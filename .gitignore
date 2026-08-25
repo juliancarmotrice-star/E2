@@ -1,3 +1,13 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.env
+
+# Local MCP and Agent configurations with potential credentials
+.agents/mcp_config.json
+.agents/*.local.*
+
 # Python
 __pycache__/
 *.py[cod]
