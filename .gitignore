@@ -36,3 +36,11 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 .DS_Store
+
+# Environment variables & secrets
+.env
+.env.*
+
+# Scratch and temporary scripts
+scratch/
+
