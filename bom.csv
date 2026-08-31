@@ -1,8 +1,8 @@
 producto,nombre_producto,sku_material,cantidad_por_unidad,unidad
 PT-ESC-STD,Escritorio estándar,MP-0019,5.65,m2
 PT-ESC-STD,Escritorio estándar,MP-0022,6.21,par
-PT-ESC-STD,Escritorio estándar,MP-0094,5.42,LÁMINA
-PT-ESC-STD,Escritorio estándar,MP-0074,5.63,UNIDAD
+PT-ESC-STD,Escritorio estándar,MP-0094,5.42,lámina
+PT-ESC-STD,Escritorio estándar,MP-0074,5.63,unidad
 PT-ESC-STD,Escritorio estándar,MP-0370,1.82,m
 PT-ESC-STD,Escritorio estándar,MP-0299,7.04,unidad
 PT-ESC-STD,Escritorio estándar,MP-0309,6.39,m
@@ -11,7 +11,7 @@ PT-ESC-EJE,Escritorio ejecutivo,MP-0008,1.77,par
 PT-ESC-EJE,Escritorio ejecutivo,MP-0005,3.85,kg
 PT-ESC-EJE,Escritorio ejecutivo,MP-0133,7.51,unidad
 PT-ESC-EJE,Escritorio ejecutivo,MP-0101,6.6,par
-PT-ESC-EJE,Escritorio ejecutivo,MP-0149,4.35,M
+PT-ESC-EJE,Escritorio ejecutivo,MP-0149,4.35,m
 PT-ESC-EJE,Escritorio ejecutivo,MP-0189,5.34,lámina
 PT-ESC-EJE,Escritorio ejecutivo,MP-0254,7.77,lámina
 PT-ESC-EJE,Escritorio ejecutivo,MP-0161,2.9,par
@@ -21,14 +21,14 @@ PT-ESC-L,Escritorio en L,MP-0018,1.03,kg
 PT-ESC-L,Escritorio en L,MP-0137,5.19,m2
 PT-ESC-L,Escritorio en L,MP-0073,7.48,unidad
 PT-ESC-L,Escritorio en L,MP-0118,6.72,m2
-PT-ESC-L,Escritorio en L,MP-0199,6.36,UNIDAD
+PT-ESC-L,Escritorio en L,MP-0199,6.36,unidad
 PT-ESC-L,Escritorio en L,MP-0232,5.69,m
-PT-ESC-GER,Escritorio gerencial,MP-0027,1.12,KG
+PT-ESC-GER,Escritorio gerencial,MP-0027,1.12,kg
 PT-ESC-GER,Escritorio gerencial,MP-0022,1.69,par
 PT-ESC-GER,Escritorio gerencial,MP-0149,6.99,m
 PT-ESC-GER,Escritorio gerencial,MP-0116,3.37,kg
-PT-ESC-GER,Escritorio gerencial,MP-0108,3.98,KG
-PT-ESC-GER,Escritorio gerencial,MP-0293,5.92,LÁMINA
+PT-ESC-GER,Escritorio gerencial,MP-0108,3.98,kg
+PT-ESC-GER,Escritorio gerencial,MP-0293,5.92,lámina
 PT-ESC-GER,Escritorio gerencial,MP-0239,2.81,kg
 PT-ARCH-4G,Archivador 4 gavetas,MP-0016,5.87,kg
 PT-ARCH-4G,Archivador 4 gavetas,MP-0030,1.16,par
@@ -58,13 +58,13 @@ PT-EST-5N,Estantería 5 niveles,MP-0085,2.48,unidad
 PT-EST-5N,Estantería 5 niveles,MP-0202,7.79,kg
 PT-EST-5N,Estantería 5 niveles,MP-0153,3.58,par
 PT-EST-5N,Estantería 5 niveles,MP-0178,1.69,m2
-PT-EST-5N,Estantería 5 niveles,MP-0229,7.98,UNIDAD
+PT-EST-5N,Estantería 5 niveles,MP-0229,7.98,unidad
 PT-EST-3N,Estantería 3 niveles,MP-0013,4.97,kg
 PT-EST-3N,Estantería 3 niveles,MP-0020,2.78,lámina
 PT-EST-3N,Estantería 3 niveles,MP-0106,3.27,par
 PT-EST-3N,Estantería 3 niveles,MP-0051,5.48,par
 PT-EST-3N,Estantería 3 niveles,MP-0411,4.93,par
-PT-EST-3N,Estantería 3 niveles,MP-0238,4.64,KG
+PT-EST-3N,Estantería 3 niveles,MP-0238,4.64,kg
 PT-EST-IND,Estantería industrial,MP-0004,4.55,m2
 PT-EST-IND,Estantería industrial,MP-0033,4.02,kg
 PT-EST-IND,Estantería industrial,MP-0128,6.46,kg
@@ -75,7 +75,7 @@ PT-EST-IND,Estantería industrial,MP-0393,1.81,unidad
 PT-EST-IND,Estantería industrial,MP-0373,7.29,unidad
 PT-SIL-OPE,Silla operativa,MP-0015,4.13,unidad
 PT-SIL-OPE,Silla operativa,MP-0012,6.26,m
-PT-SIL-OPE,Silla operativa,MP-0142,6.29,LÁMINA
+PT-SIL-OPE,Silla operativa,MP-0142,6.29,lámina
 PT-SIL-OPE,Silla operativa,MP-0102,7.67,m2
 PT-SIL-OPE,Silla operativa,MP-0114,1.83,unidad
 PT-SIL-OPE,Silla operativa,MP-0325,4.93,m
@@ -87,7 +87,7 @@ PT-SIL-INT,Silla interlocutora,MP-0020,5.05,lámina
 PT-SIL-INT,Silla interlocutora,MP-0117,6.22,kg
 PT-SIL-INT,Silla interlocutora,MP-0060,5.56,par
 PT-SIL-INT,Silla interlocutora,MP-0357,6.84,par
-PT-SIL-INT,Silla interlocutora,MP-0162,1.05,KG
+PT-SIL-INT,Silla interlocutora,MP-0162,1.05,kg
 PT-SIL-GER,Silla gerencial,MP-0009,5.15,unidad
 PT-SIL-GER,Silla gerencial,MP-0024,7.09,m2
 PT-SIL-GER,Silla gerencial,MP-0076,7.12,unidad
@@ -105,10 +105,10 @@ PT-MOD-CAL,Módulo call center,MP-0008,3.53,par
 PT-MOD-CAL,Módulo call center,MP-0085,3.86,unidad
 PT-MOD-CAL,Módulo call center,MP-0088,6.43,m2
 PT-MOD-CAL,Módulo call center,MP-0143,7.19,kg
-PT-MOD-CAL,Módulo call center,MP-0181,6.04,KG
+PT-MOD-CAL,Módulo call center,MP-0181,6.04,kg
 PT-MOD-CAL,Módulo call center,MP-0385,1.77,m
 PT-MOD-CAL,Módulo call center,MP-0321,3.26,unidad
-PT-MOD-CAL,Módulo call center,MP-0343,7.24,PAR
+PT-MOD-CAL,Módulo call center,MP-0343,7.24,par
 PT-LOCK-12,Lockers 12 puertas,MP-0036,3.06,m
 PT-LOCK-12,Lockers 12 puertas,MP-0019,2.11,m2
 PT-LOCK-12,Lockers 12 puertas,MP-0080,3.38,kg
