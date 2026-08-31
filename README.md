@@ -117,14 +117,21 @@ Para estructurar analíticamente el proyecto, las fuentes de datos se integran b
 
 ```mermaid
 erDiagram
-    MAESTRO_MATERIALES ||--o{ MOVIMIENTOS_INVENTARIO : "registra movimientos"
+    MAESTRO_MATERIALES ||--o{ MOVIMIENTOS_INVENTARIOS : "registra movimientos (Kardex)"
     MAESTRO_MATERIALES ||--o{ ORDENES_COMPRA : "se abastece mediante"
-    MAESTRO_MATERIALES ||--o{ BOM : "es componente de"
+    MAESTRO_MATERIALES ||--o{ BOM : "es componente (materia prima)"
     MAESTRO_MATERIALES ||--o{ INVENTARIO_INICIAL : "tiene saldo inicial"
     MAESTRO_MATERIALES ||--o{ CONTEO_FISICO : "es auditado en"
+    MAESTRO_MATERIALES ||--o{ INVENTARIO_BODEGA_JEFE : "conteo manual jefe"
     
-    PLAN_PRODUCCION ||--o{ BOM : "demanda componentes segun"
+    MAESTRO_PRODUCTOS ||--o{ PLAN_PRODUCCION : "programa produccion"
+    MAESTRO_PRODUCTOS ||--o{ BOM : "define lista de materiales"
     
+    MAESTRO_PRODUCTOS {
+        string producto PK
+        string nombre_producto
+    }
+
     MAESTRO_MATERIALES {
         string sku PK
         string descripcion
@@ -148,7 +155,7 @@ erDiagram
         float costo_unitario
     }
 
-    MOVIMIENTOS_INVENTARIO {
+    MOVIMIENTOS_INVENTARIOS {
         date fecha
         string sku FK
         string tipo_movimiento
@@ -159,17 +166,16 @@ erDiagram
     }
 
     BOM {
+        string id_bom PK
         string producto FK
-        string nombre_producto
         string sku_material FK
         float cantidad_por_unidad
         string unidad
     }
 
     PLAN_PRODUCCION {
-        date periodo
-        string producto PK
-        string nombre_producto
+        date periodo PK
+        string producto PK, FK
         int cantidad_planeada
         int cantidad_real
     }
@@ -194,7 +200,7 @@ erDiagram
 De acuerdo con el documento normativo [`03_Evaluacion_E1.pdf`](03_Evaluacion_E1.pdf), el equipo debe consolidar en el repositorio los siguientes componentes:
 
 1. **Modelo de Datos Normalizado:** Esquema relacional estructurado y poblado tras la limpieza.
-2. **Bitácora de Limpieza de Datos:** Documento técnico que detalla cada defecto encontrado (nulos, valores imposibles, duplicados, inconsistencias) y la regla de transformación aplicada.
+2. **Bitácora de Limpieza de Datos:** Documento técnico [`BITACORA_DE_LIMPIEZA.md`](BITACORA_DE_LIMPIEZA.md) que detalla cada defecto encontrado (nulos, valores imposibles, duplicados, inconsistencias) y la regla de transformación aplicada.
 3. **Diagnóstico del AS-IS:** Análisis cuantitativo de cuellos de botella operacionales (diferenciando causas raíz de síntomas).
 4. **Verificación de Quejas del Cliente:** Validación estadística de cada una de las 4 percepciones de gerencia.
 5. **Línea Base Cuantitativa:** Medición de KPIs actuales y dimensionamiento en pesos ($ COP) del costo de ineficiencia.

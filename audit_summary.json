@@ -1,0 +1,15 @@
+{
+  "maestro_materiales": {
+    "total_rows": 440,
+    "nulls": {
+      "sku": 0,
+      "descripcion": 0,
+      "categoria": 0,
+      "unidad": 0,
+      "costo_unitario": 0,
+      "proveedor": 0,
+      "lead_time_declarado_dias": 54,
+      "stock_min": 0,
+      "stock_max": 0
+    },
+    "duplicates": 
