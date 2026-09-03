@@ -107,3 +107,20 @@ SET lead_time_declarado_dias = CASE
     ELSE lead_time_declarado_dias
 END
 WHERE lead_time_declarado_dias IS NULL;
+
+-- 6. NORMALIZACIÓN DE CANTIDADES EN MOVIMIENTOS_INVENTARIO
+-- Convertir cantidades negativas a su valor absoluto
+UPDATE public.movimientos_inventario
+SET cantidad = ABS(cantidad)
+WHERE cantidad < 0;
+
+-- 7. INTEGRIDAD ESTRUCTURAL EN PLAN_PRODUCCION
+-- Asegurar NOT NULL y Llave Primaria compuesta (periodo, producto)
+ALTER TABLE public.plan_produccion 
+    ALTER COLUMN periodo SET NOT NULL,
+    ALTER COLUMN producto SET NOT NULL,
+    ALTER COLUMN cantidad_planeada SET NOT NULL,
+    ALTER COLUMN cantidad_real SET NOT NULL;
+
+ALTER TABLE public.plan_produccion DROP CONSTRAINT IF EXISTS plan_produccion_pkey CASCADE;
+ALTER TABLE public.plan_produccion ADD CONSTRAINT plan_produccion_pkey PRIMARY KEY (periodo, producto);
