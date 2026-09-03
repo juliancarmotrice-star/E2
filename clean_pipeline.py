@@ -41,11 +41,12 @@ def run_cleaning_pipeline():
     oc_fr = pd.to_datetime(oc_raw['fecha_recepcion'], errors='coerce')
     oc_mask_2035 = oc_fr.dt.year == 2035
     oc_fr_clean = oc_fr.copy()
-    oc_fr_clean.loc[oc_mask_2035] = oc_raw.loc[oc_mask_2035].apply(
-        lambda r: pd.to_datetime(r['fecha_recepcion']).replace(
-            year=pd.to_datetime(r['fecha_pedido']).year if (pd.to_datetime(r['fecha_recepcion']).replace(year=pd.to_datetime(r['fecha_pedido']).year) >= pd.to_datetime(r['fecha_pedido'])) else pd.to_datetime(r['fecha_pedido']).year + 1
-        ), axis=1
-    )
+    if oc_mask_2035.sum() > 0:
+        oc_fr_clean.loc[oc_mask_2035] = oc_raw.loc[oc_mask_2035].apply(
+            lambda r: pd.to_datetime(r['fecha_recepcion']).replace(
+                year=pd.to_datetime(r['fecha_pedido']).year if (pd.to_datetime(r['fecha_recepcion']).replace(year=pd.to_datetime(r['fecha_pedido']).year) >= pd.to_datetime(r['fecha_pedido'])) else pd.to_datetime(r['fecha_pedido']).year + 1
+            ), axis=1
+        )
     oc_dur = (oc_fr_clean - oc_fp).dt.days
     oc_temp = pd.DataFrame({'sku': oc_raw['sku'], 'proveedor': oc_raw['proveedor'], 'lead_time': oc_dur}).dropna()
     
@@ -89,9 +90,10 @@ def run_cleaning_pipeline():
     
     # Corregir año 2035 -> año de pedido
     mask_2035 = oc['fr'].dt.year == 2035
-    oc.loc[mask_2035, 'fecha_recepcion'] = oc.loc[mask_2035].apply(
-        lambda r: r['fr'].replace(year=r['fp'].year if (r['fr'].replace(year=r['fp'].year) >= r['fp']) else r['fp'].year + 1).strftime('%Y-%m-%d'), axis=1
-    )
+    if mask_2035.sum() > 0:
+        oc.loc[mask_2035, 'fecha_recepcion'] = oc.loc[mask_2035].apply(
+            lambda r: r['fr'].replace(year=r['fp'].year if (r['fr'].replace(year=r['fp'].year) >= r['fp']) else r['fp'].year + 1).strftime('%Y-%m-%d'), axis=1
+        )
     oc = oc.drop(columns=['fp', 'fr'])
     
     oc.to_csv('data_clean/ordenes_compra_clean.csv', index=False)
@@ -142,37 +144,45 @@ def run_cleaning_pipeline():
     # 7. CONTEO FISICO
     # =========================================================================
     cf = pd.read_csv('conteo_fisico.csv')
-    # Reconstruir stock teorico para imputar los 94 negativos
-    mov_entradas = mov[mov['tipo_movimiento'] == 'entrada'].groupby('sku')['cantidad'].sum()
-    mov_salidas = mov[mov['tipo_movimiento'] == 'salida'].groupby('sku')['cantidad'].sum()
-    mov_ajustes = mov[mov['tipo_movimiento'] == 'ajuste'].groupby('sku')['cantidad'].sum()
     
-    kardex_calc = ii.merge(mov_entradas.rename('entradas'), on='sku', how='left').fillna(0)
-    kardex_calc = kardex_calc.merge(mov_salidas.rename('salidas'), on='sku', how='left').fillna(0)
-    kardex_calc = kardex_calc.merge(mov_ajustes.rename('ajustes'), on='sku', how='left').fillna(0)
-    kardex_calc['stock_teorico'] = kardex_calc['stock_inicial'] + kardex_calc['entradas'] - kardex_calc['salidas'] + kardex_calc['ajustes']
-    kardex_calc['stock_teorico'] = kardex_calc['stock_teorico'].apply(lambda x: max(0, x)) # truncar si fue quiebre
-
-    cf_merged = cf.merge(kardex_calc[['sku', 'stock_teorico']], on='sku', how='left')
-    cf_merged['stock_fisico_contado_original'] = cf_merged['stock_fisico_contado']
-    cf_merged['es_anomalo_negativo'] = cf_merged['stock_fisico_contado'] < 0
-    # Imputar conteo físico negativo con el stock teórico Kardex
-    cf_merged['stock_fisico_contado'] = np.where(cf_merged['stock_fisico_contado'] < 0, cf_merged['stock_teorico'].round().astype(int), cf_merged['stock_fisico_contado'])
+    # 7.1 Deduplicación (preservar primera ocurrencia si existen duplicados)
+    num_dups = cf.duplicated(subset=['sku']).sum()
+    if num_dups > 0:
+        cf = cf.drop_duplicates(subset=['sku'], keep='first')
+        
+    # 7.2 Corrección de signos negativos: interpretación como error de digitación (valor absoluto)
+    num_neg = (cf['stock_fisico_contado'] < 0).sum()
+    cf['stock_fisico_contado'] = cf['stock_fisico_contado'].abs()
     
-    cf_clean = cf_merged[['sku', 'stock_fisico_contado', 'fecha_conteo']]
+    cf_clean = cf[['sku', 'stock_fisico_contado', 'fecha_conteo']]
     cf_clean.to_csv('data_clean/conteo_fisico_clean.csv', index=False)
-    log.append("conteo_fisico: 94 valores negativos marcados e imputados mediante reconstrucción de saldo teórico de Kardex.")
+    log.append(f"conteo_fisico: {num_neg} valores negativos convertidos a positivos (error de digitación vía valor absoluto) y verificación de duplicados ({num_dups} eliminados).")
 
     # =========================================================================
     # 8. INVENTARIO BODEGA JEFE
     # =========================================================================
     jefe = pd.read_csv('Inventario_bodega_JEFE.csv')
+    
+    # 8.1 Deduplicación (preservar primer registro si existiesen duplicados por codigo)
+    num_dups_jefe = jefe.duplicated(subset=['codigo']).sum()
+    if num_dups_jefe > 0:
+        jefe = jefe.drop_duplicates(subset=['codigo'], keep='first')
+        
+    # 8.2 Normalización de categorías de material
     jefe['material'] = jefe['material'].map(cat_map).fillna(jefe['material'])
+    
+    # 8.3 Imputación de observaciones nulas
+    num_nulos_obs = jefe['observacion'].isna().sum()
     jefe['observacion'] = jefe['observacion'].fillna('Sin observación')
-    # Corregir negativos
-    jefe['conteo_jefe_limpio'] = jefe['conteo_jefe'].apply(lambda x: max(0, x))
-    jefe.to_csv('data_clean/inventario_bodega_JEFE_clean.csv', index=False)
-    log.append("Inventario_bodega_JEFE: Nombres de material normalizados, observaciones nulas imputadas y conteos negativos truncados a 0.")
+    
+    # 8.4 Corrección de valores negativos: interpretación como error de digitación (valor absoluto)
+    num_neg_jefe = (jefe['conteo_jefe'] < 0).sum()
+    jefe['conteo_jefe'] = jefe['conteo_jefe'].abs()
+    jefe['conteo_jefe_limpio'] = jefe['conteo_jefe']
+    
+    jefe_clean = jefe[['material', 'codigo', 'conteo_jefe', 'conteo_jefe_limpio', 'observacion']]
+    jefe_clean.to_csv('data_clean/inventario_bodega_JEFE_clean.csv', index=False)
+    log.append(f"Inventario_bodega_JEFE: {num_neg_jefe} valores negativos convertidos a positivos (error de digitación vía valor absoluto), {num_nulos_obs} observaciones nulas imputadas y verificación de duplicados ({num_dups_jefe} eliminados).")
 
     # Resumen
     print("=== PIPELINE DE LIMPIEZA COMPLETADO EXITOSAMENTE ===")

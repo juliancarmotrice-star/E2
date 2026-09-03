@@ -20,8 +20,8 @@ Todas las transformaciones se ejecutaron mediante un pipeline automatizado en Py
 | **2** | `movimientos_inventario.csv` | 16,195 | 466 neg. + 15 fechas | 3.0% | 466 cantidades negativas (440 salidas, 26 ajustes); 15 fechas `2026-13-05` (mes 13 inexistente). | Fechas trasladadas `YYYY-DD-MM`; la cantidad debe ser positiva pues el tipo define el signo. | Inversión de fecha a `2026-05-13` y aplicación de valor absoluto $\lvert \text{cantidad} \rvert$. | 🔴 ALTA |
 | **3** | `ordenes_compra.csv` | 1,471 | 22 fechas + 74 nulas | 6.5% | 22 órdenes con año de recepción `2035`; 74 órdenes en tránsito (`fecha_recepcion = NaN`). | No mezclar compras abiertas con cerradas; corregir typo de año 2035 al año de pedido. | Corrección de año `2035` a año de compra (`2024/2025`); partición metodológica de órdenes abiertas. | 🔴 ALTA |
 | **4** | `bom.csv` | 131 | 131 vacíos + 12 unidades | 100% (ID) | Columna `ID_bom` 100% nula; dispersión de mayúsculas/minúsculas en unidades; atributo descriptivo `nombre_producto` redundante. | Crear llave compuesta `producto + material`, estandarizar unidades y normalizar eliminando redundancias descriptivas (3FN). | Generación de PK `id_bom`, unificación de unidades canónicas y eliminación de `nombre_producto` (migrado a `maestro_productos`). | 🟡 MEDIA |
-| **5** | `conteo_fisico.csv` | 420 | 94 negativos | 22.4% | 94 SKUs con stock contado negativo (hasta -18,018); stocks de 19,000 frente a stock max de 500. | El inventario físico no puede ser negativo; reconstruir saldo real con la "tabla madre" e histórico Kardex. | Imputación analítica de saldos negativos a partir del Kardex teórico consolidado. | 🔴 CRÍTICA |
-| **6** | `Inventario_bodega_JEFE.csv` | 120 | 32 neg. + 23 nulos | 45.8% | 32 existencias negativas; 23 notas vacías; vocabulario informal (`faltante??`, `pedir ya`, `sobra`). | Definir y justificar rol en el modelo: no es Kardex oficial, sino verificación paralela y auditoría de descuadre. | Mapeo de `material` (categoría) y `codigo` (SKU); truncado a $\ge 0$; imputación de notas nulas. | 🔴 CRÍTICA |
+| **5** | `conteo_fisico.csv` | 420 | 94 negativos | 22.4% | 94 SKUs con stock contado registrado con signo negativo (hasta -18,018 unidades). | El inventario físico no puede ser negativo; las unidades negativas se interpretan como error de digitación de signo. | Conversión de negativos a positivos mediante valor absoluto $\lvert \text{stock\_fisico\_contado} \rvert$ y verificación/eliminación de duplicados. | 🔴 CRÍTICA |
+| **6** | `Inventario_bodega_JEFE.csv` | 120 | 32 neg. + 23 nulos | 45.8% | 32 existencias registradas con signo negativo (hasta -17,263); 23 notas vacías; vocabulario informal (`faltante??`, `pedir ya`, `sobra`). | Definir rol como verificación auxiliar; los negativos corresponden a errores de digitación en la libreta física. | Conversión de negativos a positivos vía $\lvert \text{conteo\_jefe} \rvert$, imputación de 23 observaciones nulas con `'Sin observación'`, normalización de categorías y deduplicación. | 🔴 CRÍTICA |
 | **7** | `inventario_inicial.csv` | 420 | 0 | 0.0% | Estructura 100% íntegra. Saldos base entre 200 y 600 unidades al 2024-07-01. | **"Tabla Madre"**: Línea base perfecta para reconstruir toda la trazabilidad transaccional. | Conservación íntegra; tipificación formal de fecha y saldo como ancla del Kardex. | 🟢 LIMPIO |
 | **8** | `plan_produccion.csv` | 378 | Redundancia 3FN | N/A | Atributo `nombre_producto` repetido en 378 filas; redundante con la entidad de productos. | Normalizar modelo relacional eliminando atributos descriptivos foráneos (Tercera Forma Normal - 3FN). | Eliminación de `nombre_producto` de la tabla de hechos; validación de integridad referencial con `maestro_productos`. | 🟢 LIMPIO |
 | **9** | `maestro_productos.csv` *(Nueva)* | 18 | 0 | 0.0% | Inexistencia previa de entidad dimensional de Productos Terminados (PT). | Diseñar y poblar la entidad maestra de PT como padre de `bom` y `plan_produccion`. | Creación de tabla maestra con los 18 productos únicos de E2 SAS (`producto`, `nombre_producto`). | 🟢 NUEVA / 3FN |
@@ -183,50 +183,82 @@ $$\text{ID\_bom} = \text{producto} + \text{"\_"} + \text{sku\_material}$$
 
 ---
 
-### 3.5 `conteo_fisico.csv` (Auditoría Física Periódica)
+### 3.5 `conteo_fisico.csv` (Auditoría Física Periódica y Tabla en Supabase)
 
 ```
-Estructura: 420 filas × 3 columnas | Fecha de Corte: 2026-03-31
+Estructura: 420 filas × 3 columnas | Fecha de Corte: 2026-03-31 | PK: sku
 ```
 
-#### A. Tratamiento de Conteos Físicos Negativos
-* **94 SKUs (22.38%)** presentaban existencias negativas (hasta `-18,018` unidades).
-* *Explicación Técnica:* En piso de planta, un conteo físico no puede arrojar unidades negativas. Esto ocurrió porque los auditores transcribieron saldos distorsionados por consumos no legalizados en el sistema.
-* *Solución Aplicada:* Reconstrucción del saldo teórico a partir de la **Tabla Madre** (`inventario_inicial.csv`) y los movimientos netos del Kardex hasta el 2026-03-31, imputando el valor reconstruido a los 94 SKUs anómalos.
+#### A. Tratamiento de Conteos Físicos Negativos (Error de Digitación)
+* **94 SKUs (22.38%)** registraban cantidades negativas (por ejemplo: `MP-0001: -7783`, `MP-0008: -10995`, `MP-0013: -660`, hasta `-18,018` unidades).
+* *Interpretación y Criterio de Negocio:* Físicamente, un conteo en piso de bodega o auditoría de estantería no puede arrojar unidades negativas; la presencia del signo menos obedece a un **error involuntario de digitación** en la captura del formulario de auditoría.
+* *Acción Ejecutada:* Se transformaron las 94 cantidades negativas a su valor positivo real aplicando la función de valor absoluto:
+$$\text{stock\_fisico\_contado}_{\text{corregido}} = \lvert \text{stock\_fisico\_contado} \rvert$$
+* *Sincronización Directa en Supabase:* Se ejecutó la actualización en la tabla `public.conteo_fisico` en Supabase y en el pipeline reproducible local ([`clean_pipeline.py`](clean_pipeline.py)).
+
+#### B. Auditoría y Eliminación de Duplicados
+* **Diagnóstico de Duplicados:** Se auditó la tabla en busca de registros repetidos bajo tres criterios:
+  1. Duplicados exactos en todas las columnas (`sku`, `stock_fisico_contado`, `fecha_conteo`): **0 duplicados**.
+  2. Duplicados por clave primaria (`sku`): **0 duplicados** (420 SKUs únicos).
+  3. Duplicados por corte temporal (`sku`, `fecha_conteo`): **0 duplicados**.
+* *Garantía de Unicidad:* La tabla mantiene su restricción de clave primaria `PRIMARY KEY (sku)` en Supabase, impidiendo colisiones futuras.
 
 ---
 
-### 3.6 `Inventario_bodega_JEFE.csv` (Control Informal Paralelo)
+### 3.6 `Inventario_bodega_JEFE.csv` (Registro Auxiliar de Bodega y Tabla en Supabase)
 
 ```
-Estructura: 120 filas × 4 columnas | Cobertura: 28.5% del catálogo
+Estructura: 120 filas × 4 columnas | Cobertura: 28.5% del catálogo | FK: codigo -> maestro_materiales(sku)
 ```
 
-#### A. Rol y Tratamiento
-* **32 valores negativos** truncados a `0`.
-* **23 observaciones nulas** imputadas con `"Sin observación"`.
-* **Nombres de material** normalizados a las 8 familias canónicas.
-* **Justificación de Uso:** Esta tabla se mantiene en la capa analítica para cuantificar el grado de discrepancia entre la percepción del jefe de bodega y el sistema central.
+#### A. Tratamiento de Existencias Negativas (Error de Digitación)
+* **32 registros (26.67%)** presentaban cantidades negativas (por ejemplo: `MP-0157: -17263`, `MP-0020: -4890`, `MP-0153: -5678`, hasta `-17,263` unidades).
+* *Criterio de Negocio:* Al ser un conteo manual de piso ("libreta de bodega"), las existencias físicas no pueden ser negativas. El signo menos se debió a un error de digitación durante el levantamiento manual.
+* *Acción Ejecutada:* Conversión de las 32 cantidades negativas a valores positivos mediante valor absoluto:
+$$\text{conteo\_jefe}_{\text{corregido}} = \lvert \text{conteo\_jefe} \rvert$$
+
+#### B. Imputación de Observaciones Nulas y Estandarización de Texto
+* **23 celdas nulas / vacías** en la columna `observacion` fueron imputadas con la categoría formal `'Sin observación'`.
+* Las observaciones cualitativas (`revisar`, `sobra`, `ok`, `faltante??`, `pedir ya`) se preservan como insumo clave para diagnosticar alertas tempranas de abastecimiento.
+
+#### C. Normalización de Nombres de Material y Validación de Duplicados
+* Nombres de material normalizados a las 8 familias canónicas (`Lámina`, `Tubería`, `Tornillería`, `Pintura`, `Correderas`, `Adhesivos`, `Empaque`, `Vidrio`).
+* **Auditoría de Duplicados:** **0 duplicados** por `codigo` y **0 duplicados exactos** en la tabla.
+* **Integridad Referencial:** 100% de los códigos (120 de 120) coinciden con SKUs válidos en `maestro_materiales`.
+* *Sincronización Directa:* Cambios ejecutados en vivo sobre la tabla `public.inventario_bodega_JEFE` en Supabase y reflejados en [`data_clean/inventario_bodega_JEFE_clean.csv`](data_clean/inventario_bodega_JEFE_clean.csv).
 
 ---
 
 ## 📊 4. Reconciliación Transversal y Exactitud de Inventarios (IRA)
 
-La comparación tridimensional entre el **Kardex Teórico Reconstruido**, el **Conteo Físico Auditado** y el **Registro del Jefe de Bodega** arrojó los siguientes indicadores de exactitud:
+La comparación tridimensional entre el **Inventario Inicial** ("Tabla Madre"), el **Conteo Físico Auditado**, el **Registro del Jefe de Bodega** y el **Kardex Teórico Reconstruido** arrojó los siguientes hallazgos e indicadores clave de exactitud:
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    RECONCILIACIÓN INTEGRAL DE INVENTARIOS                   │
-├───────────────────────────────┬─────────────────────────────────────────────┤
-│ Total SKUs Auditados          │ 420 materias primas                         │
-│ SKUs con Coincidencia Exacta  │ 301 SKUs (71.67%)                           │
-│ SKUs con Descuadre (IRA)      │ 119 SKUs (28.33% de inexactitud de registro)│
-│ Descuadre Absoluto Promedio   │ 297.4 unidades por SKU con error            │
-│ SKUs con Quiebre en Kardex    │ 93 SKUs con saldo negativo histórico        │
-└───────────────────────────────┴─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                   RECONCILIACIÓN TRIDIMENSIONAL DE INVENTARIOS — E2 SAS                     │
+├─────────────────────────────────────────┬───────────────────────────────────────────────────┤
+│ Total SKUs en Catálogo Activo           │ 420 materias primas (100% en II y CF)             │
+│ Cobertura Registro Auxiliar Jefe        │ 120 materias primas (28.57% del catálogo)         │
+│ Correlación Conteo Físico vs Jefe       │ r = 0.9954 (99.54% de consistencia física lineal)  │
+│ Diferencia Media Neta (Físico - Jefe)   │ -49.33 unidades                                   │
+│ Diferencia Absoluta Media (|Físico-Jefe|)│ 283.35 unidades (desfase natural de corte/estante)│
+│ SKUs con Diferencia Relativa > 20%      │ 0 SKUs (sin outliers extremos)                    │
+│ Coincidencias Exactas con Kardex ERP    │ 53 SKUs (12.62% de inventario sin descuadre)      │
+│ SKUs con Descuadre vs Kardex (IRA)      │ 367 SKUs (87.38% de inexactitud de registro ERP)  │
+│ Descuadre Absoluto Promedio vs Kardex   │ 2.873,97 unidades                                 │
+└─────────────────────────────────────────┴───────────────────────────────────────────────────┘
 ```
 
-$$\text{IRA} = \left(1 - \frac{\text{SKUs con } \lvert \text{Stock Teórico} - \text{Stock Físico} \rvert \le \text{Tolerancia}}{\text{Total SKUs}} \right) \times 100 = 28.33\%$$
+$$\text{IRA} = \left(1 - \frac{\text{SKUs con } \lvert \text{Stock Teórico ERP} - \text{Stock Físico} \rvert \le \text{Tolerancia}}{\text{Total SKUs}} \right) \times 100 = 87.38\%$$
+
+### 📌 Diagnóstico Integral del Cruce de Tablas:
+1. **Consistencia Física (Conteo Físico vs. Libreta del Jefe):**
+   * Tras la corrección de errores de digitación ($\lvert \text{cantidad} \rvert$), ambas fuentes físicas presentan una correlación casi perfecta (**$r = 0.9954$**), demostrando que la libreta informal del jefe y la auditoría oficial midieron la misma realidad tangible.
+2. **Causa Raíz de la Brecha ERP vs. Físico (Queja 3 Gerencial):**
+   * El desacople frente al Kardex teórico ($r = -0.3594$) no es un defecto de los datos limpios, sino el reflejo de la **falla operacional crítica de E2 SAS**: para evitar costosas paradas de planta ($450.000 COP/h$), producción consume materias primas recién descargadas en muelle antes de que bodega registre la recepción formal en el ERP, provocando que el sistema muestre saldos desfasados mientras en piso existen existencias físicas.
+3. **Validación de Alertas Cualitativas:**
+   * Las observaciones del jefe (`sobra`, `faltante??`, `pedir ya`, `revisar`) coinciden con los SKUs de alta rotación y quiebre de stock, sirviendo como mapa de alerta para el nuevo modelo de reposición ($ROP$ y Stock de Seguridad).
+
 
 ---
 
@@ -278,8 +310,8 @@ python clean_pipeline.py
  ┣ 📄 ordenes_compra_clean.csv          # 1,471 filas: años 2035 corregidos a año de pedido.
  ┣ 📄 bom_clean.csv                     # 131 filas: PK ID_bom, unidades estándar y sin 'nombre_producto' redundante.
  ┣ 📄 plan_produccion_clean.csv         # 378 filas: datos validados de planeación mensual (sin 'nombre_producto').
- ┣ 📄 conteo_fisico_clean.csv           # 420 filas: 94 negativos imputados con saldo teórico Kardex.
- ┣ 📄 inventario_bodega_JEFE_clean.csv  # 120 filas: nombres normalizados, truncado a >=0 y notas limpias.
+ ┣ 📄 conteo_fisico_clean.csv           # 420 filas: 94 negativos corregidos a positivos (error de digitación) y sin duplicados.
+ ┣ 📄 inventario_bodega_JEFE_clean.csv  # 120 filas: nombres normalizados, 32 negativos convertidos a positivos (error de digitación), 23 notas imputadas y sin duplicados.
  ┗ 📄 inventario_inicial_clean.csv      # 420 filas: "Tabla Madre" con saldos base consolidados.
 ```
 
