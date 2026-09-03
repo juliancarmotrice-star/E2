@@ -108,34 +108,49 @@ SET lead_time_declarado_dias = CASE
 END
 WHERE lead_time_declarado_dias IS NULL;
 
--- 6. CORRECCIÓN DE SIGNOS NEGATIVOS EN CONTEO_FISICO (ERROR DE DIGITACIÓN)
+-- 6. NORMALIZACIÓN DE CANTIDADES EN MOVIMIENTOS_INVENTARIO
+-- Convertir cantidades negativas a su valor absoluto
+UPDATE public.movimientos_inventarios
+SET cantidad = ABS(cantidad)
+WHERE cantidad < 0;
+
+-- 7. INTEGRIDAD ESTRUCTURAL EN PLAN_PRODUCCION
+-- Asegurar NOT NULL y Llave Primaria compuesta (periodo, producto)
+ALTER TABLE public.plan_produccion 
+    ALTER COLUMN periodo SET NOT NULL,
+    ALTER COLUMN producto SET NOT NULL,
+    ALTER COLUMN cantidad_planeada SET NOT NULL,
+    ALTER COLUMN cantidad_real SET NOT NULL;
+
+ALTER TABLE public.plan_produccion DROP CONSTRAINT IF EXISTS plan_produccion_pkey CASCADE;
+ALTER TABLE public.plan_produccion ADD CONSTRAINT plan_produccion_pkey PRIMARY KEY (periodo, producto);
+
+-- 8. CORRECCIÓN DE SIGNOS NEGATIVOS EN CONTEO_FISICO (ERROR DE DIGITACIÓN)
 -- Convertir unidades negativas a positivas interpretadas como error involuntario de digitación de signo
 UPDATE public.conteo_fisico
 SET stock_fisico_contado = ABS(stock_fisico_contado)
 WHERE stock_fisico_contado < 0;
 
--- 7. ELIMINACIÓN Y PREVENCIÓN DE DUPLICADOS EN CONTEO_FISICO
+-- 9. ELIMINACIÓN Y PREVENCIÓN DE DUPLICADOS EN CONTEO_FISICO
 -- Eliminar registros duplicados si existieren, conservando una única fila por SKU
 DELETE FROM public.conteo_fisico a
 USING public.conteo_fisico b
 WHERE a.ctid < b.ctid AND a.sku = b.sku;
 
--- 8. CORRECCIÓN DE SIGNOS NEGATIVOS EN INVENTARIO_BODEGA_JEFE (ERROR DE DIGITACIÓN)
+-- 10. CORRECCIÓN DE SIGNOS NEGATIVOS EN INVENTARIO_BODEGA_JEFE (ERROR DE DIGITACIÓN)
 -- Convertir existencias negativas a positivas mediante valor absoluto
 UPDATE public."inventario_bodega_JEFE"
 SET conteo_jefe = ABS(conteo_jefe)
 WHERE conteo_jefe < 0;
 
--- 9. IMPUTACIÓN DE OBSERVACIONES NULAS EN INVENTARIO_BODEGA_JEFE
+-- 11. IMPUTACIÓN DE OBSERVACIONES NULAS EN INVENTARIO_BODEGA_JEFE
 -- Estandarizar valores nulos o vacíos en el campo de texto descriptivo
 UPDATE public."inventario_bodega_JEFE"
 SET observacion = 'Sin observación'
 WHERE observacion IS NULL OR TRIM(observacion) = '' OR observacion = 'nan';
 
--- 10. ELIMINACIÓN Y PREVENCIÓN DE DUPLICADOS EN INVENTARIO_BODEGA_JEFE
+-- 12. ELIMINACIÓN Y PREVENCIÓN DE DUPLICADOS EN INVENTARIO_BODEGA_JEFE
 -- Eliminar registros duplicados si existieren, conservando una única fila por código de material
 DELETE FROM public."inventario_bodega_JEFE" a
 USING public."inventario_bodega_JEFE" b
 WHERE a.ctid < b.ctid AND a.codigo = b.codigo;
-
-
