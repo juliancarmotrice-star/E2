@@ -138,16 +138,51 @@ Al reconstruir cronológicamente el saldo diario de inventario para los 40 SKUs 
 
 ## 💰 4. Cuantificación Financiera del Impacto
 
-A partir de los parámetros económicos del proyecto:
-* **Costo por Parada de Línea:** `$450.000 COP / hora`.
-* **Mora Acumulada en Láminas:** `1.056 días de retraso` frente a la fecha promesa en órdenes cerradas.
-* **Jornada Operativa:** `8 horas / día`.
+## 📈 4. Definición de los Indicadores de Referencia (Línea Base AS-IS)
 
-$$\text{Horas de Riesgo de Parada} = 1.056\text{ días} \times 8\text{ horas/día} = \mathbf{8.448\text{ horas}}$$
+Para cuantificar el estado inicial de la operación y proyectar el impacto de la optimización en la Fase E2, se formalizan los siguientes **KPIs de Referencia de Línea Base para Abastecimiento**:
 
+```mermaid
+graph LR
+    subgraph Linea_Base_AS_IS["LÍNEA BASE (AS-IS)"]
+        K1["OTIF Lámina: 2.80%"]
+        K2["Desfase LT: +8.66 días (+71.5%)"]
+        K3["Riesgo Downtime: $3.801 M COP"]
+    end
+
+    subgraph Meta_TO_BE["OBJETIVO OPTIMIZADO (TO-BE)"]
+        M1["OTIF Meta: >= 95.0%"]
+        M2["Desfase LT: <= 0.0 días"]
+        M3["Cero Paradas de Planta ($0 COP)"]
+    end
+
+    K1 -->|Contratos SLA y Penalización| M1
+    K2 -->|Calibración LT en ERP (21d)| M2
+    K3 -->|ROP y Stock de Seguridad Dinámico| M3
+```
+
+### 4.1 KPI Principal: Nivel de Cumplimiento de Entrega del Proveedor (OTIF — On-Time In-Full)
+$$\text{OTIF}_{\text{Lámina}} = \frac{\sum \mathbb{I}_{\{\text{fecha\_recepcion} \le \text{fecha\_promesa} \land \text{cantidad\_recibida} = \text{cantidad\_pedida}\}}}{\text{Total Órdenes Cerradas de Lámina}} \times 100$$
+
+$$\text{OTIF}_{\text{Lámina (AS-IS)}} = \frac{3}{107} \times 100 = \mathbf{2.80\%} \quad (\mathbf{\text{Meta TO-BE}} \ge \mathbf{95.0\%})$$
+
+---
+
+### 4.2 KPI Secundario 1: Desfase Estructural de Lead Time ($\Delta LT$)
+$$\Delta LT = \overline{LT}_{\text{Real}} - \overline{LT}_{\text{Declarado ERP}}$$
+
+$$\Delta LT_{\text{(AS-IS)}} = 20.78\text{ días} - 12.11\text{ días} = \mathbf{+8.66\text{ días de retraso}} \quad (\mathbf{+71.5\%} \text{ de desfase})$$
+
+---
+
+### 4.3 KPI Secundario 2: Severidad de Retraso Promedio frente a Fecha Pactada
+$$\text{Mora Promedio} = \frac{\sum (\text{fecha\_recepcion} - \text{fecha\_promesa})^{+}}{N_{\text{órdenes con retraso}}} = \mathbf{9.80\text{ días de mora}}$$
+
+---
+
+### 4.4 Cuantificación Financiera del Riesgo de Parada de Planta
+$$\text{Horas de Riesgo de Parada} = 1.056\text{ días acumulados} \times 8\text{ horas/día} = \mathbf{8.448\text{ horas}}$$
 $$\text{Costo Potencial por Desabastecimiento} = 8.448\text{ horas} \times \$450.000\text{ COP/hora} = \mathbf{\$3.801.600.000\text{ COP}}$$
-
-Adicionalmente, la caída acumulada de producción en los 9 productos terminados con lámina representa cientos de unidades no facturadas a tiempo, comprometiendo el margen de contribución del **30%** y deteriorando la relación comercial con distribuidores y clientes corporativos.
 
 ---
 
@@ -191,7 +226,19 @@ $$Q^* = \sqrt{\frac{2 \cdot D \cdot S}{H}}$$
 
 ---
 
-## 🏁 7. Veredicto Final
+## 🏁 7. Matriz de Cuadro de Mando: Indicadores de Referencia Comparativos (Queja 1 vs Queja 2)
+
+| Eje Problemático | Indicador Clave de Desempeño (KPI) | Línea Base Actual (AS-IS) | Meta de Optimización (TO-BE) | Impacto Económico Cuantificado |
+|---|---|:---:|:---:|---|
+| **Queja 1: Abastecimiento y Retrasos de Lámina** | **OTIF Proveedores de Lámina** | **2.80%** | **$\ge 95.0\%$** | Evita pérdidas por parada de planta de **$3.801.600.000 COP**. |
+| | **Desfase de Lead Time ($\Delta LT$)** | **+8.66 días (+71.5%)** | **$\le 0.0$ días** | |
+| **Queja 2: Plata Muerta y Sobre-stock** | **Índice de Rotación (ITR Global)** | **0.4956 veces/año** | **$\ge 6.0$ veces/año** | Libera capital atrapado de **$3.550.022.309 COP** y ahorra **$887.505.577 COP/año** en costo $H$. |
+| | **Días de Cobertura (DSI)** | **736.5 días** | **$\le 60.0$ días** | |
+| | **% Capital en Plata Muerta** | **53.99%** | **$\le 5.0\%$** | |
+
+---
+
+## 🏁 8. Veredicto Final
 
 > [!IMPORTANT]
 > **Conclusión de la Auditoría:**  
