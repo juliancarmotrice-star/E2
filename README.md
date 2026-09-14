@@ -122,6 +122,7 @@ PA-E2/
 │   └── supabase_bom_pk.sql      # Llave primaria compuesta para BOM
 │
 ├── 📁 informes/                 # Documentación técnica, bitácoras e informes de consultoría
+│   ├── ARQUITECTURA_DEL_SISTEMA_REPOSICION.md # Arquitectura conceptual y técnica del sistema
 │   ├── INFORME_FINAL_DIAGNOSTICO_Y_LINEA_BASE_E1.md # Documento técnico maestro E1
 │   ├── INFORME_SUSTENTACION_JUNTA_DIRECTIVA_E1.md   # Informe ejecutivo para Junta Directiva
 │   ├── BITACORA_DE_LIMPIEZA.md                      # Bitácora metodológica de saneamiento
@@ -217,11 +218,12 @@ erDiagram
 
 ## 6. Informes y Entregables de Consultoría (Fase E1)
 
-1. **[Informe Final de Diagnóstico y Línea Base (E1)](informes/INFORME_FINAL_DIAGNOSTICO_Y_LINEA_BASE_E1.md):** Documento técnico exhaustivo con diagnóstico AS-IS, peritaje de quejas y cuantificación de costos.
-2. **[Informe Ejecutivo para la Junta Directiva](informes/INFORME_SUSTENTACION_JUNTA_DIRECTIVA_E1.md):** Resumen de alto nivel orientado a la toma de decisiones estratégicas.
-3. **[Bitácora de Limpieza de Datos](informes/BITACORA_DE_LIMPIEZA.md):** Registro detallado de transformaciones, normalización 3FN y reglas de deducción.
-4. **[Línea Base y Cuantificación de Costos](informes/LINEA_BASE_Y_CUANTIFICACION_DE_COSTOS.md):** Modelo económico de los $219.8M COP anuales de ineficiencia.
-5. **[Diagnóstico de Base de Datos y Esquema Supabase](informes/DIAGNOSTICO_BASE_DE_DATOS_SUPABASE.md):** Verificación de llaves, tablas y restricciones relacionales.
+1. **[Arquitectura del Sistema de Reposición Inteligente](informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md):** Diseño conceptual y técnico de la solución (Lector Skill, Motor Determinístico ROP/SS/EOQ, Agente Vigilante IA, Notificador y Tablero).
+2. **[Informe Final de Diagnóstico y Línea Base (E1)](informes/INFORME_FINAL_DIAGNOSTICO_Y_LINEA_BASE_E1.md):** Documento técnico exhaustivo con diagnóstico AS-IS, peritaje de quejas y cuantificación de costos.
+3. **[Informe Ejecutivo para la Junta Directiva](informes/INFORME_SUSTENTACION_JUNTA_DIRECTIVA_E1.md):** Resumen de alto nivel orientado a la toma de decisiones estratégicas.
+4. **[Bitácora de Limpieza de Datos](informes/BITACORA_DE_LIMPIEZA.md):** Registro detallado de transformaciones, normalización 3FN y reglas de deducción.
+5. **[Línea Base y Cuantificación de Costos](informes/LINEA_BASE_Y_CUANTIFICACION_DE_COSTOS.md):** Modelo económico de los $219.8M COP anuales de ineficiencia.
+6. **[Diagnóstico de Base de Datos y Esquema Supabase](informes/DIAGNOSTICO_BASE_DE_DATOS_SUPABASE.md):** Verificación de llaves, tablas y restricciones relacionales.
 
 ---
 
