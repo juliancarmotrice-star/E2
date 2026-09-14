@@ -2,7 +2,7 @@
   "analisis_lead_time_categorias": {
     "Adhesivos": {
       "total_pedidos": 245,
-      "lt_declarado_medio": 13.56,
+      "lt_declarado_medio": 14.118367346938776,
       "lt_real_medio": 24.979591836734695,
       "lt_real_mediana": 24.0,
       "lt_real_max": 76,
@@ -11,7 +11,7 @@
     },
     "Correderas": {
       "total_pedidos": 223,
-      "lt_declarado_medio": 13.434782608695652,
+      "lt_declarado_medio": 13.860986547085203,
       "lt_real_medio": 23.56053811659193,
       "lt_real_mediana": 23.0,
       "lt_real_max": 55,
@@ -20,7 +20,7 @@
     },
     "Empaque": {
       "total_pedidos": 152,
-      "lt_declarado_medio": 11.986301369863014,
+      "lt_declarado_medio": 12.06578947368421,
       "lt_real_medio": 22.625,
       "lt_real_mediana": 21.0,
       "lt_real_max": 54,
@@ -29,7 +29,7 @@
     },
     "Lámina": {
       "total_pedidos": 107,
-      "lt_declarado_medio": 11.125,
+      "lt_declarado_medio": 12.11214953271028,
       "lt_real_medio": 20.77570093457944,
       "lt_real_mediana": 19.0,
       "lt_real_max": 51,
@@ -38,7 +38,7 @@
     },
     "Pintura": {
       "total_pedidos": 225,
-      "lt_declarado_medio": 11.995169082125605,
+      "lt_declarado_medio": 12.671111111111111,
       "lt_real_medio": 21.453333333333333,
       "lt_real_mediana": 19.0,
       "lt_real_max": 53,
@@ -47,7 +47,7 @@
     },
     "Tornillería": {
       "total_pedidos": 103,
-      "lt_declarado_medio": 11.350515463917526,
+      "lt_declarado_medio": 11.844660194174757,
       "lt_real_medio": 21.359223300970875,
       "lt_real_mediana": 20.0,
       "lt_real_max": 52,
@@ -56,7 +56,7 @@
     },
     "Tubería": {
       "total_pedidos": 178,
-      "lt_declarado_medio": 10.46,
+      "lt_declarado_medio": 12.926966292134832,
       "lt_real_medio": 20.353932584269664,
       "lt_real_mediana": 19.5,
       "lt_real_max": 49,
@@ -65,7 +65,7 @@
     },
     "Vidrio": {
       "total_pedidos": 164,
-      "lt_declarado_medio": 10.69078947368421,
+      "lt_declarado_medio": 11.390243902439025,
       "lt_real_medio": 20.402439024390244,
       "lt_real_mediana": 19.0,
       "lt_real_max": 52,

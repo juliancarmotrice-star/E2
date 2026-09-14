@@ -1,17 +1,28 @@
+import os
 import pandas as pd
 import numpy as np
 import json
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(CURRENT_DIR)) if os.path.basename(os.path.dirname(CURRENT_DIR)) in ['python', 'src', 'scripts'] else os.path.dirname(CURRENT_DIR)
+RAW_DIR = os.path.join(BASE_DIR, 'datos_iniciales')
+RESULTS_DIR = os.path.join(BASE_DIR, 'resultados_auditoria')
+
+def get_raw_path(filename):
+    p = os.path.join(RAW_DIR, filename)
+    return p if os.path.exists(p) else os.path.join(BASE_DIR, filename)
+
 def run_deep_analysis():
+    os.makedirs(RESULTS_DIR, exist_ok=True)
     # 1. Cargar fuentes
-    mm = pd.read_csv('maestro_materiales.csv')
-    mov = pd.read_csv('movimientos_inventario.csv')
-    oc = pd.read_csv('ordenes_compra.csv')
-    bom = pd.read_csv('bom.csv')
-    plan = pd.read_csv('plan_produccion.csv')
-    ii = pd.read_csv('inventario_inicial.csv')
-    cf = pd.read_csv('conteo_fisico.csv')
-    jefe = pd.read_csv('Inventario_bodega_JEFE.csv')
+    mm = pd.read_csv(get_raw_path('maestro_materiales.csv'))
+    mov = pd.read_csv(get_raw_path('movimientos_inventario.csv'))
+    oc = pd.read_csv(get_raw_path('ordenes_compra.csv'))
+    bom = pd.read_csv(get_raw_path('bom.csv'))
+    plan = pd.read_csv(get_raw_path('plan_produccion.csv'))
+    ii = pd.read_csv(get_raw_path('inventario_inicial.csv'))
+    cf = pd.read_csv(get_raw_path('conteo_fisico.csv'))
+    jefe = pd.read_csv(get_raw_path('Inventario_bodega_JEFE.csv'))
 
     results = {}
 
@@ -31,7 +42,6 @@ def run_deep_analysis():
     oc_clean_dates['lt_real_corregido'] = (oc_clean_dates['fr'] - oc_clean_dates['fp']).dt.days
     oc_clean_dates['retraso_promesa_corregido'] = (oc_clean_dates['fr'] - oc_clean_dates['fprom']).dt.days
 
-    # Merge con categorías de maestro
     # Normalizar categorías de maestro
     cat_map = {
         'Lamina de acero': 'Lámina', 'lamina': 'Lámina', 'LAMINA AC': 'Lámina', 'Lámina': 'Lámina', 'Lmina': 'Lámina',
@@ -62,7 +72,6 @@ def run_deep_analysis():
     # -------------------------------------------------------------
     # HIPÓTESIS 2: ROTACIÓN ABC / PLATA MUERTA / COSTO FINANCIERO
     # -------------------------------------------------------------
-    # Consumo total histórico valorizado por SKU (salidas en Kardex * costo_unitario)
     mov_clean = mov.copy()
     mov_clean['cantidad_abs'] = mov_clean['cantidad'].abs()
     salidas_sku = mov_clean[mov_clean['tipo_movimiento'] == 'salida'].groupby('sku')['cantidad_abs'].sum().reset_index()
@@ -84,7 +93,6 @@ def run_deep_analysis():
     abc_valor = salidas_sku.groupby('clasificacion_abc')['valor_consumo_total'].sum().to_dict()
 
     # Inventario promedio y dinero inmovilizado
-    # Reconciliación de saldo final Kardex
     entradas_sku = mov_clean[mov_clean['tipo_movimiento'] == 'entrada'].groupby('sku')['cantidad_abs'].sum()
     ajustes_sku = mov_clean[mov_clean['tipo_movimiento'] == 'ajuste'].groupby('sku')['cantidad'].sum()
     
@@ -95,9 +103,6 @@ def run_deep_analysis():
     stock_df['valor_inventario_final'] = stock_df['saldo_final_kardex'] * stock_df['costo_unitario']
     stock_df['costo_mantenimiento_anual_H'] = stock_df['valor_inventario_final'] * 0.25
 
-    # SKUs sin movimiento (plata muerta) o con rotación casi nula
-    plata_muerta = stock_df[(stock_df['salidas'] == 0) | (stock_df['clasificacion_abc'] == 'C')]
-    
     results['analisis_abc_rotacion'] = {
         'distribucion_skus': abc_counts,
         'valor_consumo_por_clase': abc_valor,
@@ -111,7 +116,6 @@ def run_deep_analysis():
     # -------------------------------------------------------------
     # HIPÓTESIS 4: VARIABILIDAD DE DEMANDA Y EXPLOSIÓN BOM
     # -------------------------------------------------------------
-    # Demanda por producto terminado
     plan_prod = plan.groupby('producto').agg(
         nombre=('nombre_producto', 'first'),
         media_planeada=('cantidad_planeada', 'mean'),
@@ -122,18 +126,13 @@ def run_deep_analysis():
         total_real=('cantidad_real', 'sum')
     )
     plan_prod['cv_real'] = (plan_prod['std_real'] / plan_prod['media_real'])
-    
-    # Explosión de materiales requeridos vs compras realizadas
-    # Cada mes: cantidad_real * bom['cantidad_por_unidad']
-    plan_bom = plan.merge(bom, on='producto', suffixes=('_plan', '_bom'))
-    plan_bom['consumo_requerido'] = plan_bom['cantidad_real'] * plan_bom['cantidad_por_unidad']
-    consumo_mensual_mp = plan_bom.groupby(['periodo', 'sku_material'])['consumo_requerido'].sum().reset_index()
 
-    # Variabilidad de productos (Archivadores y Estanterías)
     results['variabilidad_productos_cv'] = plan_prod[['nombre', 'cv_real', 'total_real']].sort_values(by='cv_real', ascending=False).to_dict(orient='index')
 
-    with open('deep_analysis_results.json', 'w', encoding='utf-8') as f:
+    output_path = os.path.join(RESULTS_DIR, 'deep_analysis_results.json')
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
-    print("Deep analysis finished successfully.")
+    print(f"Deep analysis finished successfully. Saved to {output_path}")
 
-run_deep_analysis()
+if __name__ == '__main__':
+    run_deep_analysis()

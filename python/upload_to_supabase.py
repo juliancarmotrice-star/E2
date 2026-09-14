@@ -10,11 +10,17 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
+# Configuración de rutas
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(CURRENT_DIR) if os.path.basename(CURRENT_DIR) in ['python', 'src', 'scripts'] else CURRENT_DIR
+CLEAN_DIR = os.path.join(BASE_DIR, 'datos_limpios')
+
 # Cargar variables de entorno desde .env
 def load_env():
     env_vars = {}
-    if os.path.exists('.env'):
-        with open('.env', 'r', encoding='utf-8') as f:
+    env_path = os.path.join(BASE_DIR, '.env')
+    if os.path.exists(env_path):
+        with open(env_path, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith('#') and '=' in line:
@@ -88,25 +94,25 @@ def run_upload():
     print("==================================================")
 
     # 1. Maestro de Materiales
-    df_mm = pd.read_csv('data_clean/maestro_materiales_clean.csv')
+    df_mm = pd.read_csv(os.path.join(CLEAN_DIR, 'maestro_materiales_clean.csv'))
     mm_records = df_mm.to_dict(orient='records')
     if not insert_batch('maestro_materiales', mm_records, API_KEY):
         return
 
     # 2. Inventario Inicial
-    df_ii = pd.read_csv('data_clean/inventario_inicial_clean.csv')
+    df_ii = pd.read_csv(os.path.join(CLEAN_DIR, 'inventario_inicial_clean.csv'))
     ii_records = df_ii.to_dict(orient='records')
     if not insert_batch('inventario_inicial', ii_records, API_KEY):
         return
 
     # 3. Conteo Físico
-    df_cf = pd.read_csv('data_clean/conteo_fisico_clean.csv')
+    df_cf = pd.read_csv(os.path.join(CLEAN_DIR, 'conteo_fisico_clean.csv'))
     cf_records = df_cf[['sku', 'stock_fisico_contado', 'fecha_conteo']].to_dict(orient='records')
     if not insert_batch('conteo_fisico', cf_records, API_KEY):
         return
 
     # 4. Inventario Bodega JEFE
-    df_jefe = pd.read_csv('data_clean/inventario_bodega_JEFE_clean.csv')
+    df_jefe = pd.read_csv(os.path.join(CLEAN_DIR, 'inventario_bodega_JEFE_clean.csv'))
     # Columnas originales en la tabla: material, codigo, conteo_jefe, observacion
     jefe_records = df_jefe.copy()
     jefe_records['conteo_jefe'] = jefe_records['conteo_jefe_limpio']
@@ -115,27 +121,26 @@ def run_upload():
         return
 
     # 5. BOM (Bill of Materials)
-    df_bom = pd.read_csv('data_clean/bom_clean.csv')
-    # Quitar ID_bom si la columna es calculada o no existe en Supabase
+    df_bom = pd.read_csv(os.path.join(CLEAN_DIR, 'bom_clean.csv'))
     bom_cols = [c for c in ['producto', 'nombre_producto', 'sku_material', 'cantidad_por_unidad', 'unidad'] if c in df_bom.columns]
     bom_records = df_bom[bom_cols].to_dict(orient='records')
     if not insert_batch('bom', bom_records, API_KEY):
         return
 
     # 6. Plan de Producción
-    df_plan = pd.read_csv('data_clean/plan_produccion_clean.csv')
+    df_plan = pd.read_csv(os.path.join(CLEAN_DIR, 'plan_produccion_clean.csv'))
     plan_records = df_plan.to_dict(orient='records')
     if not insert_batch('plan_produccion', plan_records, API_KEY):
         return
 
     # 7. Órdenes de Compra
-    df_oc = pd.read_csv('data_clean/ordenes_compra_clean.csv')
+    df_oc = pd.read_csv(os.path.join(CLEAN_DIR, 'ordenes_compra_clean.csv'))
     oc_records = df_oc.to_dict(orient='records')
     if not insert_batch('ordenes_compra', oc_records, API_KEY):
         return
 
     # 8. Movimientos de Inventarios (Kardex - 15.545 filas)
-    df_mov = pd.read_csv('data_clean/movimientos_inventario_clean.csv')
+    df_mov = pd.read_csv(os.path.join(CLEAN_DIR, 'movimientos_inventario_clean.csv'))
     mov_records = df_mov.to_dict(orient='records')
     if not insert_batch('movimientos_inventarios', mov_records, API_KEY):
         return

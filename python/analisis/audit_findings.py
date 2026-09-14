@@ -1,7 +1,17 @@
+import os
 import pandas as pd
 import numpy as np
 import json
 import sys
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(CURRENT_DIR)) if os.path.basename(os.path.dirname(CURRENT_DIR)) in ['python', 'src', 'scripts'] else os.path.dirname(CURRENT_DIR)
+RAW_DIR = os.path.join(BASE_DIR, 'datos_iniciales')
+RESULTS_DIR = os.path.join(BASE_DIR, 'resultados_auditoria')
+
+def get_raw_path(filename):
+    p = os.path.join(RAW_DIR, filename)
+    return p if os.path.exists(p) else os.path.join(BASE_DIR, filename)
 
 def convert_np(obj):
     if isinstance(obj, (np.int64, np.int32, np.int16, np.int8)):
@@ -17,12 +27,13 @@ def convert_np(obj):
     return obj
 
 def audit():
+    os.makedirs(RESULTS_DIR, exist_ok=True)
     report = {}
 
     # =========================================================================
     # 1. MAESTRO DE MATERIALES
     # =========================================================================
-    mm = pd.read_csv('maestro_materiales.csv')
+    mm = pd.read_csv(get_raw_path('maestro_materiales.csv'))
     
     # 1.1 Nulos y duplicados
     nulls_mm = mm.isnull().sum().to_dict()
@@ -58,19 +69,17 @@ def audit():
         'stock_min_igual_stock_max': len(stock_equal_mm),
         'lead_time_declarado_invalido': len(neg_lead_mm),
         'lead_time_declarado_invalido_detalle': neg_lead_mm[['sku', 'lead_time_declarado_dias']].to_dict(orient='records'),
-        'outliers_costo_iqr_total': len(outliers_cost),
-        'outliers_costo_iqr_detalle': outliers_cost[['sku', 'descripcion', 'categoria', 'costo_unitario']].head(10).to_dict(orient='records'),
-        'estadisticas_costo': {'min': float(mm['costo_unitario'].min()), 'max': float(mm['costo_unitario'].max()), 'media': float(mm['costo_unitario'].mean()), 'mediana': float(mm['costo_unitario'].median())},
-        'estadisticas_lead_time': {'min': int(mm['lead_time_declarado_dias'].min()), 'max': int(mm['lead_time_declarado_dias'].max()), 'media': float(mm['lead_time_declarado_dias'].mean())},
+        'outliers_costo_total': len(outliers_cost),
+        'outliers_costo_detalle': outliers_cost[['sku', 'descripcion', 'categoria', 'costo_unitario']].to_dict(orient='records'),
         'categorias_distribucion': cat_counts,
         'unidades_distribucion': unit_counts,
-        'proveedores_total': len(prov_counts)
+        'proveedores_distribucion': prov_counts
     }
 
     # =========================================================================
     # 2. MOVIMIENTOS INVENTARIO (KARDEX)
     # =========================================================================
-    mov = pd.read_csv('movimientos_inventario.csv')
+    mov = pd.read_csv(get_raw_path('movimientos_inventario.csv'))
     nulls_mov = mov.isnull().sum().to_dict()
     dup_rows_mov = int(mov.duplicated().sum())
     neg_qty_mov = mov[mov['cantidad'] <= 0]
@@ -102,7 +111,7 @@ def audit():
     # =========================================================================
     # 3. ORDENES DE COMPRA
     # =========================================================================
-    oc = pd.read_csv('ordenes_compra.csv')
+    oc = pd.read_csv(get_raw_path('ordenes_compra.csv'))
     nulls_oc = oc.isnull().sum().to_dict()
     dup_rows_oc = int(oc.duplicated().sum())
     dup_oc_id = int(oc['orden_compra'].duplicated().sum())
@@ -120,7 +129,7 @@ def audit():
     fechas_promesa_anomalas = oc[oc['lead_time_prometido'] < 0]
     ordenes_sin_recepcion = oc[oc['fecha_recepcion'].isnull()]
 
-    # Cruce de costo OC vs Maestro Materiales (discrepancias de precio de compra)
+    # Cruce de costo OC vs Maestro Materiales
     oc_merged = oc.merge(mm[['sku', 'costo_unitario', 'lead_time_declarado_dias']], on='sku', suffixes=('_oc', '_maestro'))
     oc_merged['dif_costo_pct'] = ((oc_merged['costo_unitario_oc'] - oc_merged['costo_unitario_maestro']) / oc_merged['costo_unitario_maestro']) * 100
     oc_merged['dif_lead_time_dias'] = oc_merged['lead_time_real'] - oc_merged['lead_time_declarado_dias']
@@ -158,7 +167,7 @@ def audit():
     # =========================================================================
     # 4. BOM (BILL OF MATERIALS)
     # =========================================================================
-    bom = pd.read_csv('bom.csv')
+    bom = pd.read_csv(get_raw_path('bom.csv'))
     nulls_bom = bom.isnull().sum().to_dict()
     dup_rows_bom = int(bom.duplicated().sum())
     neg_qty_bom = bom[bom['cantidad_por_unidad'] <= 0]
@@ -187,7 +196,7 @@ def audit():
     # =========================================================================
     # 5. PLAN DE PRODUCCION
     # =========================================================================
-    plan = pd.read_csv('plan_produccion.csv')
+    plan = pd.read_csv(get_raw_path('plan_produccion.csv'))
     nulls_plan = plan.isnull().sum().to_dict()
     dup_rows_plan = int(plan.duplicated().sum())
     neg_plan = plan[plan['cantidad_planeada'] < 0]
@@ -219,7 +228,7 @@ def audit():
     # =========================================================================
     # 6. INVENTARIO INICIAL
     # =========================================================================
-    ii = pd.read_csv('inventario_inicial.csv')
+    ii = pd.read_csv(get_raw_path('inventario_inicial.csv'))
     nulls_ii = ii.isnull().sum().to_dict()
     dup_rows_ii = int(ii.duplicated().sum())
     dup_sku_ii = int(ii['sku'].duplicated().sum())
@@ -244,7 +253,7 @@ def audit():
     # =========================================================================
     # 7. CONTEO FISICO (AUDITORIA FISICA)
     # =========================================================================
-    cf = pd.read_csv('conteo_fisico.csv')
+    cf = pd.read_csv(get_raw_path('conteo_fisico.csv'))
     nulls_cf = cf.isnull().sum().to_dict()
     dup_rows_cf = int(cf.duplicated().sum())
     dup_sku_cf = int(cf['sku'].duplicated().sum())
@@ -269,13 +278,12 @@ def audit():
     # =========================================================================
     # 8. INVENTARIO BODEGA JEFE (REGISTRO MANUAL)
     # =========================================================================
-    jefe = pd.read_csv('Inventario_bodega_JEFE.csv')
+    jefe = pd.read_csv(get_raw_path('Inventario_bodega_JEFE.csv'))
     nulls_jefe = jefe.isnull().sum().to_dict()
     dup_rows_jefe = int(jefe.duplicated().sum())
     dup_cod_jefe = int(jefe['codigo'].duplicated().sum())
     neg_stock_jefe = jefe[jefe['conteo_jefe'] < 0]
     
-    # Material naming check (accents/encoding)
     mat_names = jefe['material'].value_counts().to_dict()
     obs_counts = jefe['observacion'].value_counts().to_dict()
 
@@ -298,7 +306,6 @@ def audit():
     # =========================================================================
     # 9. AUDITORIA TRANSVERSAL: RECONCILIACION KARDEX VS FISICO VS JEFE
     # =========================================================================
-    # Reconstruir stock teorico por Kardex: Stock Inicial + Entradas - Salidas + Ajustes
     mov_entradas = mov[mov['tipo_movimiento'] == 'entrada'].groupby('sku')['cantidad'].sum().rename('entradas')
     mov_salidas = mov[mov['tipo_movimiento'] == 'salida'].groupby('sku')['cantidad'].sum().rename('salidas')
     mov_ajustes = mov[mov['tipo_movimiento'] == 'ajuste'].groupby('sku')['cantidad'].sum().rename('ajustes')
@@ -309,7 +316,6 @@ def audit():
     rec = rec.merge(mov_ajustes, on='sku', how='left').fillna(0)
     rec['stock_teorico_kardex'] = rec['stock_inicial'] + rec['entradas'] - rec['salidas'] + rec['ajustes']
 
-    # Unir con Conteo Fisico
     rec = rec.merge(cf[['sku', 'stock_fisico_contado']], on='sku', how='left')
     rec = rec.merge(jefe[['codigo', 'conteo_jefe', 'observacion']], left_on='sku', right_on='codigo', how='left')
 
@@ -336,9 +342,10 @@ def audit():
     }
 
     clean_report = convert_np(report)
-    with open('audit_findings.json', 'w', encoding='utf-8') as f:
+    output_path = os.path.join(RESULTS_DIR, 'audit_findings.json')
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(clean_report, f, indent=2, ensure_ascii=False)
-    print('Audit findings successfully saved to audit_findings.json')
+    print(f'Audit findings successfully saved to {output_path}')
     return clean_report
 
 if __name__ == '__main__':
