@@ -1,19 +1,43 @@
+import os
 import pandas as pd
 import numpy as np
 import json
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(CURRENT_DIR)) if os.path.basename(os.path.dirname(CURRENT_DIR)) in ['python', 'src', 'scripts'] else os.path.dirname(CURRENT_DIR)
+RAW_DIR = os.path.join(BASE_DIR, 'datos_iniciales')
+RESULTS_DIR = os.path.join(BASE_DIR, 'resultados_auditoria')
+
+def get_raw_path(filename):
+    p = os.path.join(RAW_DIR, filename)
+    return p if os.path.exists(p) else os.path.join(BASE_DIR, filename)
+
+def convert_np(obj):
+    if isinstance(obj, (np.int64, np.int32, np.int16, np.int8)):
+        return int(obj)
+    elif isinstance(obj, (np.float64, np.float32, np.float16)):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {k: convert_np(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_np(i) for i in obj]
+    return obj
+
 def audit_dataset():
+    os.makedirs(RESULTS_DIR, exist_ok=True)
     report = {}
 
     # -------------------------------------------------------------
     # 1. MAESTRO DE MATERIALES
     # -------------------------------------------------------------
-    mm = pd.read_csv('maestro_materiales.csv')
+    mm = pd.read_csv(get_raw_path('maestro_materiales.csv'))
     mm_issues = {
         'total_rows': len(mm),
         'nulls': mm.isnull().sum().to_dict(),
-        'duplicates': mm.duplicated().sum(),
-        'sku_duplicates': mm['sku'].duplicated().sum(),
+        'duplicates': int(mm.duplicated().sum()),
+        'sku_duplicates': int(mm['sku'].duplicated().sum()),
         'negative_or_zero_cost': mm[mm['costo_unitario'] <= 0][['sku', 'costo_unitario']].to_dict(orient='records'),
         'invalid_stock_thresholds': mm[mm['stock_min'] > mm['stock_max']][['sku', 'stock_min', 'stock_max']].to_dict(orient='records'),
         'negative_lead_time': mm[mm['lead_time_declarado_dias'] <= 0][['sku', 'lead_time_declarado_dias']].to_dict(orient='records'),
@@ -32,11 +56,11 @@ def audit_dataset():
     # -------------------------------------------------------------
     # 2. MOVIMIENTOS INVENTARIO
     # -------------------------------------------------------------
-    mov = pd.read_csv('movimientos_inventario.csv')
+    mov = pd.read_csv(get_raw_path('movimientos_inventario.csv'))
     mov_issues = {
         'total_rows': len(mov),
         'nulls': mov.isnull().sum().to_dict(),
-        'duplicates': mov.duplicated().sum(),
+        'duplicates': int(mov.duplicated().sum()),
         'negative_or_zero_quantity': mov[mov['cantidad'] <= 0][['fecha', 'sku', 'tipo_movimiento', 'cantidad', 'documento']].to_dict(orient='records'),
         'tipos_movimiento': mov['tipo_movimiento'].value_counts().to_dict(),
         'bodegas': mov['bodega'].value_counts().to_dict(),
@@ -55,7 +79,7 @@ def audit_dataset():
     # -------------------------------------------------------------
     # 3. ORDENES DE COMPRA
     # -------------------------------------------------------------
-    oc = pd.read_csv('ordenes_compra.csv')
+    oc = pd.read_csv(get_raw_path('ordenes_compra.csv'))
     oc['fecha_pedido_dt'] = pd.to_datetime(oc['fecha_pedido'], errors='coerce')
     oc['fecha_promesa_dt'] = pd.to_datetime(oc['fecha_promesa'], errors='coerce')
     oc['fecha_recepcion_dt'] = pd.to_datetime(oc['fecha_recepcion'], errors='coerce')
@@ -66,8 +90,8 @@ def audit_dataset():
     oc_issues = {
         'total_rows': len(oc),
         'nulls': oc.isnull().sum().to_dict(),
-        'duplicates': oc.duplicated().sum(),
-        'orden_compra_duplicates': oc['orden_compra'].duplicated().sum(),
+        'duplicates': int(oc.duplicated().sum()),
+        'orden_compra_duplicates': int(oc['orden_compra'].duplicated().sum()),
         'negative_or_zero_quantity': oc[oc['cantidad'] <= 0][['orden_compra', 'sku', 'cantidad']].to_dict(orient='records'),
         'negative_or_zero_cost': oc[oc['costo_unitario'] <= 0][['orden_compra', 'sku', 'costo_unitario']].to_dict(orient='records'),
         'recepcion_before_pedido': oc[oc['lead_time_real'] < 0][['orden_compra', 'fecha_pedido', 'fecha_recepcion', 'lead_time_real']].to_dict(orient='records'),
@@ -80,12 +104,12 @@ def audit_dataset():
     # -------------------------------------------------------------
     # 4. BOM (BILL OF MATERIALS)
     # -------------------------------------------------------------
-    bom = pd.read_csv('bom.csv')
+    bom = pd.read_csv(get_raw_path('bom.csv'))
     bom_issues = {
         'total_rows': len(bom),
         'nulls': bom.isnull().sum().to_dict(),
-        'duplicates': bom.duplicated().sum(),
-        'empty_id_bom': int(bom['ID_bom'].isnull().sum()),
+        'duplicates': int(bom.duplicated().sum()),
+        'empty_id_bom': int(bom['ID_bom'].isnull().sum()) if 'ID_bom' in bom.columns else 0,
         'negative_or_zero_qty': bom[bom['cantidad_por_unidad'] <= 0][['producto', 'sku_material', 'cantidad_por_unidad']].to_dict(orient='records'),
         'units': bom['unidad'].value_counts().to_dict(),
         'products_count': int(bom['producto'].nunique())
@@ -95,11 +119,11 @@ def audit_dataset():
     # -------------------------------------------------------------
     # 5. PLAN DE PRODUCCION
     # -------------------------------------------------------------
-    plan = pd.read_csv('plan_produccion.csv')
+    plan = pd.read_csv(get_raw_path('plan_produccion.csv'))
     plan_issues = {
         'total_rows': len(plan),
         'nulls': plan.isnull().sum().to_dict(),
-        'duplicates': plan.duplicated().sum(),
+        'duplicates': int(plan.duplicated().sum()),
         'negative_planned': plan[plan['cantidad_planeada'] < 0][['periodo', 'producto', 'cantidad_planeada']].to_dict(orient='records'),
         'negative_real': plan[plan['cantidad_real'] < 0][['periodo', 'producto', 'cantidad_real']].to_dict(orient='records'),
         'zero_planned': int((plan['cantidad_planeada'] == 0).sum()),
@@ -112,12 +136,12 @@ def audit_dataset():
     # -------------------------------------------------------------
     # 6. INVENTARIO INICIAL
     # -------------------------------------------------------------
-    ii = pd.read_csv('inventario_inicial.csv')
+    ii = pd.read_csv(get_raw_path('inventario_inicial.csv'))
     ii_issues = {
         'total_rows': len(ii),
         'nulls': ii.isnull().sum().to_dict(),
-        'duplicates': ii.duplicated().sum(),
-        'sku_duplicates': ii['sku'].duplicated().sum(),
+        'duplicates': int(ii.duplicated().sum()),
+        'sku_duplicates': int(ii['sku'].duplicated().sum()),
         'negative_stock': ii[ii['stock_inicial'] < 0][['sku', 'stock_inicial']].to_dict(orient='records'),
         'zero_stock': int((ii['stock_inicial'] == 0).sum()),
         'dates': ii['fecha'].value_counts().to_dict()
@@ -127,12 +151,12 @@ def audit_dataset():
     # -------------------------------------------------------------
     # 7. CONTEO FISICO
     # -------------------------------------------------------------
-    cf = pd.read_csv('conteo_fisico.csv')
+    cf = pd.read_csv(get_raw_path('conteo_fisico.csv'))
     cf_issues = {
         'total_rows': len(cf),
         'nulls': cf.isnull().sum().to_dict(),
-        'duplicates': cf.duplicated().sum(),
-        'sku_duplicates': cf['sku'].duplicated().sum(),
+        'duplicates': int(cf.duplicated().sum()),
+        'sku_duplicates': int(cf['sku'].duplicated().sum()),
         'negative_stock': cf[cf['stock_fisico_contado'] < 0][['sku', 'stock_fisico_contado']].to_dict(orient='records'),
         'negative_stock_count': int((cf['stock_fisico_contado'] < 0).sum()),
         'zero_stock': int((cf['stock_fisico_contado'] == 0).sum()),
@@ -143,12 +167,12 @@ def audit_dataset():
     # -------------------------------------------------------------
     # 8. INVENTARIO BODEGA JEFE
     # -------------------------------------------------------------
-    jefe = pd.read_csv('Inventario_bodega_JEFE.csv')
+    jefe = pd.read_csv(get_raw_path('Inventario_bodega_JEFE.csv'))
     jefe_issues = {
         'total_rows': len(jefe),
         'nulls': jefe.isnull().sum().to_dict(),
-        'duplicates': jefe.duplicated().sum(),
-        'codigo_duplicates': jefe['codigo'].duplicated().sum(),
+        'duplicates': int(jefe.duplicated().sum()),
+        'codigo_duplicates': int(jefe['codigo'].duplicated().sum()),
         'negative_stock': jefe[jefe['conteo_jefe'] < 0][['material', 'codigo', 'conteo_jefe', 'observacion']].to_dict(orient='records'),
         'negative_stock_count': int((jefe['conteo_jefe'] < 0).sum()),
         'materials_naming': jefe['material'].value_counts().to_dict(),
@@ -156,8 +180,11 @@ def audit_dataset():
     }
     report['inventario_bodega_jefe'] = jefe_issues
 
-    with open('audit_summary.json', 'w', encoding='utf-8') as f:
-        json.dump(report, f, indent=2, ensure_ascii=False)
-    print('Audit summary saved successfully to audit_summary.json')
+    clean_report = convert_np(report)
+    output_path = os.path.join(RESULTS_DIR, 'audit_summary.json')
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(clean_report, f, indent=2, ensure_ascii=False)
+    print(f'Audit summary saved successfully to {output_path}')
 
-audit_dataset()
+if __name__ == '__main__':
+    audit_dataset()

@@ -1,0 +1,4335 @@
+{
+  "maestro_materiales": {
+    "total_rows": 440,
+    "nulls": {
+      "sku": 0,
+      "descripcion": 0,
+      "categoria": 0,
+      "unidad": 0,
+      "costo_unitario": 0,
+      "proveedor": 0,
+      "lead_time_declarado_dias": 0,
+      "stock_min": 0,
+      "stock_max": 0
+    },
+    "duplicates": 0,
+    "sku_duplicates": 0,
+    "negative_or_zero_cost": [],
+    "invalid_stock_thresholds": [],
+    "negative_lead_time": [],
+    "categories": {
+      "Tubería": 67,
+      "Correderas": 65,
+      "Adhesivos": 64,
+      "Pintura": 55,
+      "Tornillería": 55,
+      "Vidrio": 49,
+      "Empaque": 45,
+      "Lámina": 40
+    },
+    "units": {
+      "kg": 119,
+      "unidad": 100,
+      "m": 67,
+      "par": 65,
+      "m2": 49,
+      "lámina": 40
+    },
+    "providers": {
+      "PROV-07": 21,
+      "PROV-11": 19,
+      "PROV-09": 19,
+      "PROV-02": 19,
+      "PROV-26": 18,
+      "PROV-06": 17,
+      "PROV-31": 17,
+      "PROV-30": 15,
+      "PROV-23": 15,
+      "PROV-03": 15,
+      "PROV-34": 15,
+      "PROV-27": 14,
+      "PROV-13": 13,
+      "PROV-32": 13,
+      "PROV-15": 13,
+      "PROV-25": 12,
+      "PROV-08": 12,
+      "PROV-29": 12,
+      "PROV-05": 12,
+      "PROV-35": 12,
+      "PROV-14": 12,
+      "PROV-10": 11,
+      "PROV-21": 11,
+      "PROV-17": 11,
+      "PROV-20": 11,
+      "PROV-24": 10,
+      "PROV-01": 10,
+      "PROV-12": 9,
+      "PROV-19": 9,
+      "PROV-16": 8,
+      "PROV-18": 8,
+      "PROV-04": 7,
+      "PROV-22": 7,
+      "PROV-28": 7,
+      "PROV-33": 6
+    },
+    "cost_extreme_outliers": [
+      {
+        "sku": "MP-0012",
+        "descripcion": "Tubería calibre/ref 22",
+        "categoria": "Tubería",
+        "costo_unitario": 260365
+      },
+      {
+        "sku": "MP-0030",
+        "descripcion": "Correderas calibre/ref 5",
+        "categoria": "Correderas",
+        "costo_unitario": 284982
+      },
+      {
+        "sku": "MP-0027",
+        "descripcion": "Pintura calibre/ref 17",
+        "categoria": "Pintura",
+        "costo_unitario": 179174
+      },
+      {
+        "sku": "MP-0024",
+        "descripcion": "Vidrio calibre/ref 33",
+        "categoria": "Vidrio",
+        "costo_unitario": 223650
+      },
+      {
+        "sku": "MP-0010",
+        "descripcion": "Pintura calibre/ref 33",
+        "categoria": "Pintura",
+        "costo_unitario": 244981
+      },
+      {
+        "sku": "MP-0021",
+        "descripcion": "Correderas calibre/ref 31",
+        "categoria": "Correderas",
+        "costo_unitario": 188399
+      },
+      {
+        "sku": "MP-0008",
+        "descripcion": "Correderas calibre/ref 39",
+        "categoria": "Correderas",
+        "costo_unitario": 310890
+      },
+      {
+        "sku": "MP-0020",
+        "descripcion": "Lámina calibre/ref 1",
+        "categoria": "Lámina",
+        "costo_unitario": 248445
+      },
+      {
+        "sku": "MP-0034",
+        "descripcion": "Tornillería calibre/ref 13",
+        "categoria": "Tornillería",
+        "costo_unitario": 318023
+      },
+      {
+        "sku": "MP-0001",
+        "descripcion": "Adhesivos calibre/ref 25",
+        "categoria": "Adhesivos",
+        "costo_unitario": 299035
+      },
+      {
+        "sku": "MP-0028",
+        "descripcion": "Tubería calibre/ref 19",
+        "categoria": "Tubería",
+        "costo_unitario": 367530
+      },
+      {
+        "sku": "MP-0007",
+        "descripcion": "Adhesivos calibre/ref 33",
+        "categoria": "Adhesivos",
+        "costo_unitario": 313781
+      },
+      {
+        "sku": "MP-0040",
+        "descripcion": "Correderas calibre/ref 2",
+        "categoria": "Correderas",
+        "costo_unitario": 143609
+      },
+      {
+        "sku": "MP-0039",
+        "descripcion": "Tubería calibre/ref 24",
+        "categoria": "Tubería",
+        "costo_unitario": 395252
+      },
+      {
+        "sku": "MP-0022",
+        "descripcion": "Correderas calibre/ref 1",
+        "categoria": "Correderas",
+        "costo_unitario": 173118
+      },
+      {
+        "sku": "MP-0025",
+        "descripcion": "Vidrio calibre/ref 34",
+        "categoria": "Vidrio",
+        "costo_unitario": 216530
+      },
+      {
+        "sku": "MP-0014",
+        "descripcion": "Vidrio calibre/ref 37",
+        "categoria": "Vidrio",
+        "costo_unitario": 234603
+      },
+      {
+        "sku": "MP-90038",
+        "descripcion": "Adhesivos (dup)",
+        "categoria": "Adhesivos",
+        "costo_unitario": 339193
+      },
+      {
+        "sku": "MP-0035",
+        "descripcion": "Empaque calibre/ref 39",
+        "categoria": "Empaque",
+        "costo_unitario": 391712
+      },
+      {
+        "sku": "MP-0031",
+        "descripcion": "Pintura calibre/ref 18",
+        "categoria": "Pintura",
+        "costo_unitario": 324073
+      },
+      {
+        "sku": "MP-0011",
+        "descripcion": "Adhesivos calibre/ref 36",
+        "categoria": "Adhesivos",
+        "costo_unitario": 356026
+      },
+      {
+        "sku": "MP-0015",
+        "descripcion": "Empaque calibre/ref 15",
+        "categoria": "Empaque",
+        "costo_unitario": 151416
+      },
+      {
+        "sku": "MP-0026",
+        "descripcion": "Empaque calibre/ref 21",
+        "categoria": "Empaque",
+        "costo_unitario": 393154
+      },
+      {
+        "sku": "MP-0038",
+        "descripcion": "Adhesivos calibre/ref 34",
+        "categoria": "Adhesivos",
+        "costo_unitario": 307900
+      },
+      {
+        "sku": "MP-0004",
+        "descripcion": "Vidrio calibre/ref 33",
+        "categoria": "Vidrio",
+        "costo_unitario": 385136
+      },
+      {
+        "sku": "MP-0033",
+        "descripcion": "Pintura calibre/ref 16",
+        "categoria": "Pintura",
+        "costo_unitario": 157770
+      },
+      {
+        "sku": "MP-0017",
+        "descripcion": "Correderas calibre/ref 12",
+        "categoria": "Correderas",
+        "costo_unitario": 165823
+      },
+      {
+        "sku": "MP-0036",
+        "descripcion": "Tubería calibre/ref 20",
+        "categoria": "Tubería",
+        "costo_unitario": 339654
+      },
+      {
+        "sku": "MP-0003",
+        "descripcion": "Tornillería calibre/ref 31",
+        "categoria": "Tornillería",
+        "costo_unitario": 178655
+      },
+      {
+        "sku": "MP-0032",
+        "descripcion": "Pintura calibre/ref 22",
+        "categoria": "Pintura",
+        "costo_unitario": 196328
+      },
+      {
+        "sku": "MP-0029",
+        "descripcion": "Empaque calibre/ref 36",
+        "categoria": "Empaque",
+        "costo_unitario": 310652
+      },
+      {
+        "sku": "MP-0013",
+        "descripcion": "Adhesivos calibre/ref 1",
+        "categoria": "Adhesivos",
+        "costo_unitario": 361794
+      },
+      {
+        "sku": "MP-0009",
+        "descripcion": "Empaque calibre/ref 27",
+        "categoria": "Empaque",
+        "costo_unitario": 256746
+      }
+    ]
+  },
+  "movimientos_inventario": {
+    "total_rows": 16195,
+    "nulls": {
+      "fecha": 0,
+      "sku": 0,
+      "tipo_movimiento": 0,
+      "cantidad": 0,
+      "documento": 0,
+      "bodega": 0,
+      "responsable": 0
+    },
+    "duplicates": 0,
+    "negative_or_zero_quantity": [
+      {
+        "fecha": "2024-07-01",
+        "sku": "MP-0043",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.2,
+        "documento": "CONS-101600"
+      },
+      {
+        "fecha": "2024-07-01",
+        "sku": "MP-0020",
+        "tipo_movimiento": "salida",
+        "cantidad": -68.6,
+        "documento": "CONS-101761"
+      },
+      {
+        "fecha": "2024-07-01",
+        "sku": "MP-0088",
+        "tipo_movimiento": "salida",
+        "cantidad": -62.5,
+        "documento": "CONS-101992"
+      },
+      {
+        "fecha": "2024-07-01",
+        "sku": "MP-0344",
+        "tipo_movimiento": "salida",
+        "cantidad": -61.2,
+        "documento": "CONS-102146"
+      },
+      {
+        "fecha": "2024-07-05",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -130.9,
+        "documento": "CONS-101447"
+      },
+      {
+        "fecha": "2024-07-05",
+        "sku": "MP-0122",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.8,
+        "documento": "CONS-101664"
+      },
+      {
+        "fecha": "2024-07-05",
+        "sku": "MP-0321",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.7,
+        "documento": "CONS-102021"
+      },
+      {
+        "fecha": "2024-07-07",
+        "sku": "MP-0114",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -4.0,
+        "documento": "AJU-120074"
+      },
+      {
+        "fecha": "2024-07-08",
+        "sku": "MP-0310",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -35.0,
+        "documento": "AJU-120039"
+      },
+      {
+        "fecha": "2024-07-13",
+        "sku": "MP-0199",
+        "tipo_movimiento": "salida",
+        "cantidad": -70.9,
+        "documento": "CONS-101533"
+      },
+      {
+        "fecha": "2024-07-17",
+        "sku": "MP-0132",
+        "tipo_movimiento": "salida",
+        "cantidad": -84.3,
+        "documento": "CONS-101674"
+      },
+      {
+        "fecha": "2024-07-17",
+        "sku": "MP-0036",
+        "tipo_movimiento": "salida",
+        "cantidad": -42.0,
+        "documento": "CONS-102038"
+      },
+      {
+        "fecha": "2024-07-17",
+        "sku": "MP-0339",
+        "tipo_movimiento": "salida",
+        "cantidad": -18.2,
+        "documento": "CONS-102066"
+      },
+      {
+        "fecha": "2024-07-17",
+        "sku": "MP-0032",
+        "tipo_movimiento": "salida",
+        "cantidad": -14.3,
+        "documento": "CONS-102122"
+      },
+      {
+        "fecha": "2024-07-20",
+        "sku": "MP-0404",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -22.0,
+        "documento": "AJU-120067"
+      },
+      {
+        "fecha": "2024-07-21",
+        "sku": "MP-0325",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.0,
+        "documento": "CONS-101878"
+      },
+      {
+        "fecha": "2024-07-21",
+        "sku": "MP-0162",
+        "tipo_movimiento": "salida",
+        "cantidad": -6.0,
+        "documento": "CONS-101927"
+      },
+      {
+        "fecha": "2024-07-25",
+        "sku": "MP-0199",
+        "tipo_movimiento": "salida",
+        "cantidad": -70.9,
+        "documento": "CONS-101536"
+      },
+      {
+        "fecha": "2024-07-25",
+        "sku": "MP-0117",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.5,
+        "documento": "CONS-101907"
+      },
+      {
+        "fecha": "2024-07-25",
+        "sku": "MP-0339",
+        "tipo_movimiento": "salida",
+        "cantidad": -18.2,
+        "documento": "CONS-102068"
+      },
+      {
+        "fecha": "2024-07-31",
+        "sku": "MP-0287",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -8.0,
+        "documento": "AJU-120076"
+      },
+      {
+        "fecha": "2024-08-01",
+        "sku": "MP-0189",
+        "tipo_movimiento": "salida",
+        "cantidad": -65.6,
+        "documento": "CONS-102244"
+      },
+      {
+        "fecha": "2024-08-01",
+        "sku": "MP-0239",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.7,
+        "documento": "CONS-102349"
+      },
+      {
+        "fecha": "2024-08-01",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -70.9,
+        "documento": "CONS-102594"
+      },
+      {
+        "fecha": "2024-08-01",
+        "sku": "MP-0139",
+        "tipo_movimiento": "salida",
+        "cantidad": -73.0,
+        "documento": "CONS-102825"
+      },
+      {
+        "fecha": "2024-08-05",
+        "sku": "MP-0189",
+        "tipo_movimiento": "salida",
+        "cantidad": -65.6,
+        "documento": "CONS-102245"
+      },
+      {
+        "fecha": "2024-08-05",
+        "sku": "MP-0137",
+        "tipo_movimiento": "salida",
+        "cantidad": -86.0,
+        "documento": "CONS-102287"
+      },
+      {
+        "fecha": "2024-08-05",
+        "sku": "MP-0407",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -5.0,
+        "documento": "AJU-120061"
+      },
+      {
+        "fecha": "2024-08-09",
+        "sku": "MP-0373",
+        "tipo_movimiento": "salida",
+        "cantidad": -128.1,
+        "documento": "CONS-102610"
+      },
+      {
+        "fecha": "2024-08-13",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -92.3,
+        "documento": "CONS-102226"
+      },
+      {
+        "fecha": "2024-08-13",
+        "sku": "MP-0293",
+        "tipo_movimiento": "salida",
+        "cantidad": -58.4,
+        "documento": "CONS-102345"
+      },
+      {
+        "fecha": "2024-08-13",
+        "sku": "MP-0239",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.7,
+        "documento": "CONS-102352"
+      },
+      {
+        "fecha": "2024-08-13",
+        "sku": "MP-0357",
+        "tipo_movimiento": "salida",
+        "cantidad": -92.8,
+        "documento": "CONS-102695"
+      },
+      {
+        "fecha": "2024-08-13",
+        "sku": "MP-0211",
+        "tipo_movimiento": "salida",
+        "cantidad": -61.9,
+        "documento": "CONS-102863"
+      },
+      {
+        "fecha": "2024-08-17",
+        "sku": "MP-0370",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.9,
+        "documento": "CONS-102185"
+      },
+      {
+        "fecha": "2024-08-17",
+        "sku": "MP-0150",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.8,
+        "documento": "CONS-102493"
+      },
+      {
+        "fecha": "2024-08-17",
+        "sku": "MP-0330",
+        "tipo_movimiento": "salida",
+        "cantidad": -10.0,
+        "documento": "CONS-102668"
+      },
+      {
+        "fecha": "2024-08-17",
+        "sku": "MP-0024",
+        "tipo_movimiento": "salida",
+        "cantidad": -134.8,
+        "documento": "CONS-102675"
+      },
+      {
+        "fecha": "2024-08-21",
+        "sku": "MP-0157",
+        "tipo_movimiento": "salida",
+        "cantidad": -99.1,
+        "documento": "CONS-102403"
+      },
+      {
+        "fecha": "2024-08-21",
+        "sku": "MP-0136",
+        "tipo_movimiento": "salida",
+        "cantidad": -39.5,
+        "documento": "CONS-102914"
+      },
+      {
+        "fecha": "2024-08-25",
+        "sku": "MP-0008",
+        "tipo_movimiento": "salida",
+        "cantidad": -112.1,
+        "documento": "CONS-102215"
+      },
+      {
+        "fecha": "2024-08-25",
+        "sku": "MP-0244",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.2,
+        "documento": "CONS-102439"
+      },
+      {
+        "fecha": "2024-08-25",
+        "sku": "MP-0181",
+        "tipo_movimiento": "salida",
+        "cantidad": -94.1,
+        "documento": "CONS-102789"
+      },
+      {
+        "fecha": "2024-09-01",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -75.9,
+        "documento": "CONS-102944"
+      },
+      {
+        "fecha": "2024-09-01",
+        "sku": "MP-0238",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.2,
+        "documento": "CONS-103343"
+      },
+      {
+        "fecha": "2024-09-01",
+        "sku": "MP-0273",
+        "tipo_movimiento": "salida",
+        "cantidad": -110.9,
+        "documento": "CONS-103504"
+      },
+      {
+        "fecha": "2024-09-01",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -82.2,
+        "documento": "CONS-103553"
+      },
+      {
+        "fecha": "2024-09-05",
+        "sku": "MP-0122",
+        "tipo_movimiento": "salida",
+        "cantidad": -46.1,
+        "documento": "CONS-103218"
+      },
+      {
+        "fecha": "2024-09-05",
+        "sku": "MP-0240",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -31.0,
+        "documento": "AJU-120063"
+      },
+      {
+        "fecha": "2024-09-09",
+        "sku": "MP-0111",
+        "tipo_movimiento": "salida",
+        "cantidad": -23.3,
+        "documento": "CONS-103520"
+      },
+      {
+        "fecha": "2024-09-13",
+        "sku": "MP-0022",
+        "tipo_movimiento": "salida",
+        "cantidad": -111.6,
+        "documento": "CONS-102940"
+      },
+      {
+        "fecha": "2024-09-13",
+        "sku": "MP-0369",
+        "tipo_movimiento": "salida",
+        "cantidad": -58.1,
+        "documento": "CONS-103171"
+      },
+      {
+        "fecha": "2024-09-13",
+        "sku": "MP-0114",
+        "tipo_movimiento": "salida",
+        "cantidad": -16.5,
+        "documento": "CONS-103423"
+      },
+      {
+        "fecha": "2024-09-17",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -109.4,
+        "documento": "CONS-103004"
+      },
+      {
+        "fecha": "2024-09-18",
+        "sku": "MP-0318",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -7.0,
+        "documento": "AJU-120035"
+      },
+      {
+        "fecha": "2024-09-21",
+        "sku": "MP-0027",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.3,
+        "documento": "CONS-103103"
+      },
+      {
+        "fecha": "2024-09-21",
+        "sku": "MP-0139",
+        "tipo_movimiento": "salida",
+        "cantidad": -89.0,
+        "documento": "CONS-103607"
+      },
+      {
+        "fecha": "2024-09-21",
+        "sku": "MP-0390",
+        "tipo_movimiento": "salida",
+        "cantidad": -7.8,
+        "documento": "CONS-103656"
+      },
+      {
+        "fecha": "2024-09-25",
+        "sku": "MP-0199",
+        "tipo_movimiento": "salida",
+        "cantidad": -26.3,
+        "documento": "CONS-103090"
+      },
+      {
+        "fecha": "2024-09-25",
+        "sku": "MP-0030",
+        "tipo_movimiento": "salida",
+        "cantidad": -10.4,
+        "documento": "CONS-103146"
+      },
+      {
+        "fecha": "2024-09-28",
+        "sku": "MP-0375",
+        "tipo_movimiento": "ajuste",
+        "cantidad": 0.0,
+        "documento": "AJU-120025"
+      },
+      {
+        "fecha": "2024-10-01",
+        "sku": "MP-0189",
+        "tipo_movimiento": "salida",
+        "cantidad": -67.9,
+        "documento": "CONS-103798"
+      },
+      {
+        "fecha": "2024-10-01",
+        "sku": "MP-0373",
+        "tipo_movimiento": "salida",
+        "cantidad": -157.7,
+        "documento": "CONS-104162"
+      },
+      {
+        "fecha": "2024-10-01",
+        "sku": "MP-0193",
+        "tipo_movimiento": "salida",
+        "cantidad": -19.0,
+        "documento": "CONS-104211"
+      },
+      {
+        "fecha": "2024-10-05",
+        "sku": "MP-0016",
+        "tipo_movimiento": "salida",
+        "cantidad": -114.0,
+        "documento": "CONS-103911"
+      },
+      {
+        "fecha": "2024-10-05",
+        "sku": "MP-0085",
+        "tipo_movimiento": "salida",
+        "cantidad": -40.8,
+        "documento": "CONS-104051"
+      },
+      {
+        "fecha": "2024-10-05",
+        "sku": "MP-0071",
+        "tipo_movimiento": "salida",
+        "cantidad": -85.6,
+        "documento": "CONS-104303"
+      },
+      {
+        "fecha": "2024-10-05",
+        "sku": "MP-0339",
+        "tipo_movimiento": "salida",
+        "cantidad": -16.9,
+        "documento": "CONS-104394"
+      },
+      {
+        "fecha": "2024-10-09",
+        "sku": "MP-0189",
+        "tipo_movimiento": "salida",
+        "cantidad": -67.9,
+        "documento": "CONS-103800"
+      },
+      {
+        "fecha": "2024-10-09",
+        "sku": "MP-0045",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.3,
+        "documento": "CONS-104143"
+      },
+      {
+        "fecha": "2024-10-13",
+        "sku": "MP-0071",
+        "tipo_movimiento": "salida",
+        "cantidad": -85.6,
+        "documento": "CONS-104305"
+      },
+      {
+        "fecha": "2024-10-13",
+        "sku": "MP-0356",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.7,
+        "documento": "CONS-104389"
+      },
+      {
+        "fecha": "2024-10-17",
+        "sku": "MP-0325",
+        "tipo_movimiento": "salida",
+        "cantidad": -21.1,
+        "documento": "CONS-104208"
+      },
+      {
+        "fecha": "2024-10-17",
+        "sku": "MP-0071",
+        "tipo_movimiento": "salida",
+        "cantidad": -85.6,
+        "documento": "CONS-104306"
+      },
+      {
+        "fecha": "2024-10-21",
+        "sku": "MP-0128",
+        "tipo_movimiento": "salida",
+        "cantidad": -89.5,
+        "documento": "CONS-103978"
+      },
+      {
+        "fecha": "2024-10-21",
+        "sku": "MP-0244",
+        "tipo_movimiento": "salida",
+        "cantidad": -16.5,
+        "documento": "CONS-103992"
+      },
+      {
+        "fecha": "2024-10-21",
+        "sku": "MP-0117",
+        "tipo_movimiento": "salida",
+        "cantidad": -43.5,
+        "documento": "CONS-104237"
+      },
+      {
+        "fecha": "2024-10-21",
+        "sku": "MP-0357",
+        "tipo_movimiento": "salida",
+        "cantidad": -47.9,
+        "documento": "CONS-104251"
+      },
+      {
+        "fecha": "2024-10-21",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -88.3,
+        "documento": "CONS-104265"
+      },
+      {
+        "fecha": "2024-10-25",
+        "sku": "MP-0182",
+        "tipo_movimiento": "salida",
+        "cantidad": -75.0,
+        "documento": "CONS-103944"
+      },
+      {
+        "fecha": "2024-10-25",
+        "sku": "MP-0132",
+        "tipo_movimiento": "salida",
+        "cantidad": -86.5,
+        "documento": "CONS-104007"
+      },
+      {
+        "fecha": "2024-10-25",
+        "sku": "MP-0211",
+        "tipo_movimiento": "salida",
+        "cantidad": -41.8,
+        "documento": "CONS-104420"
+      },
+      {
+        "fecha": "2024-10-25",
+        "sku": "MP-0039",
+        "tipo_movimiento": "salida",
+        "cantidad": -2.7,
+        "documento": "CONS-104448"
+      },
+      {
+        "fecha": "2024-11-01",
+        "sku": "MP-0157",
+        "tipo_movimiento": "salida",
+        "cantidad": -134.7,
+        "documento": "CONS-104729"
+      },
+      {
+        "fecha": "2024-11-01",
+        "sku": "MP-0272",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.2,
+        "documento": "CONS-104799"
+      },
+      {
+        "fecha": "2024-11-01",
+        "sku": "MP-0321",
+        "tipo_movimiento": "salida",
+        "cantidad": -54.5,
+        "documento": "CONS-105128"
+      },
+      {
+        "fecha": "2024-11-01",
+        "sku": "MP-0080",
+        "tipo_movimiento": "salida",
+        "cantidad": -39.6,
+        "documento": "CONS-105149"
+      },
+      {
+        "fecha": "2024-11-01",
+        "sku": "MP-0032",
+        "tipo_movimiento": "salida",
+        "cantidad": -25.2,
+        "documento": "CONS-105226"
+      },
+      {
+        "fecha": "2024-11-05",
+        "sku": "MP-0037",
+        "tipo_movimiento": "salida",
+        "cantidad": -44.2,
+        "documento": "CONS-104604"
+      },
+      {
+        "fecha": "2024-11-05",
+        "sku": "MP-0027",
+        "tipo_movimiento": "salida",
+        "cantidad": -5.6,
+        "documento": "CONS-104653"
+      },
+      {
+        "fecha": "2024-11-05",
+        "sku": "MP-0293",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.6,
+        "documento": "CONS-104674"
+      },
+      {
+        "fecha": "2024-11-05",
+        "sku": "MP-0120",
+        "tipo_movimiento": "salida",
+        "cantidad": -62.6,
+        "documento": "CONS-104702"
+      },
+      {
+        "fecha": "2024-11-05",
+        "sku": "MP-0390",
+        "tipo_movimiento": "salida",
+        "cantidad": -40.3,
+        "documento": "CONS-105206"
+      },
+      {
+        "fecha": "2024-11-09",
+        "sku": "MP-0309",
+        "tipo_movimiento": "salida",
+        "cantidad": -45.6,
+        "documento": "CONS-104528"
+      },
+      {
+        "fecha": "2024-11-09",
+        "sku": "MP-0001",
+        "tipo_movimiento": "salida",
+        "cantidad": -109.9,
+        "documento": "CONS-104738"
+      },
+      {
+        "fecha": "2024-11-09",
+        "sku": "MP-0131",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.9,
+        "documento": "CONS-104787"
+      },
+      {
+        "fecha": "2024-11-09",
+        "sku": "MP-0136",
+        "tipo_movimiento": "salida",
+        "cantidad": -73.6,
+        "documento": "CONS-105242"
+      },
+      {
+        "fecha": "2024-11-13",
+        "sku": "MP-0073",
+        "tipo_movimiento": "salida",
+        "cantidad": -53.4,
+        "documento": "CONS-104627"
+      },
+      {
+        "fecha": "2024-11-13",
+        "sku": "MP-0116",
+        "tipo_movimiento": "salida",
+        "cantidad": -16.9,
+        "documento": "CONS-104662"
+      },
+      {
+        "fecha": "2024-11-13",
+        "sku": "MP-0132",
+        "tipo_movimiento": "salida",
+        "cantidad": -94.2,
+        "documento": "CONS-104781"
+      },
+      {
+        "fecha": "2024-11-13",
+        "sku": "MP-0216",
+        "tipo_movimiento": "salida",
+        "cantidad": -72.9,
+        "documento": "CONS-104795"
+      },
+      {
+        "fecha": "2024-11-13",
+        "sku": "MP-0010",
+        "tipo_movimiento": "salida",
+        "cantidad": -78.5,
+        "documento": "CONS-104809"
+      },
+      {
+        "fecha": "2024-11-17",
+        "sku": "MP-0131",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.9,
+        "documento": "CONS-104789"
+      },
+      {
+        "fecha": "2024-11-17",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.9,
+        "documento": "CONS-105097"
+      },
+      {
+        "fecha": "2024-11-17",
+        "sku": "MP-0385",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.6,
+        "documento": "CONS-105125"
+      },
+      {
+        "fecha": "2024-11-17",
+        "sku": "MP-0343",
+        "tipo_movimiento": "salida",
+        "cantidad": -121.0,
+        "documento": "CONS-105139"
+      },
+      {
+        "fecha": "2024-11-21",
+        "sku": "MP-0309",
+        "tipo_movimiento": "salida",
+        "cantidad": -45.6,
+        "documento": "CONS-104531"
+      },
+      {
+        "fecha": "2024-11-21",
+        "sku": "MP-0182",
+        "tipo_movimiento": "salida",
+        "cantidad": -118.5,
+        "documento": "CONS-104720"
+      },
+      {
+        "fecha": "2024-11-21",
+        "sku": "MP-0178",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.8,
+        "documento": "CONS-104853"
+      },
+      {
+        "fecha": "2024-11-25",
+        "sku": "MP-0254",
+        "tipo_movimiento": "salida",
+        "cantidad": -138.8,
+        "documento": "CONS-104588"
+      },
+      {
+        "fecha": "2024-11-25",
+        "sku": "MP-0118",
+        "tipo_movimiento": "salida",
+        "cantidad": -48.0,
+        "documento": "CONS-104637"
+      },
+      {
+        "fecha": "2024-11-25",
+        "sku": "MP-0088",
+        "tipo_movimiento": "salida",
+        "cantidad": -107.5,
+        "documento": "CONS-105106"
+      },
+      {
+        "fecha": "2024-11-25",
+        "sku": "MP-0139",
+        "tipo_movimiento": "salida",
+        "cantidad": -73.0,
+        "documento": "CONS-105162"
+      },
+      {
+        "fecha": "2024-11-25",
+        "sku": "MP-0268",
+        "tipo_movimiento": "salida",
+        "cantidad": -36.9,
+        "documento": "CONS-105218"
+      },
+      {
+        "fecha": "2024-11-25",
+        "sku": "MP-0129",
+        "tipo_movimiento": "salida",
+        "cantidad": -85.5,
+        "documento": "CONS-105239"
+      },
+      {
+        "fecha": "2024-12-01",
+        "sku": "MP-0101",
+        "tipo_movimiento": "salida",
+        "cantidad": -111.3,
+        "documento": "CONS-105338"
+      },
+      {
+        "fecha": "2024-12-01",
+        "sku": "MP-0106",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.9,
+        "documento": "CONS-105653"
+      },
+      {
+        "fecha": "2024-12-01",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -30.6,
+        "documento": "CONS-105702"
+      },
+      {
+        "fecha": "2024-12-01",
+        "sku": "MP-0102",
+        "tipo_movimiento": "salida",
+        "cantidad": -83.3,
+        "documento": "CONS-105744"
+      },
+      {
+        "fecha": "2024-12-05",
+        "sku": "MP-0232",
+        "tipo_movimiento": "salida",
+        "cantidad": -87.8,
+        "documento": "CONS-105423"
+      },
+      {
+        "fecha": "2024-12-05",
+        "sku": "MP-0108",
+        "tipo_movimiento": "salida",
+        "cantidad": -41.3,
+        "documento": "CONS-105444"
+      },
+      {
+        "fecha": "2024-12-05",
+        "sku": "MP-0045",
+        "tipo_movimiento": "salida",
+        "cantidad": -13.8,
+        "documento": "CONS-105696"
+      },
+      {
+        "fecha": "2024-12-05",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -25.8,
+        "documento": "CONS-105815"
+      },
+      {
+        "fecha": "2024-12-05",
+        "sku": "MP-0111",
+        "tipo_movimiento": "salida",
+        "cantidad": -91.4,
+        "documento": "CONS-105850"
+      },
+      {
+        "fecha": "2024-12-05",
+        "sku": "MP-0078",
+        "tipo_movimiento": "salida",
+        "cantidad": -42.7,
+        "documento": "CONS-105955"
+      },
+      {
+        "fecha": "2024-12-09",
+        "sku": "MP-0076",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.6,
+        "documento": "CONS-105823"
+      },
+      {
+        "fecha": "2024-12-09",
+        "sku": "MP-0078",
+        "tipo_movimiento": "salida",
+        "cantidad": -42.7,
+        "documento": "CONS-105956"
+      },
+      {
+        "fecha": "2024-12-13",
+        "sku": "MP-0137",
+        "tipo_movimiento": "salida",
+        "cantidad": -80.1,
+        "documento": "CONS-105397"
+      },
+      {
+        "fecha": "2024-12-13",
+        "sku": "MP-0239",
+        "tipo_movimiento": "salida",
+        "cantidad": -14.1,
+        "documento": "CONS-105460"
+      },
+      {
+        "fecha": "2024-12-13",
+        "sku": "MP-0030",
+        "tipo_movimiento": "salida",
+        "cantidad": -3.8,
+        "documento": "CONS-105474"
+      },
+      {
+        "fecha": "2024-12-17",
+        "sku": "MP-0149",
+        "tipo_movimiento": "salida",
+        "cantidad": -108.3,
+        "documento": "CONS-105349"
+      },
+      {
+        "fecha": "2024-12-17",
+        "sku": "MP-0239",
+        "tipo_movimiento": "salida",
+        "cantidad": -14.1,
+        "documento": "CONS-105461"
+      },
+      {
+        "fecha": "2024-12-17",
+        "sku": "MP-0047",
+        "tipo_movimiento": "salida",
+        "cantidad": -36.7,
+        "documento": "CONS-105538"
+      },
+      {
+        "fecha": "2024-12-17",
+        "sku": "MP-0076",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.6,
+        "documento": "CONS-105825"
+      },
+      {
+        "fecha": "2024-12-20",
+        "sku": "MP-0169",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -8.0,
+        "documento": "AJU-120029"
+      },
+      {
+        "fecha": "2024-12-21",
+        "sku": "MP-0330",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.3,
+        "documento": "CONS-105777"
+      },
+      {
+        "fecha": "2024-12-21",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -25.8,
+        "documento": "CONS-105819"
+      },
+      {
+        "fecha": "2024-12-25",
+        "sku": "MP-0369",
+        "tipo_movimiento": "salida",
+        "cantidad": -21.2,
+        "documento": "CONS-105505"
+      },
+      {
+        "fecha": "2024-12-25",
+        "sku": "MP-0150",
+        "tipo_movimiento": "salida",
+        "cantidad": -70.4,
+        "documento": "CONS-105603"
+      },
+      {
+        "fecha": "2024-12-25",
+        "sku": "MP-0181",
+        "tipo_movimiento": "salida",
+        "cantidad": -30.2,
+        "documento": "CONS-105897"
+      },
+      {
+        "fecha": "2024-12-25",
+        "sku": "MP-0268",
+        "tipo_movimiento": "salida",
+        "cantidad": -13.5,
+        "documento": "CONS-105995"
+      },
+      {
+        "fecha": "2025-01-01",
+        "sku": "MP-0022",
+        "tipo_movimiento": "salida",
+        "cantidad": -127.2,
+        "documento": "CONS-106045"
+      },
+      {
+        "fecha": "2025-01-01",
+        "sku": "MP-0161",
+        "tipo_movimiento": "salida",
+        "cantidad": -33.6,
+        "documento": "CONS-106143"
+      },
+      {
+        "fecha": "2025-01-01",
+        "sku": "MP-0010",
+        "tipo_movimiento": "salida",
+        "cantidad": -114.1,
+        "documento": "CONS-106360"
+      },
+      {
+        "fecha": "2025-01-01",
+        "sku": "MP-0238",
+        "tipo_movimiento": "salida",
+        "cantidad": -66.3,
+        "documento": "CONS-106451"
+      },
+      {
+        "fecha": "2025-01-01",
+        "sku": "MP-0059",
+        "tipo_movimiento": "salida",
+        "cantidad": -52.0,
+        "documento": "CONS-106738"
+      },
+      {
+        "fecha": "2025-01-05",
+        "sku": "MP-0043",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.8,
+        "documento": "CONS-106263"
+      },
+      {
+        "fecha": "2025-01-09",
+        "sku": "MP-0299",
+        "tipo_movimiento": "salida",
+        "cantidad": -67.4,
+        "documento": "CONS-106075"
+      },
+      {
+        "fecha": "2025-01-09",
+        "sku": "MP-0418",
+        "tipo_movimiento": "salida",
+        "cantidad": -56.8,
+        "documento": "CONS-106089"
+      },
+      {
+        "fecha": "2025-01-09",
+        "sku": "MP-0229",
+        "tipo_movimiento": "salida",
+        "cantidad": -142.5,
+        "documento": "CONS-106411"
+      },
+      {
+        "fecha": "2025-01-09",
+        "sku": "MP-0020",
+        "tipo_movimiento": "salida",
+        "cantidad": -72.9,
+        "documento": "CONS-106425"
+      },
+      {
+        "fecha": "2025-01-09",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -95.5,
+        "documento": "CONS-106663"
+      },
+      {
+        "fecha": "2025-01-09",
+        "sku": "MP-0129",
+        "tipo_movimiento": "salida",
+        "cantidad": -62.1,
+        "documento": "CONS-106789"
+      },
+      {
+        "fecha": "2025-01-13",
+        "sku": "MP-0418",
+        "tipo_movimiento": "salida",
+        "cantidad": -56.8,
+        "documento": "CONS-106090"
+      },
+      {
+        "fecha": "2025-01-13",
+        "sku": "MP-0101",
+        "tipo_movimiento": "salida",
+        "cantidad": -76.4,
+        "documento": "CONS-106118"
+      },
+      {
+        "fecha": "2025-01-13",
+        "sku": "MP-0033",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.1,
+        "documento": "CONS-106468"
+      },
+      {
+        "fecha": "2025-01-17",
+        "sku": "MP-0393",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.1,
+        "documento": "CONS-106490"
+      },
+      {
+        "fecha": "2025-01-17",
+        "sku": "MP-0162",
+        "tipo_movimiento": "salida",
+        "cantidad": -6.9,
+        "documento": "CONS-106588"
+      },
+      {
+        "fecha": "2025-01-17",
+        "sku": "MP-0139",
+        "tipo_movimiento": "salida",
+        "cantidad": -18.7,
+        "documento": "CONS-106714"
+      },
+      {
+        "fecha": "2025-01-17",
+        "sku": "MP-0339",
+        "tipo_movimiento": "salida",
+        "cantidad": -4.0,
+        "documento": "CONS-106728"
+      },
+      {
+        "fecha": "2025-01-19",
+        "sku": "MP-0167",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -24.0,
+        "documento": "AJU-120056"
+      },
+      {
+        "fecha": "2025-01-21",
+        "sku": "MP-0071",
+        "tipo_movimiento": "salida",
+        "cantidad": -32.4,
+        "documento": "CONS-106638"
+      },
+      {
+        "fecha": "2025-01-25",
+        "sku": "MP-0293",
+        "tipo_movimiento": "salida",
+        "cantidad": -97.3,
+        "documento": "CONS-106233"
+      },
+      {
+        "fecha": "2025-01-25",
+        "sku": "MP-0002",
+        "tipo_movimiento": "salida",
+        "cantidad": -64.8,
+        "documento": "CONS-106373"
+      },
+      {
+        "fecha": "2025-01-25",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -95.5,
+        "documento": "CONS-106667"
+      },
+      {
+        "fecha": "2025-01-25",
+        "sku": "MP-0036",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.2,
+        "documento": "CONS-106702"
+      },
+      {
+        "fecha": "2025-01-25",
+        "sku": "MP-0344",
+        "tipo_movimiento": "salida",
+        "cantidad": -78.2,
+        "documento": "CONS-106814"
+      },
+      {
+        "fecha": "2025-02-01",
+        "sku": "MP-0030",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.9,
+        "documento": "CONS-107025"
+      },
+      {
+        "fecha": "2025-02-01",
+        "sku": "MP-0122",
+        "tipo_movimiento": "salida",
+        "cantidad": -64.9,
+        "documento": "CONS-107102"
+      },
+      {
+        "fecha": "2025-02-01",
+        "sku": "MP-0139",
+        "tipo_movimiento": "salida",
+        "cantidad": -101.5,
+        "documento": "CONS-107487"
+      },
+      {
+        "fecha": "2025-02-05",
+        "sku": "MP-0193",
+        "tipo_movimiento": "salida",
+        "cantidad": -66.6,
+        "documento": "CONS-107320"
+      },
+      {
+        "fecha": "2025-02-05",
+        "sku": "MP-0273",
+        "tipo_movimiento": "salida",
+        "cantidad": -115.4,
+        "documento": "CONS-107390"
+      },
+      {
+        "fecha": "2025-02-05",
+        "sku": "MP-0088",
+        "tipo_movimiento": "salida",
+        "cantidad": -76.2,
+        "documento": "CONS-107432"
+      },
+      {
+        "fecha": "2025-02-09",
+        "sku": "MP-0074",
+        "tipo_movimiento": "salida",
+        "cantidad": -16.1,
+        "documento": "CONS-106838"
+      },
+      {
+        "fecha": "2025-02-09",
+        "sku": "MP-0136",
+        "tipo_movimiento": "salida",
+        "cantidad": -58.8,
+        "documento": "CONS-107573"
+      },
+      {
+        "fecha": "2025-02-13",
+        "sku": "MP-0217",
+        "tipo_movimiento": "salida",
+        "cantidad": -51.9,
+        "documento": "CONS-107581"
+      },
+      {
+        "fecha": "2025-02-21",
+        "sku": "MP-0344",
+        "tipo_movimiento": "salida",
+        "cantidad": -86.1,
+        "documento": "CONS-107590"
+      },
+      {
+        "fecha": "2025-02-25",
+        "sku": "MP-0161",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.9,
+        "documento": "CONS-106926"
+      },
+      {
+        "fecha": "2025-02-25",
+        "sku": "MP-0182",
+        "tipo_movimiento": "salida",
+        "cantidad": -103.4,
+        "documento": "CONS-107052"
+      },
+      {
+        "fecha": "2025-02-25",
+        "sku": "MP-0330",
+        "tipo_movimiento": "salida",
+        "cantidad": -30.7,
+        "documento": "CONS-107332"
+      },
+      {
+        "fecha": "2025-03-01",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -45.7,
+        "documento": "CONS-107606"
+      },
+      {
+        "fecha": "2025-03-01",
+        "sku": "MP-0001",
+        "tipo_movimiento": "salida",
+        "cantidad": -132.3,
+        "documento": "CONS-107844"
+      },
+      {
+        "fecha": "2025-03-05",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.7,
+        "documento": "CONS-107663"
+      },
+      {
+        "fecha": "2025-03-05",
+        "sku": "MP-0122",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.4,
+        "documento": "CONS-107880"
+      },
+      {
+        "fecha": "2025-03-05",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -67.0,
+        "documento": "CONS-108146"
+      },
+      {
+        "fecha": "2025-03-09",
+        "sku": "MP-0356",
+        "tipo_movimiento": "salida",
+        "cantidad": -13.1,
+        "documento": "CONS-108273"
+      },
+      {
+        "fecha": "2025-03-13",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -45.7,
+        "documento": "CONS-107609"
+      },
+      {
+        "fecha": "2025-03-17",
+        "sku": "MP-0002",
+        "tipo_movimiento": "salida",
+        "cantidad": -37.9,
+        "documento": "CONS-107925"
+      },
+      {
+        "fecha": "2025-03-17",
+        "sku": "MP-0117",
+        "tipo_movimiento": "salida",
+        "cantidad": -55.1,
+        "documento": "CONS-108121"
+      },
+      {
+        "fecha": "2025-03-18",
+        "sku": "MP-0353",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -35.0,
+        "documento": "AJU-120064"
+      },
+      {
+        "fecha": "2025-03-21",
+        "sku": "MP-0182",
+        "tipo_movimiento": "salida",
+        "cantidad": -122.1,
+        "documento": "CONS-107828"
+      },
+      {
+        "fecha": "2025-03-21",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -43.7,
+        "documento": "CONS-108206"
+      },
+      {
+        "fecha": "2025-03-25",
+        "sku": "MP-0026",
+        "tipo_movimiento": "salida",
+        "cantidad": -62.0,
+        "documento": "CONS-108179"
+      },
+      {
+        "fecha": "2025-04-01",
+        "sku": "MP-0005",
+        "tipo_movimiento": "salida",
+        "cantidad": -26.7,
+        "documento": "CONS-108432"
+      },
+      {
+        "fecha": "2025-04-01",
+        "sku": "MP-0411",
+        "tipo_movimiento": "salida",
+        "cantidad": -23.2,
+        "documento": "CONS-108775"
+      },
+      {
+        "fecha": "2025-04-01",
+        "sku": "MP-0012",
+        "tipo_movimiento": "salida",
+        "cantidad": -93.0,
+        "documento": "CONS-108838"
+      },
+      {
+        "fecha": "2025-04-05",
+        "sku": "MP-0116",
+        "tipo_movimiento": "salida",
+        "cantidad": -38.0,
+        "documento": "CONS-108545"
+      },
+      {
+        "fecha": "2025-04-05",
+        "sku": "MP-0411",
+        "tipo_movimiento": "salida",
+        "cantidad": -23.2,
+        "documento": "CONS-108776"
+      },
+      {
+        "fecha": "2025-04-05",
+        "sku": "MP-0111",
+        "tipo_movimiento": "salida",
+        "cantidad": -43.8,
+        "documento": "CONS-108958"
+      },
+      {
+        "fecha": "2025-04-09",
+        "sku": "MP-0217",
+        "tipo_movimiento": "salida",
+        "cantidad": -51.9,
+        "documento": "CONS-109134"
+      },
+      {
+        "fecha": "2025-04-13",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -33.3,
+        "documento": "CONS-108442"
+      },
+      {
+        "fecha": "2025-04-13",
+        "sku": "MP-0254",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.4,
+        "documento": "CONS-108470"
+      },
+      {
+        "fecha": "2025-04-13",
+        "sku": "MP-0273",
+        "tipo_movimiento": "salida",
+        "cantidad": -114.3,
+        "documento": "CONS-108946"
+      },
+      {
+        "fecha": "2025-04-13",
+        "sku": "MP-0026",
+        "tipo_movimiento": "salida",
+        "cantidad": -28.5,
+        "documento": "CONS-108953"
+      },
+      {
+        "fecha": "2025-04-13",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.1,
+        "documento": "CONS-108981"
+      },
+      {
+        "fecha": "2025-04-16",
+        "sku": "MP-0004",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -40.0,
+        "documento": "AJU-120031"
+      },
+      {
+        "fecha": "2025-04-17",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -41.0,
+        "documento": "CONS-108387"
+      },
+      {
+        "fecha": "2025-04-17",
+        "sku": "MP-0074",
+        "tipo_movimiento": "salida",
+        "cantidad": -42.6,
+        "documento": "CONS-108394"
+      },
+      {
+        "fecha": "2025-04-21",
+        "sku": "MP-0005",
+        "tipo_movimiento": "salida",
+        "cantidad": -26.7,
+        "documento": "CONS-108437"
+      },
+      {
+        "fecha": "2025-04-21",
+        "sku": "MP-0131",
+        "tipo_movimiento": "salida",
+        "cantidad": -47.6,
+        "documento": "CONS-108675"
+      },
+      {
+        "fecha": "2025-04-25",
+        "sku": "MP-0229",
+        "tipo_movimiento": "salida",
+        "cantidad": -102.6,
+        "documento": "CONS-108746"
+      },
+      {
+        "fecha": "2025-04-25",
+        "sku": "MP-0071",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.7,
+        "documento": "CONS-108970"
+      },
+      {
+        "fecha": "2025-04-25",
+        "sku": "MP-0344",
+        "tipo_movimiento": "salida",
+        "cantidad": -86.1,
+        "documento": "CONS-109145"
+      },
+      {
+        "fecha": "2025-04-27",
+        "sku": "MP-0280",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -7.0,
+        "documento": "AJU-120047"
+      },
+      {
+        "fecha": "2025-05-01",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -63.7,
+        "documento": "CONS-109587"
+      },
+      {
+        "fecha": "2025-05-01",
+        "sku": "MP-0088",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.8,
+        "documento": "CONS-109762"
+      },
+      {
+        "fecha": "2025-05-01",
+        "sku": "MP-0211",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.6,
+        "documento": "CONS-109853"
+      },
+      {
+        "fecha": "2025-05-05",
+        "sku": "MP-0002",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.0,
+        "documento": "CONS-109476"
+      },
+      {
+        "fecha": "2025-05-09",
+        "sku": "MP-0370",
+        "tipo_movimiento": "salida",
+        "cantidad": -16.6,
+        "documento": "CONS-109176"
+      },
+      {
+        "fecha": "2025-05-09",
+        "sku": "MP-0254",
+        "tipo_movimiento": "salida",
+        "cantidad": -91.0,
+        "documento": "CONS-109246"
+      },
+      {
+        "fecha": "2025-05-09",
+        "sku": "MP-0216",
+        "tipo_movimiento": "salida",
+        "cantidad": -52.3,
+        "documento": "CONS-109456"
+      },
+      {
+        "fecha": "2025-05-09",
+        "sku": "MP-0321",
+        "tipo_movimiento": "salida",
+        "cantidad": -18.2,
+        "documento": "CONS-109792"
+      },
+      {
+        "fecha": "2025-05-13",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -49.6,
+        "documento": "CONS-109163"
+      },
+      {
+        "fecha": "2025-05-13",
+        "sku": "MP-0059",
+        "tipo_movimiento": "salida",
+        "cantidad": -45.4,
+        "documento": "CONS-109849"
+      },
+      {
+        "fecha": "2025-05-17",
+        "sku": "MP-0149",
+        "tipo_movimiento": "salida",
+        "cantidad": -118.9,
+        "documento": "CONS-109234"
+      },
+      {
+        "fecha": "2025-05-17",
+        "sku": "MP-0189",
+        "tipo_movimiento": "salida",
+        "cantidad": -62.6,
+        "documento": "CONS-109241"
+      },
+      {
+        "fecha": "2025-05-17",
+        "sku": "MP-0016",
+        "tipo_movimiento": "salida",
+        "cantidad": -54.6,
+        "documento": "CONS-109353"
+      },
+      {
+        "fecha": "2025-05-17",
+        "sku": "MP-0030",
+        "tipo_movimiento": "salida",
+        "cantidad": -4.3,
+        "documento": "CONS-109360"
+      },
+      {
+        "fecha": "2025-05-17",
+        "sku": "MP-0193",
+        "tipo_movimiento": "salida",
+        "cantidad": -65.3,
+        "documento": "CONS-109654"
+      },
+      {
+        "fecha": "2025-05-17",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -19.9,
+        "documento": "CONS-109703"
+      },
+      {
+        "fecha": "2025-05-21",
+        "sku": "MP-0027",
+        "tipo_movimiento": "salida",
+        "cantidad": -10.9,
+        "documento": "CONS-109319"
+      },
+      {
+        "fecha": "2025-05-21",
+        "sku": "MP-0182",
+        "tipo_movimiento": "salida",
+        "cantidad": -33.0,
+        "documento": "CONS-109382"
+      },
+      {
+        "fecha": "2025-05-21",
+        "sku": "MP-0390",
+        "tipo_movimiento": "salida",
+        "cantidad": -25.5,
+        "documento": "CONS-109872"
+      },
+      {
+        "fecha": "2025-05-25",
+        "sku": "MP-0309",
+        "tipo_movimiento": "salida",
+        "cantidad": -58.4,
+        "documento": "CONS-109194"
+      },
+      {
+        "fecha": "2025-05-25",
+        "sku": "MP-0369",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.0,
+        "documento": "CONS-109390"
+      },
+      {
+        "fecha": "2025-05-25",
+        "sku": "MP-0002",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.0,
+        "documento": "CONS-109481"
+      },
+      {
+        "fecha": "2025-05-25",
+        "sku": "MP-0111",
+        "tipo_movimiento": "salida",
+        "cantidad": -116.7,
+        "documento": "CONS-109740"
+      },
+      {
+        "fecha": "2025-05-25",
+        "sku": "MP-0217",
+        "tipo_movimiento": "salida",
+        "cantidad": -73.1,
+        "documento": "CONS-109915"
+      },
+      {
+        "fecha": "2025-05-31",
+        "sku": "MP-0248",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -33.0,
+        "documento": "AJU-120037"
+      },
+      {
+        "fecha": "2025-06-01",
+        "sku": "MP-0030",
+        "tipo_movimiento": "salida",
+        "cantidad": -18.1,
+        "documento": "CONS-110133"
+      },
+      {
+        "fecha": "2025-06-01",
+        "sku": "MP-0131",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.4,
+        "documento": "CONS-110224"
+      },
+      {
+        "fecha": "2025-06-05",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -83.6,
+        "documento": "CONS-109938"
+      },
+      {
+        "fecha": "2025-06-05",
+        "sku": "MP-0199",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.0,
+        "documento": "CONS-110078"
+      },
+      {
+        "fecha": "2025-06-05",
+        "sku": "MP-0004",
+        "tipo_movimiento": "salida",
+        "cantidad": -61.8,
+        "documento": "CONS-110344"
+      },
+      {
+        "fecha": "2025-06-05",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -76.5,
+        "documento": "CONS-110365"
+      },
+      {
+        "fecha": "2025-06-05",
+        "sku": "MP-0012",
+        "tipo_movimiento": "salida",
+        "cantidad": -80.5,
+        "documento": "CONS-110393"
+      },
+      {
+        "fecha": "2025-06-05",
+        "sku": "MP-0060",
+        "tipo_movimiento": "salida",
+        "cantidad": -69.9,
+        "documento": "CONS-110456"
+      },
+      {
+        "fecha": "2025-06-05",
+        "sku": "MP-0077",
+        "tipo_movimiento": "salida",
+        "cantidad": -42.9,
+        "documento": "CONS-110491"
+      },
+      {
+        "fecha": "2025-06-09",
+        "sku": "MP-0189",
+        "tipo_movimiento": "salida",
+        "cantidad": -75.5,
+        "documento": "CONS-110016"
+      },
+      {
+        "fecha": "2025-06-09",
+        "sku": "MP-0120",
+        "tipo_movimiento": "salida",
+        "cantidad": -86.4,
+        "documento": "CONS-110142"
+      },
+      {
+        "fecha": "2025-06-09",
+        "sku": "MP-0273",
+        "tipo_movimiento": "salida",
+        "cantidad": -45.7,
+        "documento": "CONS-110499"
+      },
+      {
+        "fecha": "2025-06-09",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -43.1,
+        "documento": "CONS-110548"
+      },
+      {
+        "fecha": "2025-06-13",
+        "sku": "MP-0111",
+        "tipo_movimiento": "salida",
+        "cantidad": -63.2,
+        "documento": "CONS-110514"
+      },
+      {
+        "fecha": "2025-06-17",
+        "sku": "MP-0149",
+        "tipo_movimiento": "salida",
+        "cantidad": -176.4,
+        "documento": "CONS-110011"
+      },
+      {
+        "fecha": "2025-06-17",
+        "sku": "MP-0232",
+        "tipo_movimiento": "salida",
+        "cantidad": -44.7,
+        "documento": "CONS-110088"
+      },
+      {
+        "fecha": "2025-06-17",
+        "sku": "MP-0002",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.5,
+        "documento": "CONS-110256"
+      },
+      {
+        "fecha": "2025-06-21",
+        "sku": "MP-0014",
+        "tipo_movimiento": "salida",
+        "cantidad": -52.0,
+        "documento": "CONS-110187"
+      },
+      {
+        "fecha": "2025-06-21",
+        "sku": "MP-0002",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.5,
+        "documento": "CONS-110257"
+      },
+      {
+        "fecha": "2025-06-21",
+        "sku": "MP-0045",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.6,
+        "documento": "CONS-110362"
+      },
+      {
+        "fecha": "2025-06-21",
+        "sku": "MP-0076",
+        "tipo_movimiento": "salida",
+        "cantidad": -40.7,
+        "documento": "CONS-110488"
+      },
+      {
+        "fecha": "2025-06-21",
+        "sku": "MP-0088",
+        "tipo_movimiento": "salida",
+        "cantidad": -38.6,
+        "documento": "CONS-110544"
+      },
+      {
+        "fecha": "2025-06-25",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.4,
+        "documento": "CONS-110482"
+      },
+      {
+        "fecha": "2025-06-25",
+        "sku": "MP-0071",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.1,
+        "documento": "CONS-110524"
+      },
+      {
+        "fecha": "2025-06-25",
+        "sku": "MP-0388",
+        "tipo_movimiento": "salida",
+        "cantidad": -48.3,
+        "documento": "CONS-110531"
+      },
+      {
+        "fecha": "2025-07-01",
+        "sku": "MP-0114",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.2,
+        "documento": "CONS-111190"
+      },
+      {
+        "fecha": "2025-07-05",
+        "sku": "MP-0128",
+        "tipo_movimiento": "salida",
+        "cantidad": -154.1,
+        "documento": "CONS-110967"
+      },
+      {
+        "fecha": "2025-07-05",
+        "sku": "MP-0153",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.1,
+        "documento": "CONS-111058"
+      },
+      {
+        "fecha": "2025-07-05",
+        "sku": "MP-0181",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.7,
+        "documento": "CONS-111331"
+      },
+      {
+        "fecha": "2025-07-09",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -40.8,
+        "documento": "CONS-110772"
+      },
+      {
+        "fecha": "2025-07-09",
+        "sku": "MP-0012",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.3,
+        "documento": "CONS-111171"
+      },
+      {
+        "fecha": "2025-07-13",
+        "sku": "MP-0369",
+        "tipo_movimiento": "salida",
+        "cantidad": -85.8,
+        "documento": "CONS-110941"
+      },
+      {
+        "fecha": "2025-07-13",
+        "sku": "MP-0047",
+        "tipo_movimiento": "salida",
+        "cantidad": -46.8,
+        "documento": "CONS-110976"
+      },
+      {
+        "fecha": "2025-07-13",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -78.2,
+        "documento": "CONS-111144"
+      },
+      {
+        "fecha": "2025-07-13",
+        "sku": "MP-0076",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.4,
+        "documento": "CONS-111263"
+      },
+      {
+        "fecha": "2025-07-17",
+        "sku": "MP-0005",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.0,
+        "documento": "CONS-110767"
+      },
+      {
+        "fecha": "2025-07-17",
+        "sku": "MP-0216",
+        "tipo_movimiento": "salida",
+        "cantidad": -58.3,
+        "documento": "CONS-111012"
+      },
+      {
+        "fecha": "2025-07-17",
+        "sku": "MP-0020",
+        "tipo_movimiento": "salida",
+        "cantidad": -81.4,
+        "documento": "CONS-111089"
+      },
+      {
+        "fecha": "2025-07-21",
+        "sku": "MP-0001",
+        "tipo_movimiento": "salida",
+        "cantidad": -108.8,
+        "documento": "CONS-110957"
+      },
+      {
+        "fecha": "2025-07-21",
+        "sku": "MP-0032",
+        "tipo_movimiento": "salida",
+        "cantidad": -12.0,
+        "documento": "CONS-111447"
+      },
+      {
+        "fecha": "2025-07-25",
+        "sku": "MP-0074",
+        "tipo_movimiento": "salida",
+        "cantidad": -78.0,
+        "documento": "CONS-110727"
+      },
+      {
+        "fecha": "2025-07-25",
+        "sku": "MP-0373",
+        "tipo_movimiento": "salida",
+        "cantidad": -115.6,
+        "documento": "CONS-111161"
+      },
+      {
+        "fecha": "2025-07-25",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -16.2,
+        "documento": "CONS-111259"
+      },
+      {
+        "fecha": "2025-07-25",
+        "sku": "MP-0080",
+        "tipo_movimiento": "salida",
+        "cantidad": -47.3,
+        "documento": "CONS-111371"
+      },
+      {
+        "fecha": "2025-07-25",
+        "sku": "MP-0356",
+        "tipo_movimiento": "salida",
+        "cantidad": -55.9,
+        "documento": "CONS-111385"
+      },
+      {
+        "fecha": "2025-07-25",
+        "sku": "MP-0039",
+        "tipo_movimiento": "salida",
+        "cantidad": -6.1,
+        "documento": "CONS-111441"
+      },
+      {
+        "fecha": "2025-07-25",
+        "sku": "MP-0136",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.8,
+        "documento": "CONS-111462"
+      },
+      {
+        "fecha": "2025-08-01",
+        "sku": "MP-0030",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.2,
+        "documento": "CONS-111687"
+      },
+      {
+        "fecha": "2025-08-01",
+        "sku": "MP-0015",
+        "tipo_movimiento": "salida",
+        "cantidad": -15.3,
+        "documento": "CONS-111939"
+      },
+      {
+        "fecha": "2025-08-05",
+        "sku": "MP-0299",
+        "tipo_movimiento": "salida",
+        "cantidad": -66.4,
+        "documento": "CONS-111513"
+      },
+      {
+        "fecha": "2025-08-05",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -99.8,
+        "documento": "CONS-111548"
+      },
+      {
+        "fecha": "2025-08-05",
+        "sku": "MP-0009",
+        "tipo_movimiento": "salida",
+        "cantidad": -60.3,
+        "documento": "CONS-112031"
+      },
+      {
+        "fecha": "2025-08-09",
+        "sku": "MP-0197",
+        "tipo_movimiento": "salida",
+        "cantidad": -93.4,
+        "documento": "CONS-111591"
+      },
+      {
+        "fecha": "2025-08-09",
+        "sku": "MP-0080",
+        "tipo_movimiento": "salida",
+        "cantidad": -51.2,
+        "documento": "CONS-112144"
+      },
+      {
+        "fecha": "2025-08-13",
+        "sku": "MP-0272",
+        "tipo_movimiento": "salida",
+        "cantidad": -5.6,
+        "documento": "CONS-111795"
+      },
+      {
+        "fecha": "2025-08-13",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -54.0,
+        "documento": "CONS-111921"
+      },
+      {
+        "fecha": "2025-08-13",
+        "sku": "MP-0273",
+        "tipo_movimiento": "salida",
+        "cantidad": -93.7,
+        "documento": "CONS-112054"
+      },
+      {
+        "fecha": "2025-08-17",
+        "sku": "MP-0161",
+        "tipo_movimiento": "salida",
+        "cantidad": -38.5,
+        "documento": "CONS-111586"
+      },
+      {
+        "fecha": "2025-08-17",
+        "sku": "MP-0244",
+        "tipo_movimiento": "salida",
+        "cantidad": -36.2,
+        "documento": "CONS-111761"
+      },
+      {
+        "fecha": "2025-08-17",
+        "sku": "MP-0211",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.2,
+        "documento": "CONS-112188"
+      },
+      {
+        "fecha": "2025-08-17",
+        "sku": "MP-0136",
+        "tipo_movimiento": "salida",
+        "cantidad": -58.8,
+        "documento": "CONS-112237"
+      },
+      {
+        "fecha": "2025-08-20",
+        "sku": "MP-0151",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -23.0,
+        "documento": "AJU-120027"
+      },
+      {
+        "fecha": "2025-08-25",
+        "sku": "MP-0157",
+        "tipo_movimiento": "salida",
+        "cantidad": -88.0,
+        "documento": "CONS-111728"
+      },
+      {
+        "fecha": "2025-08-25",
+        "sku": "MP-0273",
+        "tipo_movimiento": "salida",
+        "cantidad": -93.7,
+        "documento": "CONS-112057"
+      },
+      {
+        "fecha": "2025-08-30",
+        "sku": "MP-0253",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -39.0,
+        "documento": "AJU-120069"
+      },
+      {
+        "fecha": "2025-09-01",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -70.1,
+        "documento": "CONS-112695"
+      },
+      {
+        "fecha": "2025-09-01",
+        "sku": "MP-0015",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.7,
+        "documento": "CONS-112716"
+      },
+      {
+        "fecha": "2025-09-01",
+        "sku": "MP-0060",
+        "tipo_movimiento": "salida",
+        "cantidad": -69.1,
+        "documento": "CONS-112786"
+      },
+      {
+        "fecha": "2025-09-05",
+        "sku": "MP-0114",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.5,
+        "documento": "CONS-112745"
+      },
+      {
+        "fecha": "2025-09-05",
+        "sku": "MP-0385",
+        "tipo_movimiento": "salida",
+        "cantidad": -18.5,
+        "documento": "CONS-112892"
+      },
+      {
+        "fecha": "2025-09-09",
+        "sku": "MP-0051",
+        "tipo_movimiento": "salida",
+        "cantidad": -104.2,
+        "documento": "CONS-112655"
+      },
+      {
+        "fecha": "2025-09-09",
+        "sku": "MP-0117",
+        "tipo_movimiento": "salida",
+        "cantidad": -77.3,
+        "documento": "CONS-112781"
+      },
+      {
+        "fecha": "2025-09-09",
+        "sku": "MP-0032",
+        "tipo_movimiento": "salida",
+        "cantidad": -23.4,
+        "documento": "CONS-112998"
+      },
+      {
+        "fecha": "2025-09-13",
+        "sku": "MP-0022",
+        "tipo_movimiento": "salida",
+        "cantidad": -56.2,
+        "documento": "CONS-112264"
+      },
+      {
+        "fecha": "2025-09-13",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -20.9,
+        "documento": "CONS-112271"
+      },
+      {
+        "fecha": "2025-09-13",
+        "sku": "MP-0244",
+        "tipo_movimiento": "salida",
+        "cantidad": -42.9,
+        "documento": "CONS-112537"
+      },
+      {
+        "fecha": "2025-09-13",
+        "sku": "MP-0010",
+        "tipo_movimiento": "salida",
+        "cantidad": -84.9,
+        "documento": "CONS-112579"
+      },
+      {
+        "fecha": "2025-09-13",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -47.2,
+        "documento": "CONS-112866"
+      },
+      {
+        "fecha": "2025-09-13",
+        "sku": "MP-0268",
+        "tipo_movimiento": "salida",
+        "cantidad": -6.1,
+        "documento": "CONS-112985"
+      },
+      {
+        "fecha": "2025-09-13",
+        "sku": "MP-0016",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -29.0,
+        "documento": "AJU-120045"
+      },
+      {
+        "fecha": "2025-09-17",
+        "sku": "MP-0010",
+        "tipo_movimiento": "salida",
+        "cantidad": -84.9,
+        "documento": "CONS-112580"
+      },
+      {
+        "fecha": "2025-09-21",
+        "sku": "MP-0418",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.9,
+        "documento": "CONS-112308"
+      },
+      {
+        "fecha": "2025-09-21",
+        "sku": "MP-0339",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.5,
+        "documento": "CONS-112945"
+      },
+      {
+        "fecha": "2025-09-21",
+        "sku": "MP-0340",
+        "tipo_movimiento": "salida",
+        "cantidad": -9.3,
+        "documento": "CONS-112973"
+      },
+      {
+        "fecha": "2025-09-22",
+        "sku": "MP-0147",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -33.0,
+        "documento": "AJU-120042"
+      },
+      {
+        "fecha": "2025-09-25",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -75.0,
+        "documento": "CONS-112883"
+      },
+      {
+        "fecha": "2025-09-25",
+        "sku": "MP-0343",
+        "tipo_movimiento": "salida",
+        "cantidad": -75.5,
+        "documento": "CONS-112911"
+      },
+      {
+        "fecha": "2025-10-01",
+        "sku": "MP-0370",
+        "tipo_movimiento": "salida",
+        "cantidad": -8.1,
+        "documento": "CONS-113059"
+      },
+      {
+        "fecha": "2025-10-01",
+        "sku": "MP-0118",
+        "tipo_movimiento": "salida",
+        "cantidad": -84.5,
+        "documento": "CONS-113178"
+      },
+      {
+        "fecha": "2025-10-05",
+        "sku": "MP-0418",
+        "tipo_movimiento": "salida",
+        "cantidad": -26.3,
+        "documento": "CONS-113081"
+      },
+      {
+        "fecha": "2025-10-05",
+        "sku": "MP-0150",
+        "tipo_movimiento": "salida",
+        "cantidad": -52.3,
+        "documento": "CONS-113368"
+      },
+      {
+        "fecha": "2025-10-05",
+        "sku": "MP-0411",
+        "tipo_movimiento": "salida",
+        "cantidad": -47.9,
+        "documento": "CONS-113438"
+      },
+      {
+        "fecha": "2025-10-05",
+        "sku": "MP-0077",
+        "tipo_movimiento": "salida",
+        "cantidad": -42.9,
+        "documento": "CONS-113599"
+      },
+      {
+        "fecha": "2025-10-05",
+        "sku": "MP-0321",
+        "tipo_movimiento": "salida",
+        "cantidad": -26.5,
+        "documento": "CONS-113676"
+      },
+      {
+        "fecha": "2025-10-09",
+        "sku": "MP-0094",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.0,
+        "documento": "CONS-113047"
+      },
+      {
+        "fecha": "2025-10-09",
+        "sku": "MP-0073",
+        "tipo_movimiento": "salida",
+        "cantidad": -94.0,
+        "documento": "CONS-113173"
+      },
+      {
+        "fecha": "2025-10-09",
+        "sku": "MP-0027",
+        "tipo_movimiento": "salida",
+        "cantidad": -4.6,
+        "documento": "CONS-113201"
+      },
+      {
+        "fecha": "2025-10-09",
+        "sku": "MP-0150",
+        "tipo_movimiento": "salida",
+        "cantidad": -52.3,
+        "documento": "CONS-113369"
+      },
+      {
+        "fecha": "2025-10-09",
+        "sku": "MP-0238",
+        "tipo_movimiento": "salida",
+        "cantidad": -45.1,
+        "documento": "CONS-113446"
+      },
+      {
+        "fecha": "2025-10-09",
+        "sku": "MP-0033",
+        "tipo_movimiento": "salida",
+        "cantidad": -37.3,
+        "documento": "CONS-113460"
+      },
+      {
+        "fecha": "2025-10-11",
+        "sku": "MP-0033",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -13.0,
+        "documento": "AJU-120050"
+      },
+      {
+        "fecha": "2025-10-12",
+        "sku": "MP-0149",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -17.0,
+        "documento": "AJU-120062"
+      },
+      {
+        "fecha": "2025-10-13",
+        "sku": "MP-0197",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.1,
+        "documento": "CONS-113146"
+      },
+      {
+        "fecha": "2025-10-13",
+        "sku": "MP-0027",
+        "tipo_movimiento": "salida",
+        "cantidad": -4.6,
+        "documento": "CONS-113202"
+      },
+      {
+        "fecha": "2025-10-13",
+        "sku": "MP-0128",
+        "tipo_movimiento": "salida",
+        "cantidad": -114.4,
+        "documento": "CONS-113300"
+      },
+      {
+        "fecha": "2025-10-15",
+        "sku": "MP-0398",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -30.0,
+        "documento": "AJU-120033"
+      },
+      {
+        "fecha": "2025-10-17",
+        "sku": "MP-0299",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.2,
+        "documento": "CONS-113070"
+      },
+      {
+        "fecha": "2025-10-21",
+        "sku": "MP-0074",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.9,
+        "documento": "CONS-113057"
+      },
+      {
+        "fecha": "2025-10-21",
+        "sku": "MP-0133",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.1,
+        "documento": "CONS-113106"
+      },
+      {
+        "fecha": "2025-10-21",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -8.9,
+        "documento": "CONS-113645"
+      },
+      {
+        "fecha": "2025-10-21",
+        "sku": "MP-0250",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -22.0,
+        "documento": "AJU-120066"
+      },
+      {
+        "fecha": "2025-10-25",
+        "sku": "MP-0161",
+        "tipo_movimiento": "salida",
+        "cantidad": -12.0,
+        "documento": "CONS-113142"
+      },
+      {
+        "fecha": "2025-10-25",
+        "sku": "MP-0120",
+        "tipo_movimiento": "salida",
+        "cantidad": -72.9,
+        "documento": "CONS-113254"
+      },
+      {
+        "fecha": "2025-10-25",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -52.4,
+        "documento": "CONS-113478"
+      },
+      {
+        "fecha": "2025-11-01",
+        "sku": "MP-0137",
+        "tipo_movimiento": "salida",
+        "cantidad": -54.9,
+        "documento": "CONS-113941"
+      },
+      {
+        "fecha": "2025-11-01",
+        "sku": "MP-0182",
+        "tipo_movimiento": "salida",
+        "cantidad": -77.5,
+        "documento": "CONS-114039"
+      },
+      {
+        "fecha": "2025-11-01",
+        "sku": "MP-0373",
+        "tipo_movimiento": "salida",
+        "cantidad": -95.0,
+        "documento": "CONS-114263"
+      },
+      {
+        "fecha": "2025-11-01",
+        "sku": "MP-0077",
+        "tipo_movimiento": "salida",
+        "cantidad": -87.9,
+        "documento": "CONS-114375"
+      },
+      {
+        "fecha": "2025-11-01",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -49.0,
+        "documento": "CONS-114417"
+      },
+      {
+        "fecha": "2025-11-01",
+        "sku": "MP-0078",
+        "tipo_movimiento": "salida",
+        "cantidad": -72.7,
+        "documento": "CONS-114501"
+      },
+      {
+        "fecha": "2025-11-05",
+        "sku": "MP-0370",
+        "tipo_movimiento": "salida",
+        "cantidad": -8.3,
+        "documento": "CONS-113837"
+      },
+      {
+        "fecha": "2025-11-05",
+        "sku": "MP-0116",
+        "tipo_movimiento": "salida",
+        "cantidad": -23.6,
+        "documento": "CONS-113984"
+      },
+      {
+        "fecha": "2025-11-09",
+        "sku": "MP-0033",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.4,
+        "documento": "CONS-114237"
+      },
+      {
+        "fecha": "2025-11-09",
+        "sku": "MP-0036",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.0,
+        "documento": "CONS-114468"
+      },
+      {
+        "fecha": "2025-11-13",
+        "sku": "MP-0244",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.2,
+        "documento": "CONS-114091"
+      },
+      {
+        "fecha": "2025-11-13",
+        "sku": "MP-0024",
+        "tipo_movimiento": "salida",
+        "cantidad": -144.4,
+        "documento": "CONS-114329"
+      },
+      {
+        "fecha": "2025-11-13",
+        "sku": "MP-0036",
+        "tipo_movimiento": "salida",
+        "cantidad": -24.0,
+        "documento": "CONS-114469"
+      },
+      {
+        "fecha": "2025-11-17",
+        "sku": "MP-0149",
+        "tipo_movimiento": "salida",
+        "cantidad": -75.7,
+        "documento": "CONS-113896"
+      },
+      {
+        "fecha": "2025-11-17",
+        "sku": "MP-0120",
+        "tipo_movimiento": "salida",
+        "cantidad": -40.4,
+        "documento": "CONS-114029"
+      },
+      {
+        "fecha": "2025-11-17",
+        "sku": "MP-0014",
+        "tipo_movimiento": "salida",
+        "cantidad": -59.0,
+        "documento": "CONS-114071"
+      },
+      {
+        "fecha": "2025-11-17",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -93.5,
+        "documento": "CONS-114435"
+      },
+      {
+        "fecha": "2025-11-17",
+        "sku": "MP-0078",
+        "tipo_movimiento": "salida",
+        "cantidad": -72.7,
+        "documento": "CONS-114505"
+      },
+      {
+        "fecha": "2025-11-17",
+        "sku": "MP-0344",
+        "tipo_movimiento": "salida",
+        "cantidad": -73.6,
+        "documento": "CONS-114582"
+      },
+      {
+        "fecha": "2025-11-21",
+        "sku": "MP-0369",
+        "tipo_movimiento": "salida",
+        "cantidad": -47.1,
+        "documento": "CONS-114051"
+      },
+      {
+        "fecha": "2025-11-21",
+        "sku": "MP-0128",
+        "tipo_movimiento": "salida",
+        "cantidad": -79.0,
+        "documento": "CONS-114079"
+      },
+      {
+        "fecha": "2025-11-21",
+        "sku": "MP-0020",
+        "tipo_movimiento": "salida",
+        "cantidad": -80.8,
+        "documento": "CONS-114198"
+      },
+      {
+        "fecha": "2025-11-21",
+        "sku": "MP-0181",
+        "tipo_movimiento": "salida",
+        "cantidad": -78.5,
+        "documento": "CONS-114443"
+      },
+      {
+        "fecha": "2025-11-25",
+        "sku": "MP-0299",
+        "tipo_movimiento": "salida",
+        "cantidad": -32.2,
+        "documento": "CONS-113849"
+      },
+      {
+        "fecha": "2025-11-25",
+        "sku": "MP-0293",
+        "tipo_movimiento": "salida",
+        "cantidad": -41.4,
+        "documento": "CONS-114003"
+      },
+      {
+        "fecha": "2025-11-25",
+        "sku": "MP-0229",
+        "tipo_movimiento": "salida",
+        "cantidad": -66.1,
+        "documento": "CONS-114185"
+      },
+      {
+        "fecha": "2025-11-25",
+        "sku": "MP-0106",
+        "tipo_movimiento": "salida",
+        "cantidad": -41.6,
+        "documento": "CONS-114206"
+      },
+      {
+        "fecha": "2025-11-25",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -93.5,
+        "documento": "CONS-114437"
+      },
+      {
+        "fecha": "2025-12-01",
+        "sku": "MP-0149",
+        "tipo_movimiento": "salida",
+        "cantidad": -82.8,
+        "documento": "CONS-114669"
+      },
+      {
+        "fecha": "2025-12-01",
+        "sku": "MP-0073",
+        "tipo_movimiento": "salida",
+        "cantidad": -117.5,
+        "documento": "CONS-114725"
+      },
+      {
+        "fecha": "2025-12-01",
+        "sku": "MP-0114",
+        "tipo_movimiento": "salida",
+        "cantidad": -8.9,
+        "documento": "CONS-115075"
+      },
+      {
+        "fecha": "2025-12-01",
+        "sku": "MP-0032",
+        "tipo_movimiento": "salida",
+        "cantidad": -7.7,
+        "documento": "CONS-115327"
+      },
+      {
+        "fecha": "2025-12-05",
+        "sku": "MP-0254",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.5,
+        "documento": "CONS-114684"
+      },
+      {
+        "fecha": "2025-12-05",
+        "sku": "MP-0157",
+        "tipo_movimiento": "salida",
+        "cantidad": -58.4,
+        "documento": "CONS-114831"
+      },
+      {
+        "fecha": "2025-12-05",
+        "sku": "MP-0001",
+        "tipo_movimiento": "salida",
+        "cantidad": -65.1,
+        "documento": "CONS-114838"
+      },
+      {
+        "fecha": "2025-12-05",
+        "sku": "MP-0153",
+        "tipo_movimiento": "salida",
+        "cantidad": -12.8,
+        "documento": "CONS-114943"
+      },
+      {
+        "fecha": "2025-12-05",
+        "sku": "MP-0386",
+        "tipo_movimiento": "salida",
+        "cantidad": -69.3,
+        "documento": "CONS-115027"
+      },
+      {
+        "fecha": "2025-12-07",
+        "sku": "MP-0154",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -10.0,
+        "documento": "AJU-120078"
+      },
+      {
+        "fecha": "2025-12-09",
+        "sku": "MP-0272",
+        "tipo_movimiento": "salida",
+        "cantidad": -2.3,
+        "documento": "CONS-114902"
+      },
+      {
+        "fecha": "2025-12-09",
+        "sku": "MP-0004",
+        "tipo_movimiento": "salida",
+        "cantidad": -55.9,
+        "documento": "CONS-115007"
+      },
+      {
+        "fecha": "2025-12-13",
+        "sku": "MP-0418",
+        "tipo_movimiento": "salida",
+        "cantidad": -15.2,
+        "documento": "CONS-114637"
+      },
+      {
+        "fecha": "2025-12-13",
+        "sku": "MP-0014",
+        "tipo_movimiento": "salida",
+        "cantidad": -52.9,
+        "documento": "CONS-114847"
+      },
+      {
+        "fecha": "2025-12-13",
+        "sku": "MP-0010",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.8,
+        "documento": "CONS-114910"
+      },
+      {
+        "fecha": "2025-12-13",
+        "sku": "MP-0150",
+        "tipo_movimiento": "salida",
+        "cantidad": -18.1,
+        "documento": "CONS-114924"
+      },
+      {
+        "fecha": "2025-12-13",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -47.2,
+        "documento": "CONS-115197"
+      },
+      {
+        "fecha": "2025-12-13",
+        "sku": "MP-0212",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -2.0,
+        "documento": "AJU-120079"
+      },
+      {
+        "fecha": "2025-12-21",
+        "sku": "MP-0161",
+        "tipo_movimiento": "salida",
+        "cantidad": -13.3,
+        "documento": "CONS-114695"
+      },
+      {
+        "fecha": "2025-12-21",
+        "sku": "MP-0137",
+        "tipo_movimiento": "salida",
+        "cantidad": -81.6,
+        "documento": "CONS-114723"
+      },
+      {
+        "fecha": "2025-12-21",
+        "sku": "MP-0077",
+        "tipo_movimiento": "salida",
+        "cantidad": -109.3,
+        "documento": "CONS-115157"
+      },
+      {
+        "fecha": "2025-12-21",
+        "sku": "MP-0111",
+        "tipo_movimiento": "salida",
+        "cantidad": -103.1,
+        "documento": "CONS-115178"
+      },
+      {
+        "fecha": "2025-12-25",
+        "sku": "MP-0074",
+        "tipo_movimiento": "salida",
+        "cantidad": -14.5,
+        "documento": "CONS-114612"
+      },
+      {
+        "fecha": "2025-12-25",
+        "sku": "MP-0037",
+        "tipo_movimiento": "salida",
+        "cantidad": -97.3,
+        "documento": "CONS-114710"
+      },
+      {
+        "fecha": "2025-12-25",
+        "sku": "MP-0060",
+        "tipo_movimiento": "salida",
+        "cantidad": -60.4,
+        "documento": "CONS-115123"
+      },
+      {
+        "fecha": "2026-01-01",
+        "sku": "MP-0019",
+        "tipo_movimiento": "salida",
+        "cantidad": -60.9,
+        "documento": "CONS-115362"
+      },
+      {
+        "fecha": "2026-01-01",
+        "sku": "MP-0254",
+        "tipo_movimiento": "salida",
+        "cantidad": -27.8,
+        "documento": "CONS-115460"
+      },
+      {
+        "fecha": "2026-01-01",
+        "sku": "MP-0199",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.9,
+        "documento": "CONS-115516"
+      },
+      {
+        "fecha": "2026-01-01",
+        "sku": "MP-0024",
+        "tipo_movimiento": "salida",
+        "cantidad": -120.3,
+        "documento": "CONS-115880"
+      },
+      {
+        "fecha": "2026-01-03",
+        "sku": "MP-0377",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -11.0,
+        "documento": "AJU-120054"
+      },
+      {
+        "fecha": "2026-01-05",
+        "sku": "MP-0020",
+        "tipo_movimiento": "salida",
+        "cantidad": -50.6,
+        "documento": "CONS-115748"
+      },
+      {
+        "fecha": "2026-01-05",
+        "sku": "MP-0078",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.9,
+        "documento": "CONS-116056"
+      },
+      {
+        "fecha": "2026-01-05",
+        "sku": "MP-0340",
+        "tipo_movimiento": "salida",
+        "cantidad": -14.4,
+        "documento": "CONS-116077"
+      },
+      {
+        "fecha": "2026-01-09",
+        "sku": "MP-0216",
+        "tipo_movimiento": "salida",
+        "cantidad": -80.6,
+        "documento": "CONS-115672"
+      },
+      {
+        "fecha": "2026-01-09",
+        "sku": "MP-0010",
+        "tipo_movimiento": "salida",
+        "cantidad": -205.4,
+        "documento": "CONS-115686"
+      },
+      {
+        "fecha": "2026-01-09",
+        "sku": "MP-0385",
+        "tipo_movimiento": "salida",
+        "cantidad": -25.0,
+        "documento": "CONS-116001"
+      },
+      {
+        "fecha": "2026-01-09",
+        "sku": "MP-0036",
+        "tipo_movimiento": "salida",
+        "cantidad": -38.0,
+        "documento": "CONS-116022"
+      },
+      {
+        "fecha": "2026-01-09",
+        "sku": "MP-0340",
+        "tipo_movimiento": "salida",
+        "cantidad": -14.4,
+        "documento": "CONS-116078"
+      },
+      {
+        "fecha": "2026-01-13",
+        "sku": "MP-0074",
+        "tipo_movimiento": "salida",
+        "cantidad": -34.6,
+        "documento": "CONS-115386"
+      },
+      {
+        "fecha": "2026-01-13",
+        "sku": "MP-0101",
+        "tipo_movimiento": "salida",
+        "cantidad": -23.6,
+        "documento": "CONS-115442"
+      },
+      {
+        "fecha": "2026-01-17",
+        "sku": "MP-0008",
+        "tipo_movimiento": "salida",
+        "cantidad": -123.2,
+        "documento": "CONS-115422"
+      },
+      {
+        "fecha": "2026-01-17",
+        "sku": "MP-0197",
+        "tipo_movimiento": "salida",
+        "cantidad": -25.1,
+        "documento": "CONS-115478"
+      },
+      {
+        "fecha": "2026-01-17",
+        "sku": "MP-0132",
+        "tipo_movimiento": "salida",
+        "cantidad": -104.2,
+        "documento": "CONS-115660"
+      },
+      {
+        "fecha": "2026-01-21",
+        "sku": "MP-0005",
+        "tipo_movimiento": "salida",
+        "cantidad": -55.3,
+        "documento": "CONS-115430"
+      },
+      {
+        "fecha": "2026-01-25",
+        "sku": "MP-0108",
+        "tipo_movimiento": "salida",
+        "cantidad": -83.4,
+        "documento": "CONS-115550"
+      },
+      {
+        "fecha": "2026-01-25",
+        "sku": "MP-0047",
+        "tipo_movimiento": "salida",
+        "cantidad": -80.2,
+        "documento": "CONS-115641"
+      },
+      {
+        "fecha": "2026-01-25",
+        "sku": "MP-0060",
+        "tipo_movimiento": "salida",
+        "cantidad": -15.9,
+        "documento": "CONS-115900"
+      },
+      {
+        "fecha": "2026-02-01",
+        "sku": "MP-0015",
+        "tipo_movimiento": "salida",
+        "cantidad": -61.9,
+        "documento": "CONS-116601"
+      },
+      {
+        "fecha": "2026-02-01",
+        "sku": "MP-0357",
+        "tipo_movimiento": "salida",
+        "cantidad": -124.1,
+        "documento": "CONS-116678"
+      },
+      {
+        "fecha": "2026-02-01",
+        "sku": "MP-0018",
+        "tipo_movimiento": "ajuste",
+        "cantidad": -37.0,
+        "documento": "AJU-120060"
+      },
+      {
+        "fecha": "2026-02-05",
+        "sku": "MP-0239",
+        "tipo_movimiento": "salida",
+        "cantidad": -31.7,
+        "documento": "CONS-116336"
+      },
+      {
+        "fecha": "2026-02-09",
+        "sku": "MP-0227",
+        "tipo_movimiento": "salida",
+        "cantidad": -19.2,
+        "documento": "CONS-116750"
+      },
+      {
+        "fecha": "2026-02-09",
+        "sku": "MP-0343",
+        "tipo_movimiento": "salida",
+        "cantidad": -85.8,
+        "documento": "CONS-116792"
+      },
+      {
+        "fecha": "2026-02-09",
+        "sku": "MP-0356",
+        "tipo_movimiento": "salida",
+        "cantidad": -41.6,
+        "documento": "CONS-116820"
+      },
+      {
+        "fecha": "2026-02-09",
+        "sku": "MP-0344",
+        "tipo_movimiento": "salida",
+        "cantidad": -29.5,
+        "documento": "CONS-116911"
+      },
+      {
+        "fecha": "2026-02-13",
+        "sku": "MP-0020",
+        "tipo_movimiento": "salida",
+        "cantidad": -111.9,
+        "documento": "CONS-116527"
+      },
+      {
+        "fecha": "2026-02-13",
+        "sku": "MP-0411",
+        "tipo_movimiento": "salida",
+        "cantidad": -35.9,
+        "documento": "CONS-116548"
+      },
+      {
+        "fecha": "2026-02-17",
+        "sku": "MP-0128",
+        "tipo_movimiento": "salida",
+        "cantidad": -206.5,
+        "documento": "CONS-116409"
+      },
+      {
+        "fecha": "2026-02-17",
+        "sku": "MP-0131",
+        "tipo_movimiento": "salida",
+        "cantidad": -22.6,
+        "documento": "CONS-116444"
+      },
+      {
+        "fecha": "2026-02-21",
+        "sku": "MP-0018",
+        "tipo_movimiento": "salida",
+        "cantidad": -4.0,
+        "documento": "CONS-116270"
+      },
+      {
+        "fecha": "2026-02-21",
+        "sku": "MP-0073",
+        "tipo_movimiento": "salida",
+        "cantidad": -28.9,
+        "documento": "CONS-116284"
+      },
+      {
+        "fecha": "2026-02-21",
+        "sku": "MP-0244",
+        "tipo_movimiento": "salida",
+        "cantidad": -82.7,
+        "documento": "CONS-116424"
+      },
+      {
+        "fecha": "2026-02-21",
+        "sku": "MP-0150",
+        "tipo_movimiento": "salida",
+        "cantidad": -72.6,
+        "documento": "CONS-116480"
+      },
+      {
+        "fecha": "2026-02-25",
+        "sku": "MP-0102",
+        "tipo_movimiento": "salida",
+        "cantidad": -115.0,
+        "documento": "CONS-116628"
+      },
+      {
+        "fecha": "2026-03-01",
+        "sku": "MP-0047",
+        "tipo_movimiento": "salida",
+        "cantidad": -17.9,
+        "documento": "CONS-117189"
+      },
+      {
+        "fecha": "2026-03-01",
+        "sku": "MP-0216",
+        "tipo_movimiento": "salida",
+        "cantidad": -95.1,
+        "documento": "CONS-117224"
+      },
+      {
+        "fecha": "2026-03-01",
+        "sku": "MP-0010",
+        "tipo_movimiento": "salida",
+        "cantidad": -110.5,
+        "documento": "CONS-117238"
+      },
+      {
+        "fecha": "2026-03-01",
+        "sku": "MP-0340",
+        "tipo_movimiento": "salida",
+        "cantidad": -32.5,
+        "documento": "CONS-117630"
+      },
+      {
+        "fecha": "2026-03-01",
+        "sku": "MP-0129",
+        "tipo_movimiento": "salida",
+        "cantidad": -48.6,
+        "documento": "CONS-117665"
+      },
+      {
+        "fecha": "2026-03-05",
+        "sku": "MP-0118",
+        "tipo_movimiento": "salida",
+        "cantidad": -23.0,
+        "documento": "CONS-117064"
+      },
+      {
+        "fecha": "2026-03-05",
+        "sku": "MP-0043",
+        "tipo_movimiento": "salida",
+        "cantidad": -81.2,
+        "documento": "CONS-117141"
+      },
+      {
+        "fecha": "2026-03-05",
+        "sku": "MP-0272",
+        "tipo_movimiento": "salida",
+        "cantidad": -12.1,
+        "documento": "CONS-117232"
+      },
+      {
+        "fecha": "2026-03-05",
+        "sku": "MP-0024",
+        "tipo_movimiento": "salida",
+        "cantidad": -127.7,
+        "documento": "CONS-117435"
+      },
+      {
+        "fecha": "2026-03-05",
+        "sku": "MP-0143",
+        "tipo_movimiento": "salida",
+        "cantidad": -122.2,
+        "documento": "CONS-117540"
+      },
+      {
+        "fecha": "2026-03-09",
+        "sku": "MP-0008",
+        "tipo_movimiento": "salida",
+        "cantidad": -156.9,
+        "documento": "CONS-116974"
+      },
+      {
+        "fecha": "2026-03-09",
+        "sku": "MP-0411",
+        "tipo_movimiento": "salida",
+        "cantidad": -28.9,
+        "documento": "CONS-117324"
+      },
+      {
+        "fecha": "2026-03-13",
+        "sku": "MP-0080",
+        "tipo_movimiento": "salida",
+        "cantidad": -61.8,
+        "documento": "CONS-117584"
+      },
+      {
+        "fecha": "2026-03-13",
+        "sku": "MP-0078",
+        "tipo_movimiento": "salida",
+        "cantidad": -67.3,
+        "documento": "CONS-117612"
+      },
+      {
+        "fecha": "2026-03-13",
+        "sku": "MP-0032",
+        "tipo_movimiento": "salida",
+        "cantidad": -14.3,
+        "documento": "CONS-117661"
+      },
+      {
+        "fecha": "2026-03-17",
+        "sku": "MP-0157",
+        "tipo_movimiento": "salida",
+        "cantidad": -180.5,
+        "documento": "CONS-117165"
+      },
+      {
+        "fecha": "2026-03-17",
+        "sku": "MP-0122",
+        "tipo_movimiento": "salida",
+        "cantidad": -74.2,
+        "documento": "CONS-117207"
+      },
+      {
+        "fecha": "2026-03-17",
+        "sku": "MP-0272",
+        "tipo_movimiento": "salida",
+        "cantidad": -12.1,
+        "documento": "CONS-117235"
+      },
+      {
+        "fecha": "2026-03-21",
+        "sku": "MP-0077",
+        "tipo_movimiento": "salida",
+        "cantidad": -85.7,
+        "documento": "CONS-117488"
+      },
+      {
+        "fecha": "2026-03-25",
+        "sku": "MP-0388",
+        "tipo_movimiento": "salida",
+        "cantidad": -70.6,
+        "documento": "CONS-117524"
+      },
+      {
+        "fecha": "2026-03-25",
+        "sku": "MP-0217",
+        "tipo_movimiento": "salida",
+        "cantidad": -36.9,
+        "documento": "CONS-117685"
+      }
+    ],
+    "tipos_movimiento": {
+      "salida": 14975,
+      "entrada": 1169,
+      "ajuste": 51
+    },
+    "bodegas": {
+      "BOD-03": 5489,
+      "BOD-02": 5426,
+      "BOD-01": 5280
+    },
+    "responsables": {
+      "OP-03": 2740,
+      "OP-01": 2723,
+      "OP-06": 2690,
+      "OP-05": 2669,
+      "OP-04": 2655,
+      "OP-02": 2652,
+      "AUDIT": 51,
+      "OP-99": 15
+    },
+    "date_range": {
+      "min": "2024-07-01",
+      "max": "2026-05-13"
+    },
+    "quantity_extreme_outliers_count": 601,
+    "quantity_max": 2506.0,
+    "quantity_min": -206.5
+  },
+  "ordenes_compra": {
+    "total_rows": 1471,
+    "nulls": {
+      "orden_compra": 0,
+      "fecha_pedido": 0,
+      "sku": 0,
+      "cantidad": 0,
+      "proveedor": 0,
+      "fecha_promesa": 0,
+      "fecha_recepcion": 74,
+      "costo_unitario": 0,
+      "fecha_pedido_dt": 0,
+      "fecha_promesa_dt": 0,
+      "fecha_recepcion_dt": 74,
+      "lead_time_real": 74,
+      "lead_time_prometido": 0,
+      "retraso_entrega": 74
+    },
+    "duplicates": 0,
+    "orden_compra_duplicates": 0,
+    "negative_or_zero_quantity": [],
+    "negative_or_zero_cost": [],
+    "recepcion_before_pedido": [],
+    "promesa_before_pedido": [],
+    "unreceived_orders": 74,
+    "providers": {
+      "PROV-26": 95,
+      "PROV-03": 88,
+      "PROV-07": 76,
+      "PROV-34": 68,
+      "PROV-02": 66,
+      "PROV-31": 61,
+      "PROV-15": 57,
+      "PROV-27": 57,
+      "PROV-32": 54,
+      "PROV-24": 53,
+      "PROV-09": 53,
+      "PROV-06": 52,
+      "PROV-17": 51,
+      "PROV-01": 48,
+      "PROV-29": 41,
+      "PROV-11": 40,
+      "PROV-20": 39,
+      "PROV-10": 39,
+      "PROV-04": 35,
+      "PROV-30": 34,
+      "PROV-08": 33,
+      "PROV-28": 31,
+      "PROV-14": 31,
+      "PROV-16": 30,
+      "PROV-23": 30,
+      "PROV-25": 30,
+      "PROV-18": 29,
+      "PROV-35": 27,
+      "PROV-21": 24,
+      "PROV-33": 20,
+      "PROV-12": 18,
+      "PROV-19": 17,
+      "PROV-22": 16,
+      "PROV-13": 15,
+      "PROV-05": 13
+    }
+  },
+  "bom": {
+    "total_rows": 131,
+    "nulls": {
+      "producto": 0,
+      "nombre_producto": 0,
+      "sku_material": 0,
+      "cantidad_por_unidad": 0,
+      "unidad": 0
+    },
+    "duplicates": 0,
+    "empty_id_bom": 0,
+    "negative_or_zero_qty": [],
+    "units": {
+      "kg": 37,
+      "par": 27,
+      "unidad": 27,
+      "m2": 18,
+      "m": 12,
+      "lámina": 10
+    },
+    "products_count": 18
+  },
+  "plan_produccion": {
+    "total_rows": 378,
+    "nulls": {
+      "periodo": 0,
+      "producto": 0,
+      "nombre_producto": 0,
+      "cantidad_planeada": 0,
+      "cantidad_real": 0
+    },
+    "duplicates": 0,
+    "negative_planned": [],
+    "negative_real": [],
+    "zero_planned": 0,
+    "zero_real": 0,
+    "periods": {
+      "2024-07-01": 18,
+      "2024-08-01": 18,
+      "2024-09-01": 18,
+      "2024-10-01": 18,
+      "2024-11-01": 18,
+      "2024-12-01": 18,
+      "2025-01-01": 18,
+      "2025-02-01": 18,
+      "2025-03-01": 18,
+      "2025-04-01": 18,
+      "2025-05-01": 18,
+      "2025-06-01": 18,
+      "2025-07-01": 18,
+      "2025-08-01": 18,
+      "2025-09-01": 18,
+      "2025-10-01": 18,
+      "2025-11-01": 18,
+      "2025-12-01": 18,
+      "2026-01-01": 18,
+      "2026-02-01": 18,
+      "2026-03-01": 18
+    },
+    "products_count": 18
+  },
+  "inventario_inicial": {
+    "total_rows": 420,
+    "nulls": {
+      "sku": 0,
+      "stock_inicial": 0,
+      "fecha": 0
+    },
+    "duplicates": 0,
+    "sku_duplicates": 0,
+    "negative_stock": [],
+    "zero_stock": 0,
+    "dates": {
+      "2024-07-01": 420
+    }
+  },
+  "conteo_fisico": {
+    "total_rows": 420,
+    "nulls": {
+      "sku": 0,
+      "stock_fisico_contado": 0,
+      "fecha_conteo": 0
+    },
+    "duplicates": 0,
+    "sku_duplicates": 0,
+    "negative_stock": [
+      {
+        "sku": "MP-0001",
+        "stock_fisico_contado": -7783
+      },
+      {
+        "sku": "MP-0008",
+        "stock_fisico_contado": -10995
+      },
+      {
+        "sku": "MP-0013",
+        "stock_fisico_contado": -660
+      },
+      {
+        "sku": "MP-0016",
+        "stock_fisico_contado": -6382
+      },
+      {
+        "sku": "MP-0019",
+        "stock_fisico_contado": -7415
+      },
+      {
+        "sku": "MP-0020",
+        "stock_fisico_contado": -5310
+      },
+      {
+        "sku": "MP-0036",
+        "stock_fisico_contado": -898
+      },
+      {
+        "sku": "MP-0037",
+        "stock_fisico_contado": -2094
+      },
+      {
+        "sku": "MP-0043",
+        "stock_fisico_contado": -4391
+      },
+      {
+        "sku": "MP-0045",
+        "stock_fisico_contado": -996
+      },
+      {
+        "sku": "MP-0047",
+        "stock_fisico_contado": -3761
+      },
+      {
+        "sku": "MP-0051",
+        "stock_fisico_contado": -15501
+      },
+      {
+        "sku": "MP-0059",
+        "stock_fisico_contado": -3855
+      },
+      {
+        "sku": "MP-0060",
+        "stock_fisico_contado": -6160
+      },
+      {
+        "sku": "MP-0071",
+        "stock_fisico_contado": -5566
+      },
+      {
+        "sku": "MP-0073",
+        "stock_fisico_contado": -9913
+      },
+      {
+        "sku": "MP-0074",
+        "stock_fisico_contado": -4438
+      },
+      {
+        "sku": "MP-0076",
+        "stock_fisico_contado": -10362
+      },
+      {
+        "sku": "MP-0077",
+        "stock_fisico_contado": -9710
+      },
+      {
+        "sku": "MP-0078",
+        "stock_fisico_contado": -9304
+      },
+      {
+        "sku": "MP-0080",
+        "stock_fisico_contado": -4184
+      },
+      {
+        "sku": "MP-0085",
+        "stock_fisico_contado": -9043
+      },
+      {
+        "sku": "MP-0088",
+        "stock_fisico_contado": -7059
+      },
+      {
+        "sku": "MP-0094",
+        "stock_fisico_contado": -5149
+      },
+      {
+        "sku": "MP-0101",
+        "stock_fisico_contado": -8182
+      },
+      {
+        "sku": "MP-0102",
+        "stock_fisico_contado": -10231
+      },
+      {
+        "sku": "MP-0106",
+        "stock_fisico_contado": -2552
+      },
+      {
+        "sku": "MP-0108",
+        "stock_fisico_contado": -8600
+      },
+      {
+        "sku": "MP-0111",
+        "stock_fisico_contado": -9296
+      },
+      {
+        "sku": "MP-0114",
+        "stock_fisico_contado": -1473
+      },
+      {
+        "sku": "MP-0116",
+        "stock_fisico_contado": -3804
+      },
+      {
+        "sku": "MP-0117",
+        "stock_fisico_contado": -7175
+      },
+      {
+        "sku": "MP-0118",
+        "stock_fisico_contado": -6666
+      },
+      {
+        "sku": "MP-0120",
+        "stock_fisico_contado": -7269
+      },
+      {
+        "sku": "MP-0122",
+        "stock_fisico_contado": -6542
+      },
+      {
+        "sku": "MP-0128",
+        "stock_fisico_contado": -13922
+      },
+      {
+        "sku": "MP-0129",
+        "stock_fisico_contado": -6862
+      },
+      {
+        "sku": "MP-0131",
+        "stock_fisico_contado": -760
+      },
+      {
+        "sku": "MP-0132",
+        "stock_fisico_contado": -10572
+      },
+      {
+        "sku": "MP-0133",
+        "stock_fisico_contado": -9619
+      },
+      {
+        "sku": "MP-0136",
+        "stock_fisico_contado": -5854
+      },
+      {
+        "sku": "MP-0137",
+        "stock_fisico_contado": -4370
+      },
+      {
+        "sku": "MP-0139",
+        "stock_fisico_contado": -9616
+      },
+      {
+        "sku": "MP-0142",
+        "stock_fisico_contado": -7009
+      },
+      {
+        "sku": "MP-0143",
+        "stock_fisico_contado": -9964
+      },
+      {
+        "sku": "MP-0149",
+        "stock_fisico_contado": -14574
+      },
+      {
+        "sku": "MP-0150",
+        "stock_fisico_contado": -8018
+      },
+      {
+        "sku": "MP-0153",
+        "stock_fisico_contado": -5934
+      },
+      {
+        "sku": "MP-0157",
+        "stock_fisico_contado": -17264
+      },
+      {
+        "sku": "MP-0161",
+        "stock_fisico_contado": -3755
+      },
+      {
+        "sku": "MP-0162",
+        "stock_fisico_contado": -923
+      },
+      {
+        "sku": "MP-0178",
+        "stock_fisico_contado": -2689
+      },
+      {
+        "sku": "MP-0181",
+        "stock_fisico_contado": -8611
+      },
+      {
+        "sku": "MP-0182",
+        "stock_fisico_contado": -14917
+      },
+      {
+        "sku": "MP-0189",
+        "stock_fisico_contado": -7197
+      },
+      {
+        "sku": "MP-0193",
+        "stock_fisico_contado": -6272
+      },
+      {
+        "sku": "MP-0197",
+        "stock_fisico_contado": -9525
+      },
+      {
+        "sku": "MP-0199",
+        "stock_fisico_contado": -8800
+      },
+      {
+        "sku": "MP-0202",
+        "stock_fisico_contado": -13234
+      },
+      {
+        "sku": "MP-0211",
+        "stock_fisico_contado": -4509
+      },
+      {
+        "sku": "MP-0216",
+        "stock_fisico_contado": -8747
+      },
+      {
+        "sku": "MP-0217",
+        "stock_fisico_contado": -6174
+      },
+      {
+        "sku": "MP-0227",
+        "stock_fisico_contado": -4225
+      },
+      {
+        "sku": "MP-0229",
+        "stock_fisico_contado": -13389
+      },
+      {
+        "sku": "MP-0232",
+        "stock_fisico_contado": -7798
+      },
+      {
+        "sku": "MP-0238",
+        "stock_fisico_contado": -6803
+      },
+      {
+        "sku": "MP-0239",
+        "stock_fisico_contado": -3452
+      },
+      {
+        "sku": "MP-0244",
+        "stock_fisico_contado": -5491
+      },
+      {
+        "sku": "MP-0254",
+        "stock_fisico_contado": -10607
+      },
+      {
+        "sku": "MP-0268",
+        "stock_fisico_contado": -2931
+      },
+      {
+        "sku": "MP-0272",
+        "stock_fisico_contado": -586
+      },
+      {
+        "sku": "MP-0273",
+        "stock_fisico_contado": -11802
+      },
+      {
+        "sku": "MP-0293",
+        "stock_fisico_contado": -7520
+      },
+      {
+        "sku": "MP-0299",
+        "stock_fisico_contado": -8751
+      },
+      {
+        "sku": "MP-0309",
+        "stock_fisico_contado": -7852
+      },
+      {
+        "sku": "MP-0321",
+        "stock_fisico_contado": -4390
+      },
+      {
+        "sku": "MP-0325",
+        "stock_fisico_contado": -7124
+      },
+      {
+        "sku": "MP-0330",
+        "stock_fisico_contado": -2687
+      },
+      {
+        "sku": "MP-0339",
+        "stock_fisico_contado": -1574
+      },
+      {
+        "sku": "MP-0340",
+        "stock_fisico_contado": -4461
+      },
+      {
+        "sku": "MP-0343",
+        "stock_fisico_contado": -10563
+      },
+      {
+        "sku": "MP-0344",
+        "stock_fisico_contado": -10495
+      },
+      {
+        "sku": "MP-0356",
+        "stock_fisico_contado": -6159
+      },
+      {
+        "sku": "MP-0357",
+        "stock_fisico_contado": -8503
+      },
+      {
+        "sku": "MP-0369",
+        "stock_fisico_contado": -10970
+      },
+      {
+        "sku": "MP-0370",
+        "stock_fisico_contado": -1969
+      },
+      {
+        "sku": "MP-0373",
+        "stock_fisico_contado": -18018
+      },
+      {
+        "sku": "MP-0385",
+        "stock_fisico_contado": -2343
+      },
+      {
+        "sku": "MP-0386",
+        "stock_fisico_contado": -8027
+      },
+      {
+        "sku": "MP-0388",
+        "stock_fisico_contado": -7582
+      },
+      {
+        "sku": "MP-0390",
+        "stock_fisico_contado": -3073
+      },
+      {
+        "sku": "MP-0393",
+        "stock_fisico_contado": -2236
+      },
+      {
+        "sku": "MP-0411",
+        "stock_fisico_contado": -7428
+      },
+      {
+        "sku": "MP-0418",
+        "stock_fisico_contado": -7354
+      }
+    ],
+    "negative_stock_count": 94,
+    "zero_stock": 0,
+    "dates": {
+      "2026-03-31": 420
+    }
+  },
+  "inventario_bodega_jefe": {
+    "total_rows": 120,
+    "nulls": {
+      "material": 0,
+      "codigo": 0,
+      "conteo_jefe": 0,
+      "observacion": 23
+    },
+    "duplicates": 0,
+    "codigo_duplicates": 0,
+    "negative_stock": [
+      {
+        "material": "Tornillería",
+        "codigo": "MP-0157",
+        "conteo_jefe": -17263,
+        "observacion": "sobra"
+      },
+      {
+        "material": "Lámina",
+        "codigo": "MP-0020",
+        "conteo_jefe": -4890,
+        "observacion": "pedir ya"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0153",
+        "conteo_jefe": -5678,
+        "observacion": "faltante??"
+      },
+      {
+        "material": "Tornillería",
+        "codigo": "MP-0076",
+        "conteo_jefe": -11640,
+        "observacion": "revisar"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0162",
+        "conteo_jefe": -790,
+        "observacion": "faltante??"
+      },
+      {
+        "material": "Vidrio",
+        "codigo": "MP-0043",
+        "conteo_jefe": -4263,
+        "observacion": "sobra"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0071",
+        "conteo_jefe": -6164,
+        "observacion": "faltante??"
+      },
+      {
+        "material": "Empaque",
+        "codigo": "MP-0299",
+        "conteo_jefe": -8785,
+        "observacion": "pedir ya"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0045",
+        "conteo_jefe": -1058,
+        "observacion": "revisar"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0117",
+        "conteo_jefe": -6307,
+        "observacion": "ok"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0116",
+        "conteo_jefe": -3381,
+        "observacion": "pedir ya"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0051",
+        "conteo_jefe": -15629,
+        "observacion": "revisar"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0273",
+        "conteo_jefe": -10650,
+        "observacion": "pedir ya"
+      },
+      {
+        "material": "Vidrio",
+        "codigo": "MP-0137",
+        "conteo_jefe": -4573,
+        "observacion": "revisar"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0008",
+        "conteo_jefe": -11281,
+        "observacion": "sobra"
+      },
+      {
+        "material": "Tornillería",
+        "codigo": "MP-0197",
+        "conteo_jefe": -9392,
+        "observacion": "sobra"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0193",
+        "conteo_jefe": -5762,
+        "observacion": "revisar"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0078",
+        "conteo_jefe": -9285,
+        "observacion": "pedir ya"
+      },
+      {
+        "material": "Empaque",
+        "codigo": "MP-0229",
+        "conteo_jefe": -12572,
+        "observacion": "faltante??"
+      },
+      {
+        "material": "Tornillería",
+        "codigo": "MP-0131",
+        "conteo_jefe": -801,
+        "observacion": "pedir ya"
+      },
+      {
+        "material": "Empaque",
+        "codigo": "MP-0073",
+        "conteo_jefe": -10059,
+        "observacion": "ok"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0369",
+        "conteo_jefe": -12324,
+        "observacion": "ok"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0037",
+        "conteo_jefe": -1838,
+        "observacion": NaN
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0143",
+        "conteo_jefe": -9041,
+        "observacion": NaN
+      },
+      {
+        "material": "Tubería",
+        "codigo": "MP-0325",
+        "conteo_jefe": -6501,
+        "observacion": "revisar"
+      },
+      {
+        "material": "Pintura",
+        "codigo": "MP-0202",
+        "conteo_jefe": -11819,
+        "observacion": "ok"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0357",
+        "conteo_jefe": -9001,
+        "observacion": "revisar"
+      },
+      {
+        "material": "Tornillería",
+        "codigo": "MP-0321",
+        "conteo_jefe": -4908,
+        "observacion": "faltante??"
+      },
+      {
+        "material": "Correderas",
+        "codigo": "MP-0129",
+        "conteo_jefe": -7344,
+        "observacion": "faltante??"
+      },
+      {
+        "material": "Lámina",
+        "codigo": "MP-0254",
+        "conteo_jefe": -11613,
+        "observacion": "sobra"
+      },
+      {
+        "material": "Lámina",
+        "codigo": "MP-0132",
+        "conteo_jefe": -9189,
+        "observacion": "sobra"
+      },
+      {
+        "material": "Vidrio",
+        "codigo": "MP-0268",
+        "conteo_jefe": -3148,
+        "observacion": "sobra"
+      }
+    ],
+    "negative_stock_count": 32,
+    "materials_naming": {
+      "Pintura": 20,
+      "Correderas": 19,
+      "Tornillería": 17,
+      "Adhesivos": 17,
+      "Vidrio": 13,
+      "Tubería": 12,
+      "Empaque": 12,
+      "Lámina": 10
+    },
+    "observations": {
+      "revisar": 25,
+      "sobra": 20,
+      "ok": 20,
+      "faltante??": 19,
+      "pedir ya": 13
+    }
+  }
+}

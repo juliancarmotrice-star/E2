@@ -8,7 +8,7 @@
       "unidad": 0,
       "costo_unitario": 0,
       "proveedor": 0,
-      "lead_time_declarado_dias": 54,
+      "lead_time_declarado_dias": 0,
       "stock_min": 0,
       "stock_max": 0
     },
@@ -21,36 +21,36 @@
     "stock_min_igual_stock_max": 0,
     "lead_time_declarado_invalido": 0,
     "lead_time_declarado_invalido_detalle": [],
-    "outliers_costo_iqr_total": 41,
-    "outliers_costo_iqr_detalle": [
+    "outliers_costo_total": 41,
+    "outliers_costo_detalle": [
       {
         "sku": "MP-0012",
         "descripcion": "Tubería calibre/ref 22",
-        "categoria": "TUBERIA",
+        "categoria": "Tubería",
         "costo_unitario": 260365
       },
       {
         "sku": "MP-0030",
         "descripcion": "Correderas calibre/ref 5",
-        "categoria": "correderas",
+        "categoria": "Correderas",
         "costo_unitario": 284982
       },
       {
         "sku": "MP-0027",
         "descripcion": "Pintura calibre/ref 17",
-        "categoria": "PINTURA",
+        "categoria": "Pintura",
         "costo_unitario": 179174
       },
       {
         "sku": "MP-0024",
         "descripcion": "Vidrio calibre/ref 33",
-        "categoria": "vidrio",
+        "categoria": "Vidrio",
         "costo_unitario": 223650
       },
       {
         "sku": "MP-0010",
         "descripcion": "Pintura calibre/ref 33",
-        "categoria": "PINTURA",
+        "categoria": "Pintura",
         "costo_unitario": 244981
       },
       {
@@ -62,13 +62,13 @@
       {
         "sku": "MP-0008",
         "descripcion": "Correderas calibre/ref 39",
-        "categoria": "correderas",
+        "categoria": "Correderas",
         "costo_unitario": 310890
       },
       {
         "sku": "MP-0020",
         "descripcion": "Lámina calibre/ref 1",
-        "categoria": "lamina",
+        "categoria": "Lámina",
         "costo_unitario": 248445
       },
       {
@@ -80,46 +80,205 @@
       {
         "sku": "MP-0001",
         "descripcion": "Adhesivos calibre/ref 25",
-        "categoria": "PEGANTE",
+        "categoria": "Adhesivos",
         "costo_unitario": 299035
+      },
+      {
+        "sku": "MP-0028",
+        "descripcion": "Tubería calibre/ref 19",
+        "categoria": "Tubería",
+        "costo_unitario": 367530
+      },
+      {
+        "sku": "MP-0007",
+        "descripcion": "Adhesivos calibre/ref 33",
+        "categoria": "Adhesivos",
+        "costo_unitario": 313781
+      },
+      {
+        "sku": "MP-0006",
+        "descripcion": "Lámina calibre/ref 25",
+        "categoria": "Lámina",
+        "costo_unitario": 142141
+      },
+      {
+        "sku": "MP-0040",
+        "descripcion": "Correderas calibre/ref 2",
+        "categoria": "Correderas",
+        "costo_unitario": 143609
+      },
+      {
+        "sku": "MP-0039",
+        "descripcion": "Tubería calibre/ref 24",
+        "categoria": "Tubería",
+        "costo_unitario": 395252
+      },
+      {
+        "sku": "MP-0022",
+        "descripcion": "Correderas calibre/ref 1",
+        "categoria": "Correderas",
+        "costo_unitario": 173118
+      },
+      {
+        "sku": "MP-0025",
+        "descripcion": "Vidrio calibre/ref 34",
+        "categoria": "Vidrio",
+        "costo_unitario": 216530
+      },
+      {
+        "sku": "MP-90018",
+        "descripcion": "Adhesivos (dup)",
+        "categoria": "Adhesivos",
+        "costo_unitario": 104040
+      },
+      {
+        "sku": "MP-0014",
+        "descripcion": "Vidrio calibre/ref 37",
+        "categoria": "Vidrio",
+        "costo_unitario": 234603
+      },
+      {
+        "sku": "MP-0037",
+        "descripcion": "Pintura calibre/ref 28",
+        "categoria": "Pintura",
+        "costo_unitario": 101283
+      },
+      {
+        "sku": "MP-90038",
+        "descripcion": "Adhesivos (dup)",
+        "categoria": "Adhesivos",
+        "costo_unitario": 339193
+      },
+      {
+        "sku": "MP-0035",
+        "descripcion": "Empaque calibre/ref 39",
+        "categoria": "Empaque",
+        "costo_unitario": 391712
+      },
+      {
+        "sku": "MP-0031",
+        "descripcion": "Pintura calibre/ref 18",
+        "categoria": "Pintura",
+        "costo_unitario": 324073
+      },
+      {
+        "sku": "MP-0018",
+        "descripcion": "Adhesivos calibre/ref 8",
+        "categoria": "Adhesivos",
+        "costo_unitario": 91904
+      },
+      {
+        "sku": "MP-0011",
+        "descripcion": "Adhesivos calibre/ref 36",
+        "categoria": "Adhesivos",
+        "costo_unitario": 356026
+      },
+      {
+        "sku": "MP-0015",
+        "descripcion": "Empaque calibre/ref 15",
+        "categoria": "Empaque",
+        "costo_unitario": 151416
+      },
+      {
+        "sku": "MP-0026",
+        "descripcion": "Empaque calibre/ref 21",
+        "categoria": "Empaque",
+        "costo_unitario": 393154
+      },
+      {
+        "sku": "MP-0023",
+        "descripcion": "Adhesivos calibre/ref 3",
+        "categoria": "Adhesivos",
+        "costo_unitario": 120113
+      },
+      {
+        "sku": "MP-0038",
+        "descripcion": "Adhesivos calibre/ref 34",
+        "categoria": "Adhesivos",
+        "costo_unitario": 307900
+      },
+      {
+        "sku": "MP-0004",
+        "descripcion": "Vidrio calibre/ref 33",
+        "categoria": "Vidrio",
+        "costo_unitario": 385136
+      },
+      {
+        "sku": "MP-0005",
+        "descripcion": "Adhesivos calibre/ref 2",
+        "categoria": "Adhesivos",
+        "costo_unitario": 141286
+      },
+      {
+        "sku": "MP-0033",
+        "descripcion": "Pintura calibre/ref 16",
+        "categoria": "Pintura",
+        "costo_unitario": 157770
+      },
+      {
+        "sku": "MP-0017",
+        "descripcion": "Correderas calibre/ref 12",
+        "categoria": "Correderas",
+        "costo_unitario": 165823
+      },
+      {
+        "sku": "MP-0036",
+        "descripcion": "Tubería calibre/ref 20",
+        "categoria": "Tubería",
+        "costo_unitario": 339654
+      },
+      {
+        "sku": "MP-0003",
+        "descripcion": "Tornillería calibre/ref 31",
+        "categoria": "Tornillería",
+        "costo_unitario": 178655
+      },
+      {
+        "sku": "MP-0032",
+        "descripcion": "Pintura calibre/ref 22",
+        "categoria": "Pintura",
+        "costo_unitario": 196328
+      },
+      {
+        "sku": "MP-0029",
+        "descripcion": "Empaque calibre/ref 36",
+        "categoria": "Empaque",
+        "costo_unitario": 310652
+      },
+      {
+        "sku": "MP-0013",
+        "descripcion": "Adhesivos calibre/ref 1",
+        "categoria": "Adhesivos",
+        "costo_unitario": 361794
+      },
+      {
+        "sku": "MP-0002",
+        "descripcion": "Adhesivos calibre/ref 23",
+        "categoria": "Adhesivos",
+        "costo_unitario": 98702
+      },
+      {
+        "sku": "MP-0009",
+        "descripcion": "Empaque calibre/ref 27",
+        "categoria": "Empaque",
+        "costo_unitario": 256746
+      },
+      {
+        "sku": "MP-0016",
+        "descripcion": "Adhesivos calibre/ref 24",
+        "categoria": "Adhesivos",
+        "costo_unitario": 142723
       }
     ],
-    "estadisticas_costo": {
-      "min": 332.0,
-      "max": 395252.0,
-      "media": 40346.62272727273,
-      "mediana": 12571.0
-    },
-    "estadisticas_lead_time": {
-      "min": 5,
-      "max": 23,
-      "media": 10.746113989637307
-    },
     "categorias_distribucion": {
-      "Vidrio": 27,
-      "tornilleria": 26,
-      "Tubería": 25,
-      "Adhesivos": 24,
-      "PEGANTE": 24,
-      "CORREDERA": 23,
-      "Correderas": 22,
-      "TUBERIA": 22,
-      "vidrio": 22,
-      "correderas": 20,
-      "tuberia": 20,
-      "PINTURA": 19,
-      "pintura electrostatica": 18,
-      "Pintura": 18,
-      "empaque": 16,
-      "adhesivo": 16,
-      "Empaque": 15,
-      "Torn.": 15,
-      "Tornillería": 14,
-      "Lamina de acero": 14,
-      "EMPAQUES": 14,
-      "lamina": 11,
-      "LAMINA AC": 10,
-      "Lámina": 5
+      "Tubería": 67,
+      "Correderas": 65,
+      "Adhesivos": 64,
+      "Pintura": 55,
+      "Tornillería": 55,
+      "Vidrio": 49,
+      "Empaque": 45,
+      "Lámina": 40
     },
     "unidades_distribucion": {
       "kg": 119,
@@ -129,7 +288,43 @@
       "m2": 49,
       "lámina": 40
     },
-    "proveedores_total": 35
+    "proveedores_distribucion": {
+      "PROV-07": 21,
+      "PROV-11": 19,
+      "PROV-09": 19,
+      "PROV-02": 19,
+      "PROV-26": 18,
+      "PROV-06": 17,
+      "PROV-31": 17,
+      "PROV-30": 15,
+      "PROV-23": 15,
+      "PROV-03": 15,
+      "PROV-34": 15,
+      "PROV-27": 14,
+      "PROV-13": 13,
+      "PROV-32": 13,
+      "PROV-15": 13,
+      "PROV-25": 12,
+      "PROV-08": 12,
+      "PROV-29": 12,
+      "PROV-05": 12,
+      "PROV-35": 12,
+      "PROV-14": 12,
+      "PROV-10": 11,
+      "PROV-21": 11,
+      "PROV-17": 11,
+      "PROV-20": 11,
+      "PROV-24": 10,
+      "PROV-01": 10,
+      "PROV-12": 9,
+      "PROV-19": 9,
+      "PROV-16": 8,
+      "PROV-18": 8,
+      "PROV-04": 7,
+      "PROV-22": 7,
+      "PROV-28": 7,
+      "PROV-33": 6
+    }
   },
   "movimientos_inventario": {
     "total_registros": 16195,
@@ -4361,7 +4556,7 @@
     },
     "rango_fechas": {
       "min": "2024-07-01",
-      "max": "2026-13-05"
+      "max": "2026-05-13"
     }
   },
   "ordenes_compra": {
@@ -4386,15 +4581,15 @@
     "ordenes_pendientes_sin_recepcion": 74,
     "estadisticas_lead_time_real": {
       "min": 4.0,
-      "max": 4055.0,
-      "media": 79.98639942734431,
+      "max": 76.0,
+      "media": 22.21331424481031,
       "mediana": 21.0
     },
     "estadisticas_retraso_entrega": {
       "entregas_con_retraso_total": 1312,
       "entregas_a_tiempo_o_antes": 85,
-      "retraso_max_dias": 4038.0,
-      "retraso_promedio_dias": 67.98711524695777
+      "retraso_max_dias": 53.0,
+      "retraso_promedio_dias": 10.214030064423765
     },
     "discrepancias_costo_oc_vs_maestro": {
       "compras_con_precio_diferente_al_maestro": 0,
@@ -4405,7 +4600,6 @@
   "bom": {
     "total_registros": 131,
     "nulos": {
-      "ID_bom": 131,
       "producto": 0,
       "nombre_producto": 0,
       "sku_material": 0,
@@ -4415,17 +4609,12 @@
     "duplicados_completos": 0,
     "cantidades_menor_igual_cero": 0,
     "unidades_distribucion_bom": {
-      "kg": 32,
-      "par": 26,
-      "unidad": 24,
+      "kg": 37,
+      "par": 27,
+      "unidad": 27,
       "m2": 18,
-      "m": 11,
-      "lámina": 7,
-      "KG": 5,
-      "LÁMINA": 3,
-      "UNIDAD": 3,
-      "M": 1,
-      "PAR": 1
+      "m": 12,
+      "lámina": 10
     },
     "discrepancias_unidades_bom_vs_maestro": 0,
     "discrepancias_unidades_detalle": [],
