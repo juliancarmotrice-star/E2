@@ -1,0 +1,7 @@
+# CODEOWNERS del repositorio E2
+# Cualquier cambio a main o archivos críticos debe ser aprobado por el propietario
+* @juliancarmotrice-star
+/python/ @juliancarmotrice-star
+/sql/ @juliancarmotrice-star
+/datos_limpios/ @juliancarmotrice-star
+/informes/ @juliancarmotrice-star
