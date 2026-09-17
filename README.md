@@ -16,6 +16,7 @@
   - [3.2 Objetivos Específicos (Fase E1 - Diagnóstico y Línea Base)](#32-objetivos-específicos-fase-e1---diagnóstico-y-línea-base)
 - [4. Estructura Organizada del Proyecto](#4-estructura-organizada-del-proyecto)
 - [5. Arquitectura y Modelo Relacional en Supabase](#5-arquitectura-y-modelo-relacional-en-supabase)
+  - [Diagrama interactivo](#diagrama-interactivo)
 - [6. Informes y Entregables de Consultoría (Fase E1)](#6-informes-y-entregables-de-consultoría-fase-e1)
 - [7. Guías de Sustentación y Presentaciones](#7-guías-de-sustentación-y-presentaciones)
 - [8. Instrucciones de Uso y Ejecución de Pipelines](#8-instrucciones-de-uso-y-ejecución-de-pipelines)
@@ -142,6 +143,10 @@ PA-E2/
 │   ├── GUIA_PREPARACION_SUSTENTACION_DIAPOSITIVAS_E1.md  # Libreto diapositiva por diapositiva
 │   └── GUIA_PREPARACION_EXPOSICION_E1.md                # Estrategia de defensa oral
 │
+├── 📁 diagrams/                 # Mapa de arquitectura interactivo (Archify)
+│   ├── arquitectura-reposicion.html
+│   └── arquitectura-reposicion.architecture.json
+│
 ├── 📁 resultados_auditoria/     # Salidas estructuradas en JSON de auditorías
 │   ├── audit_findings.json      # Reporte detallado de hallazgos por tabla
 │   ├── audit_summary.json       # Resumen ejecutivo de calidad de datos
@@ -155,6 +160,10 @@ PA-E2/
 ---
 
 ## 5. Arquitectura y Modelo Relacional en Supabase
+
+### Diagrama interactivo
+
+El mapa de la solución (ETL → Supabase → Lector → Motor ROP/EOQ → Vigilante IA → tablero y OC) está en [`diagrams/arquitectura-reposicion.html`](diagrams/arquitectura-reposicion.html). Ábrelo en el navegador para cambiar tema, seguir el camino de reorden y exportar PNG/SVG. El detalle conceptual sigue en [`informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md`](informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md).
 
 El modelo de datos relacional se estructuró en **Tercera Forma Normal (3FN)** con integridad referencial completa en PostgreSQL (Supabase):
 

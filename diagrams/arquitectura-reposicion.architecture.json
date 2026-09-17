@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura de reposición — E2 SAS",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "camino-principal",
+        "label": "Camino de reorden",
+        "focus": ["fuentes", "etl", "supabase", "lector", "motor", "vigilante", "notificador", "compras"],
+        "note": "Del Kardex al cálculo determinístico, al Vigilante y a la orden de compra."
+      },
+      {
+        "id": "nucleo-calculo",
+        "label": "Fórmulas, no IA",
+        "focus": ["lector", "motor", "supabase"],
+        "note": "ROP, SS, EOQ y ABC-XYZ se calculan con fórmulas; la IA no inventa números."
+      },
+      {
+        "id": "decision-humana",
+        "label": "Alerta y aprobación",
+        "focus": ["vigilante", "tablero", "notificador", "compras", "supabase"],
+        "note": "El Vigilante prioriza en pesos COP; Compras aprueba y cierra el ciclo en la BD."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "fuentes",
+      "type": "external",
+      "label": "Fuentes E2 SAS",
+      "sublabel": "Kardex / CSV",
+      "tag": "datos crudos",
+      "pos": [36, 340],
+      "size": [132, 68]
+    },
+    {
+      "id": "etl",
+      "type": "backend",
+      "label": "Pipeline ETL",
+      "sublabel": "Python 3FN",
+      "pos": [200, 340],
+      "size": [132, 68]
+    },
+    {
+      "id": "supabase",
+      "type": "database",
+      "label": "Supabase",
+      "sublabel": "PostgreSQL 3FN",
+      "brand": "supabase",
+      "tag": "fuente de verdad",
+      "pos": [364, 340],
+      "size": [132, 68]
+    },
+    {
+      "id": "lector",
+      "type": "backend",
+      "label": "Lector",
+      "sublabel": "stock, OC, consumo",
+      "pos": [528, 340],
+      "size": [132, 68]
+    },
+    {
+      "id": "motor",
+      "type": "backend",
+      "label": "Motor ROP / EOQ",
+      "sublabel": "SS · ABC-XYZ",
+      "tag": "fórmulas",
+      "pos": [692, 340],
+      "size": [140, 68]
+    },
+    {
+      "id": "vigilante",
+      "type": "backend",
+      "label": "Vigilante IA",
+      "sublabel": "orquesta",
+      "tag": "no calcula ROP",
+      "pos": [864, 340],
+      "size": [132, 68]
+    },
+    {
+      "id": "tablero",
+      "type": "frontend",
+      "label": "Tablero gerencial",
+      "sublabel": "semáforo SKU",
+      "pos": [864, 140],
+      "size": [132, 68]
+    },
+    {
+      "id": "notificador",
+      "type": "external",
+      "label": "Notificador",
+      "sublabel": "WhatsApp",
+      "pos": [1028, 340],
+      "size": [140, 68]
+    },
+    {
+      "id": "compras",
+      "type": "external",
+      "label": "Compras y bodega",
+      "sublabel": "cierre humano",
+      "pos": [1028, 540],
+      "size": [140, 68]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Núcleo analítico",
+      "wraps": ["etl", "supabase", "lector", "motor", "vigilante"]
+    },
+    {
+      "kind": "region",
+      "label": "Entrega y acción",
+      "wraps": ["tablero", "notificador", "compras"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "fuentes-etl",
+      "from": "fuentes",
+      "to": "etl",
+      "label": "Kardex",
+      "variant": "emphasis",
+      "labelDy": 64
+    },
+    {
+      "id": "etl-supabase",
+      "from": "etl",
+      "to": "supabase",
+      "label": "carga 3FN",
+      "labelDy": -30
+    },
+    {
+      "id": "supabase-lector",
+      "from": "supabase",
+      "to": "lector",
+      "label": "stock y tránsito",
+      "labelDy": -30
+    },
+    {
+      "id": "lector-motor",
+      "from": "lector",
+      "to": "motor",
+      "label": "d, L, σ",
+      "labelDy": -30
+    },
+    {
+      "id": "motor-vigilante",
+      "from": "motor",
+      "to": "vigilante",
+      "label": "ROP, SS, EOQ",
+      "labelDy": -30
+    },
+    {
+      "id": "vigilante-tablero",
+      "from": "vigilante",
+      "to": "tablero",
+      "label": "KPIs",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "vigilante-notificador",
+      "from": "vigilante",
+      "to": "notificador",
+      "label": "alerta",
+      "variant": "emphasis",
+      "labelDy": -30
+    },
+    {
+      "id": "notificador-compras",
+      "from": "notificador",
+      "to": "compras",
+      "label": "OC sugerida",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "compras-supabase",
+      "from": "compras",
+      "to": "supabase",
+      "label": "aprueba OC",
+      "variant": "dashed",
+      "fromSide": "left",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Determinístico",
+      "items": [
+        "ROP = d · L + SS y EOQ = √(2DS / H)",
+        "ABC-XYZ e IRA se calculan en Python / SQL, no en el LLM"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Vigilante IA",
+      "items": [
+        "Cruza ROP con retrasos de lámina y picos del plan",
+        "Prioriza por parada de línea ($450.000 COP/h) vs. plata muerta"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Cierre operacional",
+      "items": [
+        "La alerta llega con payload de OC; un humano aprueba",
+        "Supabase permanece como única fuente de verdad 3FN"
+      ]
+    }
+  ]
+}

@@ -21,6 +21,12 @@ Esta separación garantiza:
 
 ## 🗺️ 2. Diagrama de Arquitectura del Sistema
 
+Mapa interactivo (temas claro/oscuro, capítulos guiados, exportación PNG/SVG): abrir [`diagrams/arquitectura-reposicion.html`](../diagrams/arquitectura-reposicion.html) en el navegador. La interfaz fija del visor queda en inglés; el contenido del diagrama está en español.
+
+Fuente tipada: [`diagrams/arquitectura-reposicion.architecture.json`](../diagrams/arquitectura-reposicion.architecture.json).
+
+Vista estática equivalente para GitHub:
+
 ```mermaid
 flowchart TD
     subgraph S1["1. CAPA DE DATOS (Persistencia)"]
