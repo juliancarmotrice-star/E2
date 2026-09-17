@@ -16,6 +16,7 @@
   - [3.2 Objetivos Específicos (Fase E1 - Diagnóstico y Línea Base)](#32-objetivos-específicos-fase-e1---diagnóstico-y-línea-base)
 - [4. Estructura Organizada del Proyecto](#4-estructura-organizada-del-proyecto)
 - [5. Arquitectura y Modelo Relacional en Supabase](#5-arquitectura-y-modelo-relacional-en-supabase)
+  - [Diagrama interactivo](#diagrama-interactivo)
 - [6. Informes y Entregables de Consultoría (Fase E1)](#6-informes-y-entregables-de-consultoría-fase-e1)
 - [7. Guías de Sustentación y Presentaciones](#7-guías-de-sustentación-y-presentaciones)
 - [8. Instrucciones de Uso y Ejecución de Pipelines](#8-instrucciones-de-uso-y-ejecución-de-pipelines)
@@ -122,6 +123,7 @@ PA-E2/
 │   └── supabase_bom_pk.sql      # Llave primaria compuesta para BOM
 │
 ├── 📁 informes/                 # Documentación técnica, bitácoras e informes de consultoría
+│   ├── ARQUITECTURA_DEL_SISTEMA_REPOSICION.md # Arquitectura conceptual y técnica del sistema
 │   ├── INFORME_FINAL_DIAGNOSTICO_Y_LINEA_BASE_E1.md # Documento técnico maestro E1
 │   ├── INFORME_SUSTENTACION_JUNTA_DIRECTIVA_E1.md   # Informe ejecutivo para Junta Directiva
 │   ├── BITACORA_DE_LIMPIEZA.md                      # Bitácora metodológica de saneamiento
@@ -141,6 +143,10 @@ PA-E2/
 │   ├── GUIA_PREPARACION_SUSTENTACION_DIAPOSITIVAS_E1.md  # Libreto diapositiva por diapositiva
 │   └── GUIA_PREPARACION_EXPOSICION_E1.md                # Estrategia de defensa oral
 │
+├── 📁 diagrams/                 # Mapa de arquitectura interactivo (Archify)
+│   ├── arquitectura-reposicion.html
+│   └── arquitectura-reposicion.architecture.json
+│
 ├── 📁 resultados_auditoria/     # Salidas estructuradas en JSON de auditorías
 │   ├── audit_findings.json      # Reporte detallado de hallazgos por tabla
 │   ├── audit_summary.json       # Resumen ejecutivo de calidad de datos
@@ -154,6 +160,10 @@ PA-E2/
 ---
 
 ## 5. Arquitectura y Modelo Relacional en Supabase
+
+### Diagrama interactivo
+
+El mapa de la solución (ETL → Supabase → Lector → Motor ROP/EOQ → Vigilante IA → tablero y OC) está en [`diagrams/arquitectura-reposicion.html`](diagrams/arquitectura-reposicion.html). Ábrelo en el navegador para cambiar tema, seguir el camino de reorden y exportar PNG/SVG. El detalle conceptual sigue en [`informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md`](informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md).
 
 El modelo de datos relacional se estructuró en **Tercera Forma Normal (3FN)** con integridad referencial completa en PostgreSQL (Supabase):
 
@@ -217,11 +227,12 @@ erDiagram
 
 ## 6. Informes y Entregables de Consultoría (Fase E1)
 
-1. **[Informe Final de Diagnóstico y Línea Base (E1)](informes/INFORME_FINAL_DIAGNOSTICO_Y_LINEA_BASE_E1.md):** Documento técnico exhaustivo con diagnóstico AS-IS, peritaje de quejas y cuantificación de costos.
-2. **[Informe Ejecutivo para la Junta Directiva](informes/INFORME_SUSTENTACION_JUNTA_DIRECTIVA_E1.md):** Resumen de alto nivel orientado a la toma de decisiones estratégicas.
-3. **[Bitácora de Limpieza de Datos](informes/BITACORA_DE_LIMPIEZA.md):** Registro detallado de transformaciones, normalización 3FN y reglas de deducción.
-4. **[Línea Base y Cuantificación de Costos](informes/LINEA_BASE_Y_CUANTIFICACION_DE_COSTOS.md):** Modelo económico de los $219.8M COP anuales de ineficiencia.
-5. **[Diagnóstico de Base de Datos y Esquema Supabase](informes/DIAGNOSTICO_BASE_DE_DATOS_SUPABASE.md):** Verificación de llaves, tablas y restricciones relacionales.
+1. **[Arquitectura del Sistema de Reposición Inteligente](informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md):** Diseño conceptual y técnico de la solución (Lector Skill, Motor Determinístico ROP/SS/EOQ, Agente Vigilante IA, Notificador y Tablero).
+2. **[Informe Final de Diagnóstico y Línea Base (E1)](informes/INFORME_FINAL_DIAGNOSTICO_Y_LINEA_BASE_E1.md):** Documento técnico exhaustivo con diagnóstico AS-IS, peritaje de quejas y cuantificación de costos.
+3. **[Informe Ejecutivo para la Junta Directiva](informes/INFORME_SUSTENTACION_JUNTA_DIRECTIVA_E1.md):** Resumen de alto nivel orientado a la toma de decisiones estratégicas.
+4. **[Bitácora de Limpieza de Datos](informes/BITACORA_DE_LIMPIEZA.md):** Registro detallado de transformaciones, normalización 3FN y reglas de deducción.
+5. **[Línea Base y Cuantificación de Costos](informes/LINEA_BASE_Y_CUANTIFICACION_DE_COSTOS.md):** Modelo económico de los $219.8M COP anuales de ineficiencia.
+6. **[Diagnóstico de Base de Datos y Esquema Supabase](informes/DIAGNOSTICO_BASE_DE_DATOS_SUPABASE.md):** Verificación de llaves, tablas y restricciones relacionales.
 
 ---
 
