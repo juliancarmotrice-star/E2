@@ -1,0 +1,7 @@
+# GitHub Linguist Overrides
+# Indicar que diagramas, scripts de soporte y documentación no alteren el porcentaje de lenguajes del repositorio
+diagrams/** linguist-documentation
+diagrams/*.html linguist-documentation
+.agents/** linguist-vendored
+*.html linguist-documentation
+*.json linguist-documentation
