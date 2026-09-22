@@ -2,27 +2,39 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Arquitectura de reposición — E2 SAS",
+    "title": "Arquitectura de reposición basada en línea base — E2 SAS",
     "quality_profile": "showcase",
-    "animation": "trace",
+    "viewBox": [1390, 620],
     "views": [
       {
-        "id": "camino-principal",
-        "label": "Camino de reorden",
-        "focus": ["fuentes", "etl", "supabase", "lector", "motor", "vigilante", "notificador", "compras"],
-        "note": "Del Kardex al cálculo determinístico, al Vigilante y a la orden de compra."
+        "id": "origen-confiable",
+        "label": "Nueva carga gobernada",
+        "focus": ["fuentes", "etl", "supabase", "ira"],
+        "note": "Todo Excel o CSV nuevo pasa por la Skill de limpieza antes de cargarse a Supabase; no hay carga directa."
       },
       {
-        "id": "nucleo-calculo",
-        "label": "Fórmulas, no IA",
-        "focus": ["lector", "motor", "supabase"],
-        "note": "ROP, SS, EOQ y ABC-XYZ se calculan con fórmulas; la IA no inventa números."
+        "id": "cuando-pedir",
+        "label": "Cuándo pedir: ROP + SS",
+        "focus": ["supabase", "mrp", "rop", "vigilante", "tablero"],
+        "note": "ROP y stock de seguridad comparan posición de inventario con la necesidad durante el lead time."
       },
       {
-        "id": "decision-humana",
-        "label": "Alerta y aprobación",
+        "id": "cuanto-pedir",
+        "label": "Cuánto pedir: EOQ",
+        "focus": ["supabase", "eoq", "vigilante", "compras"],
+        "note": "EOQ define el tamaño económico de la orden; no decide el punto que la dispara."
+      },
+      {
+        "id": "demanda-y-bom",
+        "label": "Picos y BOM",
+        "focus": ["supabase", "mrp", "abcxyz", "vigilante", "tablero"],
+        "note": "El plan de producción se explota por BOM y se cruza con variabilidad y segmentación ABC-XYZ."
+      },
+      {
+        "id": "cierre-operativo",
+        "label": "Alerta, aprobación y trazabilidad",
         "focus": ["vigilante", "tablero", "notificador", "compras", "supabase"],
-        "note": "El Vigilante prioriza en pesos COP; Compras aprueba y cierra el ciclo en la BD."
+        "note": "La IA prioriza y explica; Compras/Bodega aprueba la OC y deja el ciclo trazable."
       }
     ]
   },
@@ -30,19 +42,20 @@
     {
       "id": "fuentes",
       "type": "external",
-      "label": "Fuentes E2 SAS",
-      "sublabel": "Kardex / CSV",
-      "tag": "datos crudos",
-      "pos": [36, 340],
-      "size": [132, 68]
+      "label": "Excel / CSV nuevos",
+      "sublabel": "ERP, Kardex y conteos",
+      "tag": "entrada obligatoria",
+      "pos": [40, 315],
+      "size": [175, 68]
     },
     {
       "id": "etl",
       "type": "backend",
-      "label": "Pipeline ETL",
-      "sublabel": "Python 3FN",
-      "pos": [200, 340],
-      "size": [132, 68]
+      "label": "Skill de limpieza E2",
+      "sublabel": "clean_pipeline.py",
+      "tag": "cada nueva carga",
+      "pos": [245, 315],
+      "size": [145, 68]
     },
     {
       "id": "supabase",
@@ -51,168 +64,118 @@
       "sublabel": "PostgreSQL 3FN",
       "brand": "supabase",
       "tag": "fuente de verdad",
-      "pos": [364, 340],
-      "size": [132, 68]
+      "pos": [440, 315],
+      "size": [145, 68]
     },
     {
-      "id": "lector",
+      "id": "ira",
       "type": "backend",
-      "label": "Lector",
-      "sublabel": "stock, OC, consumo",
-      "pos": [528, 340],
-      "size": [132, 68]
+      "label": "Control IRA",
+      "sublabel": "Kardex vs. conteos",
+      "tag": "confiabilidad",
+      "pos": [650, 120],
+      "size": [145, 68]
     },
     {
-      "id": "motor",
+      "id": "mrp",
       "type": "backend",
-      "label": "Motor ROP / EOQ",
-      "sublabel": "SS · ABC-XYZ",
-      "tag": "fórmulas",
-      "pos": [692, 340],
-      "size": [140, 68]
+      "label": "MRP / explosión BOM",
+      "sublabel": "necesidad neta por SKU",
+      "tag": "demanda dependiente",
+      "pos": [650, 290],
+      "size": [145, 68]
+    },
+    {
+      "id": "abcxyz",
+      "type": "backend",
+      "label": "ABC-XYZ",
+      "sublabel": "rotación y variabilidad",
+      "tag": "plata muerta",
+      "pos": [650, 460],
+      "size": [145, 68]
+    },
+    {
+      "id": "rop",
+      "type": "backend",
+      "label": "Motor ROP + SS",
+      "sublabel": "cuándo pedir",
+      "tag": "d · LT + SS",
+      "pos": [875, 210],
+      "size": [150, 68]
+    },
+    {
+      "id": "eoq",
+      "type": "backend",
+      "label": "Motor EOQ",
+      "sublabel": "cuánto pedir",
+      "tag": "√(2DS / H)",
+      "pos": [875, 405],
+      "size": [150, 68]
     },
     {
       "id": "vigilante",
       "type": "backend",
       "label": "Vigilante IA",
-      "sublabel": "orquesta",
-      "tag": "no calcula ROP",
-      "pos": [864, 340],
-      "size": [132, 68]
+      "sublabel": "prioriza y explica",
+      "tag": "no calcula fórmulas",
+      "pos": [1050, 315],
+      "size": [150, 68]
     },
     {
       "id": "tablero",
       "type": "frontend",
       "label": "Tablero gerencial",
-      "sublabel": "semáforo SKU",
-      "pos": [864, 140],
-      "size": [132, 68]
+      "sublabel": "KPIs AS-IS / TO-BE",
+      "tag": "13 KPI AS-IS",
+      "pos": [1225, 145],
+      "size": [155, 68]
     },
     {
       "id": "notificador",
       "type": "external",
       "label": "Notificador",
-      "sublabel": "WhatsApp",
-      "pos": [1028, 340],
-      "size": [140, 68]
+      "sublabel": "alerta estructurada",
+      "pos": [1225, 315],
+      "size": [155, 68]
     },
     {
       "id": "compras",
       "type": "external",
-      "label": "Compras y bodega",
-      "sublabel": "cierre humano",
-      "pos": [1028, 540],
-      "size": [140, 68]
-    }
-  ],
-  "boundaries": [
-    {
-      "kind": "region",
-      "label": "Núcleo analítico",
-      "wraps": ["etl", "supabase", "lector", "motor", "vigilante"]
-    },
-    {
-      "kind": "region",
-      "label": "Entrega y acción",
-      "wraps": ["tablero", "notificador", "compras"]
+      "label": "Compras / Bodega",
+      "sublabel": "aprueba OC y conteo",
+      "tag": "decisión humana",
+      "pos": [1225, 500],
+      "size": [155, 68]
     }
   ],
   "connections": [
-    {
-      "id": "fuentes-etl",
-      "from": "fuentes",
-      "to": "etl",
-      "label": "Kardex",
-      "variant": "emphasis",
-      "labelDy": 64
-    },
-    {
-      "id": "etl-supabase",
-      "from": "etl",
-      "to": "supabase",
-      "label": "carga 3FN",
-      "labelDy": -30
-    },
-    {
-      "id": "supabase-lector",
-      "from": "supabase",
-      "to": "lector",
-      "label": "stock y tránsito",
-      "labelDy": -30
-    },
-    {
-      "id": "lector-motor",
-      "from": "lector",
-      "to": "motor",
-      "label": "d, L, σ",
-      "labelDy": -30
-    },
-    {
-      "id": "motor-vigilante",
-      "from": "motor",
-      "to": "vigilante",
-      "label": "ROP, SS, EOQ",
-      "labelDy": -30
-    },
-    {
-      "id": "vigilante-tablero",
-      "from": "vigilante",
-      "to": "tablero",
-      "label": "KPIs",
-      "fromSide": "top",
-      "toSide": "bottom"
-    },
-    {
-      "id": "vigilante-notificador",
-      "from": "vigilante",
-      "to": "notificador",
-      "label": "alerta",
-      "variant": "emphasis",
-      "labelDy": -30
-    },
-    {
-      "id": "notificador-compras",
-      "from": "notificador",
-      "to": "compras",
-      "label": "OC sugerida",
-      "fromSide": "bottom",
-      "toSide": "top",
-      "labelDy": 24
-    },
-    {
-      "id": "compras-supabase",
-      "from": "compras",
-      "to": "supabase",
-      "label": "aprueba OC",
-      "variant": "dashed",
-      "fromSide": "left",
-      "toSide": "bottom"
-    }
+    { "id": "fuentes-etl", "from": "fuentes", "to": "etl", "label": "cada Excel / CSV nuevo", "variant": "emphasis", "labelDy": -28 },
+    { "id": "etl-supabase", "from": "etl", "to": "supabase", "label": "limpia, valida y carga 3FN", "variant": "emphasis", "labelDy": 58 },
+    { "id": "supabase-ira", "from": "supabase", "to": "ira", "label": "Kardex + 2 conteos", "fromSide": "top", "toSide": "left", "labelDy": -56 },
+    { "id": "supabase-mrp", "from": "supabase", "to": "mrp", "label": "MPS + BOM + stock", "labelAt": [618, 397] },
+    { "id": "supabase-abcxyz", "from": "supabase", "to": "abcxyz", "label": "consumo y valor", "fromSide": "bottom", "toSide": "left", "labelAt": [620, 542] },
+    { "id": "mrp-rop", "from": "mrp", "to": "rop", "label": "demanda neta", "fromSide": "right", "toSide": "left" },
+    { "id": "supabase-rop", "from": "supabase", "to": "rop", "label": "posición, LT real y σ", "fromSide": "top", "toSide": "left" },
+    { "id": "supabase-eoq", "from": "supabase", "to": "eoq", "label": "D, S, H y costo", "fromSide": "bottom", "toSide": "left" },
+    { "id": "ira-vigilante", "from": "ira", "to": "vigilante", "label": "alerta de saldo no confiable", "variant": "security", "fromSide": "right", "toSide": "top" },
+    { "id": "rop-vigilante", "from": "rop", "to": "vigilante", "label": "disparador de reorden", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": -77 },
+    { "id": "eoq-vigilante", "from": "eoq", "to": "vigilante", "label": "cantidad económica", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": 9 },
+    { "id": "abcxyz-vigilante", "from": "abcxyz", "to": "vigilante", "label": "política por segmento", "fromSide": "right", "toSide": "bottom" },
+    { "id": "vigilante-tablero", "from": "vigilante", "to": "tablero", "label": "scorecard y explicación", "fromSide": "right", "toSide": "left" },
+    { "id": "vigilante-notificador", "from": "vigilante", "to": "notificador", "label": "alerta priorizada", "variant": "emphasis", "labelAt": [1215, 397] },
+    { "id": "notificador-compras", "from": "notificador", "to": "compras", "label": "OC sugerida", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "compras-supabase", "from": "compras", "to": "supabase", "label": "OC aprobada + conteo", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom" }
   ],
   "cards": [
     {
-      "dot": "emerald",
-      "title": "Determinístico",
-      "items": [
-        "ROP = d · L + SS y EOQ = √(2DS / H)",
-        "ABC-XYZ e IRA se calculan en Python / SQL, no en el LLM"
-      ]
+      "dot": "rose",
+      "title": "Línea base AS-IS · Suministro y manufactura",
+      "items": ["Regla de ingreso: todo Excel/CSV → Skill de limpieza E2 → Supabase 3FN; sin carga directa", "OTIF global: 6.08% · OTIF lámina: 2.80%", "Lead time lámina: 20.78 d real vs. 12.11 d ERP · Mora: 10.99 d", "Cumplimiento MPS: 97.29% · Riesgo de parada: 8,448 h / $3,801.6 M COP"]
     },
     {
       "dot": "violet",
-      "title": "Vigilante IA",
-      "items": [
-        "Cruza ROP con retrasos de lámina y picos del plan",
-        "Prioriza por parada de línea ($450.000 COP/h) vs. plata muerta"
-      ]
-    },
-    {
-      "dot": "amber",
-      "title": "Cierre operacional",
-      "items": [
-        "La alerta llega con payload de OC; un humano aprueba",
-        "Supabase permanece como única fuente de verdad 3FN"
-      ]
+      "title": "Línea base AS-IS · Inventario y compras",
+      "items": ["IRA global: 71.67% · IRA activos: 0.00% · Desalineación: $48.760 M COP", "DSI: 736.5 días · ITR: 0.495 veces/año", "Plata muerta: $3,550 M COP (53.99%) · Costo anual: $887.506 M COP", "Emisión de OC: 1,471 órdenes · Gasto administrativo: $117.680 M COP"]
     }
   ]
 }

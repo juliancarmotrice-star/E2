@@ -2,7 +2,7 @@
 > **Proyecto de Consultoría Analítica y Modelado de Operaciones**  
 > **Universidad de Medellín — Facultad de Ingeniería — Ingeniería Industrial**  
 > **Asignatura:** Producción 4.0 / Énfasis 2  
-> **Repositorio Oficial:** [`https://github.com/juliancarmotrice-star/-Enfasis-2.git`](https://github.com/juliancarmotrice-star/-Enfasis-2.git)
+> **Repositorio Oficial:** [`https://github.com/juliancarmotrice-star/E2.git`](https://github.com/juliancarmotrice-star/E2.git)
 
 ---
 
@@ -147,6 +147,8 @@ PA-E2/
 │   ├── arquitectura-reposicion.html
 │   └── arquitectura-reposicion.architecture.json
 │
+├── 📁 .agents/skills/limpieza-datos-e2/  # Protocolo fijo de limpieza para cada carga CSV
+│
 ├── 📁 resultados_auditoria/     # Salidas estructuradas en JSON de auditorías
 │   ├── audit_findings.json      # Reporte detallado de hallazgos por tabla
 │   ├── audit_summary.json       # Resumen ejecutivo de calidad de datos
@@ -250,8 +252,8 @@ Para la defensa y presentación oral de la Fase E1, se dispone de:
 
 ### 8.1 Clonar el Repositorio
 ```bash
-git clone https://github.com/juliancarmotrice-star/-Enfasis-2.git
-cd -Enfasis-2
+git clone https://github.com/juliancarmotrice-star/E2.git
+cd E2
 ```
 
 ### 8.2 Configuración del Entorno Virtual (Python)
