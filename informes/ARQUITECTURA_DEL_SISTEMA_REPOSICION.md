@@ -28,57 +28,51 @@ Fuente tipada: [`diagrams/arquitectura-reposicion.architecture.json`](../diagram
 Vista estática equivalente para GitHub:
 
 ```mermaid
-flowchart TD
-    subgraph S1["1. CAPA DE DATOS (Persistencia)"]
-        DB[(PostgreSQL / Supabase)]
-        T1["• maestro_materiales (SKU, Costo, LT)\n• maestro_productos & bom\n• movimientos_inventarios (Kardex)\n• ordenes_compra (Histórico & Abiertas)\n• plan_produccion & conteo_fisico"]
-        DB --- T1
+flowchart LR
+    subgraph CICLO["Ciclo de ingestión"]
+        CSV[CSV E2 SAS]
+        SK[Skill limpieza<br/>clean_pipeline.py]
+        CSV -->|CSV nuevos| SK
+        SK -.->|nueva carga| CSV
     end
 
-    subgraph S2["2. CAPA DE EXTRACCIÓN Y CÁLCULO"]
-        direction TB
-        Lector["🔵 LECTOR (Skill / Tool)\nExtrae transacciones recientes,\nsaldos en tiempo real, órdenes en tránsito\ny métricas de dispersión"]
-        Calc["🟢 MOTOR DETERMINÍSTICO (Fórmulas)\n• ROP = d · L + SS\n• SS = Z · √(L · σd² + d² · σL²)\n• EOQ = √(2DS / H)\n• Matriz Multicriterio ABC - XYZ\n• Cálculo IRA y Reconciliación"]
-        Lector -->|Alimenta variables| Calc
+    DB[(Supabase 3FN)]
+    Lector[Lector]
+
+    subgraph MOT["Motores determinísticos"]
+        ROP[Motor ROP / EOQ]
+        IRA[Motor IRA]
+        ABC[Motor ABC-XYZ]
     end
 
-    subgraph S3["3. CAPA AGÉNTICA (Razonamiento)"]
-        Vigilante["🟣 VIGILANTE (Agente Orquestador IA)\n• Compara Stock Disponible vs ROP\n• Evalúa anomalías y retrasos crónicos de proveedores\n• Detecta picos de demanda y efecto látigo en BOM\n• Cuantifica impacto financiero ($ Parada vs $ Mantener)\n• Prioriza urgencias y genera justificación explicable"]
-    end
+    Vig[Vigilante IA]
+    Tab[Tablero]
+    Notif[Notificador]
+    Hum[Compras / bodega]
 
-    subgraph S4["4. CAPA DE SALIDA Y ACCIÓN"]
-        Notif["🔴 NOTIFICADOR PROACTIVO\n• Alertas Push / Telegram / WhatsApp\n• Sugerencias de OC con payload estructurado\n• Advertencias de quiebre crítico a Compras y Planta"]
-        Tablero["🔴 TABLERO GERENCIAL & OPERATIVO\n• Semáforo de riesgo por SKU (Rojo/Amarillo/Verde/Azul)\n• Valorización de Plata Muerta vs Stock Activo\n• Monitoreo de Paradas de Línea Evitadas"]
-    end
-
-    %% Relaciones principales
-    DB ==>|Lectura periódica / Eventos| Lector
-    Calc ==>|Métricas calculadas & ROP| Vigilante
-    Lector ==>|Contexto operacional crudo| Vigilante
-    Vigilante ==>|Decisiones & Alertas de Reorden| Notif
-    Vigilante ==>|KPIs, Estados y Costos| Tablero
-    Notif -.->|Confirmación humana| DB
-
-    %% Estilos
-    classDef datos fill:#00b4d8,stroke:#0077b6,stroke-width:2px,color:#fff;
-    classDef lector fill:#0077b6,stroke:#03045e,stroke-width:2px,color:#fff;
-    classDef formula fill:#2a9d8f,stroke:#1b4332,stroke-width:2px,color:#fff;
-    classDef agente fill:#7209b7,stroke:#3a0ca3,stroke-width:2px,color:#fff;
-    classDef salida fill:#e63946,stroke:#9b2226,stroke-width:2px,color:#fff;
-
-    class DB,T1 datos;
-    class Lector lector;
-    class Calc formula;
-    class Vigilante agente;
-    class Notif,Tablero salida;
+    SK -->|carga 3FN| DB
+    DB --> Lector
+    Lector -->|d, L, σ| ROP
+    Lector -->|3 conteos| IRA
+    Lector -->|consumo $| ABC
+    ROP --> Vig
+    IRA --> Vig
+    ABC --> Vig
+    Vig --> Tab
+    Vig -->|alerta| Notif
+    Notif -->|OC sugerida| Hum
+    Hum -.->|aprueba OC| DB
 ```
 
 ---
 
 ## ⚙️ 3. Desglose Detallado por Capas y Componentes
 
-### 3.1 Capa 1: Persistencia y Fuente de Datos (Supabase / PostgreSQL)
-Es la fuente única de la verdad del sistema, estructurada en **Tercera Forma Normal (3FN)** con integridad referencial estricta:
+### 3.1 Capa 1: Ciclo de ingestión y persistencia
+
+**Skill de limpieza** (`.agents/skills/limpieza-datos-e2` + `python/clean_pipeline.py`): cualquier CSV nuevo —el lote E1 o una carga posterior— entra al mismo protocolo (categorías, fechas, absolutos, OC abiertas vs cerradas, 3FN). Las fuentes en `datos_iniciales/` no se alteran. Solo los `*_clean.csv` se cargan a Supabase. La siguiente carga **repite el ciclo**; no hay atajo.
+
+**Supabase / PostgreSQL** es la fuente única de la verdad, estructurada en **Tercera Forma Normal (3FN)** con integridad referencial estricta:
 * **`maestro_materiales`**: Catálogo normalizado de materias primas con costos unitarios reales, stock mínimo y máximo, lead times declarados y familias estandarizadas.
 * **`maestro_productos` & `bom`**: Catálogo de productos terminados y listas de explosión de materiales con clave primaria compuesta única (`id_bom`).
 * **`movimientos_inventarios`**: Kardex continuo de consumos diarios por puesto de trabajo, ingresos y transferencias de bodega.
@@ -99,32 +93,29 @@ Es la fuente única de la verdad del sistema, estructurada en **Tercera Forma No
 
 ---
 
-### 3.3 Capa 3: Motor Determinístico de Modelado de Inventarios (Fórmulas Matemáticas)
-* **Naturaleza:** Código Python / SQL determinístico puro (sin componentes estocásticos ni IA generativa).
-* **Modelos y Fórmulas Implementadas:**
+### 3.3 Capa 3: Motores determinísticos (separados a propósito)
 
-#### A. Punto de Reorden ($ROP$) con Incertidumbre Doble
-Para insumos críticos con variabilidad tanto en el consumo diario como en el tiempo de entrega del proveedor (caso crítico: **Lámina de Acero**, donde el proveedor tarda $38.6$ días con alta varianza):
+No hay un único “motor de fórmulas”. Cada política responde a una pregunta distinta y usa insumos distintos:
+
+#### A. Motor de reposición ($ROP$, $SS$, $EOQ$)
+* **Pregunta:** ¿cuándo y cuánto pedir?
+* **Insumos:** consumo $\bar{d}$, $\sigma_d$, lead time real $\bar{L}$, $\sigma_L$, $S=\$80.000$, $H=25\%$.
+* **Fórmulas:**
 $$ROP_i = \bar{d}_i \cdot \bar{L}_i + SS_i$$
 $$SS_i = Z \cdot \sqrt{\bar{L}_i \cdot \sigma_{d,i}^2 + \bar{d}_i^2 \cdot \sigma_{L,i}^2}$$
-*Donde $Z = 1.96$ para un nivel de servicio del $97.5\%$ o $Z = 2.33$ para un $99\%$.*
+$$EOQ_i = \sqrt{\frac{2 \cdot D_i \cdot S}{H_i}}$$
 
-#### B. Cantidad Económica de Pedido ($EOQ$)
-Optimiza el costo total logístico balanceando el costo de emisión de órdenes ($S = \$80.000\text{ COP}$) frente al costo de mantenimiento de inventario ($H = 25\% \text{ anual}$):
-$$EOQ_i = \sqrt{\frac{2 \cdot D_i \cdot S}{H_i}} = \sqrt{\frac{2 \cdot D_i \cdot 80.000}{0.25 \cdot \text{Costo Unitario}_i}}$$
+#### B. Motor IRA (exactitud de registros)
+* **Pregunta:** ¿el Kardex es confiable frente al piso?
+* **Insumos:** Kardex teórico, `conteo_fisico`, cuaderno del jefe de bodega.
+$$IRA = \left( \frac{\text{SKUs con } |Stock_{teórico} - Stock_{físico}| > 0}{\text{SKUs auditados}} \right) \times 100$$
+Este motor **no** dispara una OC; avisa al Vigilante si una decisión de compra se apoya en un saldo dudoso.
 
-#### C. Matriz Multicriterio de Segmentación ABC - XYZ
-* **Eje ABC (Valor Monetario de Consumo):**
-  * **Clase A (80% del valor):** Control diario estricto y revisión continua.
-  * **Clase B (15% del valor):** Control periódico semanal.
-  * **Clase C (5% del valor):** Control visual / dos cajones, evitando sobreabastecimiento ("Plata Muerta").
-* **Eje XYZ (Predecibilidad y Variabilidad de Demanda):**
-  * **Clase X ($CV \le 0.20$):** Demanda constante, reposición automática $EOQ$.
-  * **Clase Y ($0.20 < CV \le 0.50$):** Demanda variable (ej. Archivadores y Estanterías), requiere colchón de seguridad dinámico ($SS$).
-  * **Clase Z ($CV > 0.50$):** Demanda errática / esporádica, reposición bajo pedido estricto (Make-to-Order).
+#### C. Motor ABC-XYZ (segmentación / plata muerta)
+* **Pregunta:** ¿qué SKU es crítico y cuál inmoviliza capital?
+* **Insumos:** valor de consumo y coeficiente de variación. Clase C/Z alimenta el semáforo azul, no el $ROP$.
 
-#### D. Indicador de Inexactitud de Registros ($IRA$)
-$$IRA = \left( \frac{\text{Número de SKUs con Discrepancia } |Stock_{teórico} - Stock_{físico}| > 0}{\text{Total de SKUs Auditados}} \right) \times 100$$
+La IA no sustituye ninguno de los tres motores.
 
 ---
 

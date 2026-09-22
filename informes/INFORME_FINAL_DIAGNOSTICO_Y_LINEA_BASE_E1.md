@@ -6,7 +6,7 @@
 > **Fase:** Primera Entrega — E1 (Diagnóstico y Línea Base)  
 > **Cliente:** E2 SAS — Mobiliario Metálico para Oficina  
 > **Horizonte de Auditoría:** 21 meses de operación transaccional (Julio 2024 – Marzo 2026)  
-> **Repositorio Oficial:** [`https://github.com/juliancarmotrice-star/-Enfasis-2.git`](https://github.com/juliancarmotrice-star/-Enfasis-2.git)  
+> **Repositorio Oficial:** [`https://github.com/juliancarmotrice-star/E2.git`](https://github.com/juliancarmotrice-star/E2.git)  
 > **Estado de la Entrega:** 🟢 **100% Saneada, Modelada, Diagnosticada y Certificada**
 
 ---

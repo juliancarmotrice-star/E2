@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura Integral de Reposición y Gobernanza de Datos — E2 SAS",
+    "quality_profile": "showcase",
+    "viewBox": [1390, 660],
+    "views": [
+      {
+        "id": "ciclo-gobernanza",
+        "label": "1. Ciclo de Ingesta y Limpieza",
+        "focus": ["fuentes-csv", "ciclo-limpieza", "supabase-db"],
+        "note": "Ciclo continuo: todo CSV nuevo pasa obligatoriamente por el protocolo de limpieza canónico antes de Supabase."
+      },
+      {
+        "id": "calculos-separados",
+        "label": "2. Capa Determinística Modular",
+        "focus": ["supabase-db", "calc-ira", "calc-mrp", "calc-abcxyz", "calc-sla", "calc-rop-ss", "calc-eoq"],
+        "note": "Cada cálculo matemático es un módulo determinístico independiente: IRA, MRP, ABC-XYZ, SLA, ROP y EOQ."
+      },
+      {
+        "id": "rop-vs-eoq",
+        "label": "3. Cuándo Pedir (ROP) vs. Cuánto Pedir (EOQ)",
+        "focus": ["calc-rop-ss", "calc-eoq", "orquestador-ia"],
+        "note": "ROP+SS compara la posición de inventario en el lead time; EOQ optimiza el tamaño del lote económico."
+      },
+      {
+        "id": "orquestacion-y-cierre",
+        "label": "4. Vigilante IA y Decisión Humana",
+        "focus": ["orquestador-ia", "tablero-kpis", "compras-humano", "supabase-db"],
+        "note": "El Agente IA contextualiza y prioriza; Compras/Bodega aprueba la OC y cierra el circuito en Supabase."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "fuentes-csv",
+      "type": "external",
+      "label": "Nuevos Archivos CSV",
+      "sublabel": "ERP, Kardex, MPS y Conteos",
+      "tag": "ingesta continua",
+      "pos": [40, 210],
+      "size": [160, 68]
+    },
+    {
+      "id": "ciclo-limpieza",
+      "type": "backend",
+      "label": "Protocolo Limpieza E2",
+      "sublabel": "clean_pipeline.py",
+      "tag": "ciclo gobernado",
+      "pos": [40, 390],
+      "size": [160, 68]
+    },
+    {
+      "id": "supabase-db",
+      "type": "database",
+      "label": "Supabase DB",
+      "sublabel": "PostgreSQL 3FN + Vistas",
+      "brand": "supabase",
+      "tag": "única fuente verdad",
+      "pos": [260, 300],
+      "size": [150, 80]
+    },
+    {
+      "id": "calc-ira",
+      "type": "backend",
+      "label": "Cálculo IRA",
+      "sublabel": "Kardex vs. conteos",
+      "tag": "exactitud registro",
+      "pos": [490, 80],
+      "size": [155, 68]
+    },
+    {
+      "id": "calc-mrp",
+      "type": "backend",
+      "label": "Cálculo MRP / BOM",
+      "sublabel": "MPS × estructura producto",
+      "tag": "demanda dependiente",
+      "pos": [490, 220],
+      "size": [155, 68]
+    },
+    {
+      "id": "calc-abcxyz",
+      "type": "backend",
+      "label": "Cálculo ABC-XYZ",
+      "sublabel": "Pareto valor y varianza",
+      "tag": "segmentación catálogo",
+      "pos": [490, 360],
+      "size": [155, 68]
+    },
+    {
+      "id": "calc-sla",
+      "type": "backend",
+      "label": "Cálculo SLA Prov.",
+      "sublabel": "OTIF y retraso real",
+      "tag": "mora de entrega",
+      "pos": [490, 500],
+      "size": [155, 68]
+    },
+    {
+      "id": "calc-rop-ss",
+      "type": "backend",
+      "label": "Cálculo ROP + SS",
+      "sublabel": "Cuándo pedir",
+      "tag": "d·LT + Z·σ",
+      "pos": [730, 220],
+      "size": [155, 68]
+    },
+    {
+      "id": "calc-eoq",
+      "type": "backend",
+      "label": "Cálculo EOQ",
+      "sublabel": "Cuánto pedir",
+      "tag": "√(2DS / H)",
+      "pos": [730, 360],
+      "size": [155, 68]
+    },
+    {
+      "id": "orquestador-ia",
+      "type": "backend",
+      "label": "Vigilante IA",
+      "sublabel": "Razonamiento y priorización",
+      "tag": "agente orquestador",
+      "pos": [960, 295],
+      "size": [160, 80]
+    },
+    {
+      "id": "tablero-kpis",
+      "type": "frontend",
+      "label": "Tablero Gerencial",
+      "sublabel": "13 KPIs AS-IS / TO-BE",
+      "tag": "visibilidad ejecutiva",
+      "pos": [1195, 180],
+      "size": [155, 75]
+    },
+    {
+      "id": "compras-humano",
+      "type": "external",
+      "label": "Compras y Bodega",
+      "sublabel": "Decisión y aprobación",
+      "tag": "humano en el bucle",
+      "pos": [1195, 420],
+      "size": [155, 75]
+    }
+  ],
+  "connections": [
+    { "id": "fuentes-a-limpieza", "from": "fuentes-csv", "to": "ciclo-limpieza", "label": "nuevo lote CSV", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [120, 334] },
+    { "id": "limpieza-a-fuentes", "from": "ciclo-limpieza", "to": "fuentes-csv", "label": "reintento si hay error", "variant": "dashed", "fromSide": "left", "toSide": "left" },
+    { "id": "limpieza-a-supabase", "from": "ciclo-limpieza", "to": "supabase-db", "label": "3FN limpia", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": 40 },
+    { "id": "db-a-ira", "from": "supabase-db", "to": "calc-ira", "label": "Kardex + conteos", "fromSide": "top", "toSide": "left", "labelDy": -25 },
+    { "id": "db-a-mrp", "from": "supabase-db", "to": "calc-mrp", "label": "MPS + BOM", "fromSide": "right", "toSide": "left", "labelAt": [435, 315] },
+    { "id": "db-a-abcxyz", "from": "supabase-db", "to": "calc-abcxyz", "label": "consumo y costo", "fromSide": "right", "toSide": "left", "labelDy": 35 },
+    { "id": "db-a-sla", "from": "supabase-db", "to": "calc-sla", "label": "órdenes compra", "fromSide": "bottom", "toSide": "left", "labelDy": 35 },
+    { "id": "mrp-a-rop", "from": "calc-mrp", "to": "calc-rop-ss", "label": "demanda neta", "fromSide": "right", "toSide": "left", "labelDy": -20 },
+    { "id": "abcxyz-a-eoq", "from": "calc-abcxyz", "to": "calc-eoq", "label": "D anual y costo", "fromSide": "right", "toSide": "left", "labelDy": -20 },
+    { "id": "ira-a-ia", "from": "calc-ira", "to": "orquestador-ia", "label": "saldo confiable", "variant": "security", "fromSide": "right", "toSide": "top", "labelDy": -25 },
+    { "id": "rop-a-ia", "from": "calc-rop-ss", "to": "orquestador-ia", "label": "alerta ROP", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": -25 },
+    { "id": "eoq-a-ia", "from": "calc-eoq", "to": "orquestador-ia", "label": "lote óptimo", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": 25 },
+    { "id": "sla-a-ia", "from": "calc-sla", "to": "orquestador-ia", "label": "OTIF y mora real", "fromSide": "right", "toSide": "bottom", "labelDy": 25 },
+    { "id": "ia-a-tablero", "from": "orquestador-ia", "to": "tablero-kpis", "label": "KPIs y scorecard", "fromSide": "right", "toSide": "left", "labelAt": [1155, 170] },
+    { "id": "ia-a-compras", "from": "orquestador-ia", "to": "compras-humano", "label": "OC priorizada", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": 20 },
+    { "id": "compras-a-db", "from": "compras-humano", "to": "supabase-db", "label": "OC aprobada en DB", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom", "via": [[1272.5, 600], [335, 600]], "labelAt": [800, 588] }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Protocolo de Limpieza y Gobernanza Cíclica",
+      "items": [
+        "Ingesta gobernada: Todo CSV nuevo pasa obligatoriamente por clean_pipeline.py antes de Supabase.",
+        "Corrección determinística: traslación mes 13 (2026-13-05 → 2026-05-13) y año anómalo 2035.",
+        "Normalización estricta: 8 categorías oficiales, unidades canónicas y cálculo de valor absoluto en cantidades.",
+        "Aislamiento de catálogo inactivo: 20 SKUs sintéticos (MP-9xxx) excluidos de las ecuaciones de reposición."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Separación de Capas: Determinístico vs. Inteligencia Artificial",
+      "items": [
+        "Módulos Determinísticos: IRA (exactitud), MRP (BOM), ABC-XYZ (Pareto), SLA (OTIF), ROP (cuándo) y EOQ (cuánto).",
+        "Cero alucinación matemática: Las fórmulas estadísticas y de IO son ejecutadas 100% en SQL y Python.",
+        "Vigilante IA: Contextualiza restricciones multivariables, balancea costo de parada ($450k/h) vs mantener ($H).",
+        "Cierre Operativo Humano: Compras/Bodega valida y aprueba; trazabilidad total en PostgreSQL."
+      ]
+    }
+  ]
+}
