@@ -39,10 +39,10 @@ flowchart LR
 
     subgraph MOT["2. Capa Determinística Modular (0% Alucinación)"]
         direction TB
-        IRA["Cálculo IRA<br/>(Exactitud Kardex vs Conteos)"]
+        ERI["Cálculo ERI<br/>(Exactitud Kardex vs Conteos)"]
         MRP["Cálculo MRP / BOM<br/>(Explosión Necesidades Netas)"]
         ABC["Cálculo ABC-XYZ<br/>(Segmentación & Plata Muerta)"]
-        SLA["Cálculo SLA Prov.<br/>(OTIF & Lead Time Real)"]
+        SLA["Cálculo SLA Prov.<br/>(Nivel de Servicio & Lead Time Real)"]
         ROP["Cálculo ROP + SS<br/>(Cuándo Pedir: d·LT + Z·σ)"]
         EOQ["Cálculo EOQ<br/>(Cuánto Pedir: √(2DS/H))"]
     end
@@ -57,17 +57,17 @@ flowchart LR
     end
 
     CLEAN -->|"3FN Limpia"| DB
-    DB -->|"Kardex + Conteos"| IRA
+    DB -->|"Kardex + Conteos"| ERI
     DB -->|"MPS + BOM"| MRP
     DB -->|"Consumo & Costo"| ABC
     DB -->|"Órdenes Compra"| SLA
     MRP -->|"Demanda neta"| ROP
     ABC -->|"D anual & Costo"| EOQ
 
-    IRA -->|"Alerta saldo dudoso"| VIG
+    ERI -->|"Alerta saldo dudoso"| VIG
     ROP -->|"Alerta ROP alcanzado"| VIG
     EOQ -->|"Lote económico sugerido"| VIG
-    SLA -->|"Mora & OTIF real"| VIG
+    SLA -->|"Mora & SLA real"| VIG
 
     VIG -->|"KPIs & Scorecard"| TAB
     VIG -->|"OC Priorizada con Justificación"| HUM
@@ -95,7 +95,7 @@ flowchart LR
 * **`movimientos_inventarios`**: Kardex continuo de consumos diarios por puesto de trabajo, ingresos y transferencias de bodega.
 * **`ordenes_compra`**: Registro de órdenes emitidas, fechas reales de recepción, retrasos y órdenes actualmente en tránsito / pendientes.
 * **`plan_produccion`**: Programación mensual contra pedidos y pronóstico de ventas.
-* **`conteo_fisico` & `inventario_bodega_JEFE`**: Registros de auditoría física para el cálculo del error de inventario ($IRA$).
+* **`conteo_fisico` & `inventario_bodega_JEFE`**: Registros de auditoría física para el cálculo de la Exactitud en el Registro de Inventario ($ERI$).
 
 ---
 
@@ -122,11 +122,11 @@ $$ROP_i = \bar{d}_i \cdot \bar{L}_i + SS_i$$
 $$SS_i = Z \cdot \sqrt{\bar{L}_i \cdot \sigma_{d,i}^2 + \bar{d}_i^2 \cdot \sigma_{L,i}^2}$$
 $$EOQ_i = \sqrt{\frac{2 \cdot D_i \cdot S}{H_i}}$$
 
-#### B. Motor IRA (exactitud de registros)
+#### B. Motor ERI (exactitud en el registro de inventario)
 * **Pregunta:** ¿el Kardex es confiable frente al piso?
 * **Insumos:** Kardex teórico, `conteo_fisico`, cuaderno del jefe de bodega.
-$$IRA = \left( \frac{\text{SKUs con } |Stock_{teórico} - Stock_{físico}| > 0}{\text{SKUs auditados}} \right) \times 100$$
-Este motor **no** dispara una OC; avisa al Vigilante si una decisión de compra se apoya en un saldo dudoso.
+$$ERI = \left( \frac{\text{SKUs con } |Stock_{teórico} - Stock_{físico}| = 0}{\text{SKUs auditados}} \right) \times 100$$
+Este motor **no** dispara una OC; avisa al Vigilante si una decisión de compra se apoya en un saldo dudoso o con desalineación contable.
 
 #### C. Motor ABC-XYZ (segmentación / plata muerta)
 * **Pregunta:** ¿qué SKU es crítico y cuál inmoviliza capital?
@@ -179,8 +179,7 @@ La IA no sustituye ninguno de los tres motores.
 * **Métricas Financieras en Vivo:**
   * Total de capital en inventario vs dinero inmovilizado en Clase C.
   * Horas de parada de planta evitadas en el mes.
-  * Tasa de exactitud de inventario ($100\% - IRA$).
-
+  * Tasa de exactitud de inventario ($ERI$).
 ---
 
 ## 🔄 4. Flujo de Información y Ciclo de Vigilancia
@@ -233,9 +232,9 @@ sequenceDiagram
 
 | Queja de la Gerencia | Cuello de Botella Detectado | Cómo lo Resuelve esta Arquitectura |
 |---|---|---|
-| **Queja 1: Desabastecimiento de Lámina** | Lead Time real de 38.6 días vs 15 teóricos (+157% de retraso). | El **Motor Determinístico** calcula el $ROP$ con el $\bar{L}$ real y $\sigma_L$, y el **Vigilante** alerta con anticipación antes de entrar en zona de quiebre. |
+| **Queja 1: Desabastecimiento de Lámina** | Lead Time real de 38.6 días vs 15 teóricos (+157% de retraso) y bajo SLA. | El **Motor Determinístico** calcula el $ROP$ con el $\bar{L}$ real y $\sigma_L$, y el **Vigilante** alerta con anticipación antes de entrar en zona de quiebre. |
 | **Queja 2: Plata Muerta en Bodega** | $145.4M COP inmovilizados en SKUs Clase C generando sobrecostos de \$36.3M anuales. | La **Matriz ABC-XYZ** identifica los SKUs Z y C; el **Vigilante** congela compras automáticas y propone planes de desacumulación. |
-| **Queja 3: Inexactitud de Inventario (IRA 89%)** | Discrepancia entre Kardex, auditoría física y cuaderno del jefe de bodega. | El **Lector** reconcilia las 3 fuentes; el **Vigilante** advierte si una decisión de compra se basa en un saldo con alta incertidumbre física. |
+| **Queja 3: Inexactitud de Inventario (ERI 0% activos)** | Discrepancia entre Kardex, auditoría física y cuaderno del jefe de bodega. | El **Lector** reconcilia las 3 fuentes; el **Vigilante** advierte si una decisión de compra se basa en un saldo con alta incertidumbre física. |
 | **Queja 4: Variabilidad en Archivadores / BOM** | Variabilidad de demanda ($CV = 48.7\%$) sin stock de seguridad dinámico. | El **Cálculo de SS** absorbe la variabilidad de la demanda y el **Vigilante** explota la lista BOM automáticamente al recibir el plan mensual. |
 
 ---
