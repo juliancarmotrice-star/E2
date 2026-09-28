@@ -1,7 +1,7 @@
 -- ==============================================================================
 -- PROYECTO E2 SAS - ÉNFASIS 2 (PRODUCCIÓN 4.0)
 -- ARCHIVO: sql/02_diagnostico_sla_proveedores_y_produccion.sql
--- DESCRIPCIÓN: Consultas de cálculo de SLA (Nivel de Servicio y Entregas de Proveedores) 
+-- DESCRIPCIÓN: Consultas y vistas de cálculo de SLA (Nivel de Servicio y Entregas de Proveedores) 
 --              y ERI (Exactitud en el Registro de Inventario / Reconciliación Tridimensional)
 -- ==============================================================================
 
@@ -15,9 +15,9 @@ SELECT
     COUNT(CASE WHEN fecha_recepcion IS NULL THEN 1 END) AS ordenes_abiertas_en_transito,
     COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END) AS entregas_a_tiempo_promesa,
     COUNT(CASE WHEN fecha_recepcion > fecha_promesa THEN 1 END) AS entregas_tardias_promesa,
-    ROUND((COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END)::numeric / COUNT(CASE WHEN fecha_recepcion IS NOT NULL THEN 1 END) * 100), 2) AS sla_global_proveedores_pct,
-    ROUND(AVG(CASE WHEN fecha_recepcion > fecha_promesa THEN fecha_recepcion - fecha_promesa END)::numeric, 2) AS dias_mora_promedio_cuando_tarde,
-    ROUND(AVG(fecha_recepcion - fecha_pedido)::numeric, 2) AS lead_time_real_promedio_dias
+    ROUND((COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END)::numeric / COUNT(CASE WHEN fecha_recepcion IS NOT NULL THEN 1 END) * 100), 2) || ' %' AS sla_global_proveedores_pct,
+    ROUND(AVG(CASE WHEN fecha_recepcion > fecha_promesa THEN fecha_recepcion - fecha_promesa END)::numeric, 2) || ' d' AS dias_mora_promedio_cuando_tarde,
+    ROUND(AVG(fecha_recepcion - fecha_pedido)::numeric, 2) || ' d' AS lead_time_real_promedio_dias
 FROM public.ordenes_compra;
 
 
@@ -27,7 +27,7 @@ FROM public.ordenes_compra;
 
 SELECT 
     m.categoria,
-    COUNT(oc.orden_compra) AS total_ordenes_cerradas,
+    COUNT(oc.orden_compra) AS total_oc_cerradas,
     COUNT(CASE WHEN oc.fecha_recepcion <= oc.fecha_promesa THEN 1 END) AS ordenes_a_tiempo,
     COUNT(CASE WHEN oc.fecha_recepcion > oc.fecha_promesa THEN 1 END) AS ordenes_retrasadas,
     ROUND((COUNT(CASE WHEN oc.fecha_recepcion <= oc.fecha_promesa THEN 1 END)::numeric / COUNT(oc.orden_compra) * 100), 2) || ' %' AS sla_cumplimiento_pct,
@@ -43,28 +43,10 @@ ORDER BY ROUND((COUNT(CASE WHEN oc.fecha_recepcion <= oc.fecha_promesa THEN 1 EN
 
 
 -- ==============================================================================
--- 3. SLA Y RANKING DE CUMPLIMIENTO POR CADA PROVEEDOR (TOP 10 MÁS CRÍTICOS)
+-- 3. CREACIÓN DE VISTA DETALLADA DE ERI (EXACTITUD EN EL REGISTRO DE INVENTARIO)
 -- ==============================================================================
 
-SELECT 
-    proveedor,
-    COUNT(orden_compra) AS total_ordenes_cerradas,
-    COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END) AS ordenes_a_tiempo,
-    COUNT(CASE WHEN fecha_recepcion > fecha_promesa THEN 1 END) AS ordenes_retrasadas,
-    ROUND((COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END)::numeric / COUNT(orden_compra) * 100), 2) || ' %' AS sla_proveedor_pct,
-    ROUND(AVG(fecha_recepcion - fecha_promesa)::numeric, 1) || ' d' AS retraso_promedio_dias,
-    ROUND(AVG(fecha_recepcion - fecha_pedido)::numeric, 1) || ' d' AS lead_time_real_promedio
-FROM public.ordenes_compra
-WHERE fecha_recepcion IS NOT NULL
-GROUP BY proveedor
-ORDER BY ROUND((COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END)::numeric / COUNT(orden_compra) * 100), 2) ASC, retraso_promedio_dias DESC
-LIMIT 10;
-
-
--- ==============================================================================
--- 4. CÁLCULO DE ERI (EXACTITUD EN EL REGISTRO DE INVENTARIO) Y DESALINEACIÓN CONTABLE
--- ==============================================================================
-
+CREATE OR REPLACE VIEW public.vista_diagnostico_eri_inventarios AS
 WITH kardex_calc AS (
     SELECT 
         m.sku,
@@ -81,55 +63,107 @@ WITH kardex_calc AS (
     LEFT JOIN public.movimientos_inventarios mov ON m.sku = mov.sku
     WHERE m.sku NOT LIKE 'MP-9%' AND m.descripcion NOT LIKE '%(dup)%'
     GROUP BY m.sku, m.descripcion, m.categoria, m.costo_unitario, ii.stock_inicial
-),
-comparacion_eri AS (
-    SELECT 
-        k.sku,
-        k.descripcion,
-        k.categoria,
-        k.costo_unitario,
-        k.total_consumo,
-        k.stock_teorico_kardex,
-        COALESCE(cf.stock_fisico_contado, 0) AS stock_fisico_contado,
-        COALESCE(bj.conteo_jefe, 0) AS stock_cuaderno_jefe,
-        ABS(COALESCE(cf.stock_fisico_contado, 0) - k.stock_teorico_kardex) AS descuadre_absoluto_unidades,
-        (ABS(COALESCE(cf.stock_fisico_contado, 0) - k.stock_teorico_kardex) * k.costo_unitario) AS descuadre_absoluto_cop,
-        CASE 
-            WHEN k.stock_teorico_kardex = COALESCE(cf.stock_fisico_contado, 0) THEN 1 
-            ELSE 0 
-        END AS es_exacto,
-        CASE 
-            WHEN k.total_consumo > 0 THEN 'Activo (En Rotación)' 
-            ELSE 'Inactivo (Plata Muerta)' 
-        END AS tipo_rotacion
-    FROM kardex_calc k
-    LEFT JOIN public.conteo_fisico cf ON k.sku = cf.sku
-    LEFT JOIN public."inventario_bodega_JEFE" bj ON k.sku = bj.codigo
 )
 SELECT 
-    tipo_rotacion,
-    COUNT(*) AS total_skus,
-    SUM(es_exacto) AS skus_exactos,
-    COUNT(*) - SUM(es_exacto) AS skus_descuadrados,
-    ROUND((SUM(es_exacto)::numeric / COUNT(*) * 100), 2) || ' %' AS eri_porcentaje_exactitud,
-    ROUND(((COUNT(*) - SUM(es_exacto))::numeric / COUNT(*) * 100), 2) || ' %' AS pct_error_discrepancia,
-    '$ ' || TO_CHAR(SUM(descuadre_absoluto_cop), 'FM999,999,999,990') || ' COP' AS desalineacion_contable_bruta
-FROM comparacion_eri
-GROUP BY tipo_rotacion
-UNION ALL
-SELECT 
-    'TOTAL GENERAL' AS tipo_rotacion,
-    COUNT(*) AS total_skus,
-    SUM(es_exacto) AS skus_exactos,
-    COUNT(*) - SUM(es_exacto) AS skus_descuadrados,
-    ROUND((SUM(es_exacto)::numeric / COUNT(*) * 100), 2) || ' %' AS eri_porcentaje_exactitud,
-    ROUND(((COUNT(*) - SUM(es_exacto))::numeric / COUNT(*) * 100), 2) || ' %' AS pct_error_discrepancia,
-    '$ ' || TO_CHAR(SUM(descuadre_absoluto_cop), 'FM999,999,999,990') || ' COP' AS desalineacion_contable_bruta
-FROM comparacion_eri;
+    k.sku,
+    k.descripcion,
+    k.categoria,
+    k.costo_unitario,
+    '$ ' || TO_CHAR(k.costo_unitario, 'FM999,999,999,990') AS costo_unitario_formato,
+    k.stock_teorico_kardex,
+    TO_CHAR(k.stock_teorico_kardex, 'FM999,999,990.00') || ' und' AS stock_kardex_formato,
+    COALESCE(cf.stock_fisico_contado, 0) AS stock_fisico_oficial,
+    TO_CHAR(COALESCE(cf.stock_fisico_contado, 0), 'FM999,999,990.00') || ' und' AS stock_fisico_formato,
+    COALESCE(bj.conteo_jefe, 0) AS stock_cuaderno_jefe,
+    TO_CHAR(COALESCE(bj.conteo_jefe, 0), 'FM999,999,990.00') || ' und' AS stock_jefe_formato,
+    (COALESCE(cf.stock_fisico_contado, 0) - k.stock_teorico_kardex) AS discrepancia_unidades,
+    TO_CHAR((COALESCE(cf.stock_fisico_contado, 0) - k.stock_teorico_kardex), 'FM999,999,990.00') || ' und' AS discrepancia_formato,
+    ABS(COALESCE(cf.stock_fisico_contado, 0) - k.stock_teorico_kardex) AS descuadre_absoluto_unidades,
+    ROUND((ABS(COALESCE(cf.stock_fisico_contado, 0) - k.stock_teorico_kardex) * k.costo_unitario)::numeric, 2) AS desalineacion_dinero_cop,
+    '$ ' || TO_CHAR(ABS(COALESCE(cf.stock_fisico_contado, 0) - k.stock_teorico_kardex) * k.costo_unitario, 'FM999,999,999,990') || ' COP' AS desalineacion_dinero_formato,
+    CASE 
+        WHEN k.stock_teorico_kardex = COALESCE(cf.stock_fisico_contado, 0) THEN 'Exacto (Conforme ERI)' 
+        ELSE 'Descuadrado (Discrepancia ERI)' 
+    END AS estado_eri,
+    CASE 
+        WHEN k.total_consumo > 0 THEN 'Activo (En Rotación)' 
+        ELSE 'Inactivo (Plata Muerta)' 
+    END AS tipo_rotacion
+FROM kardex_calc k
+LEFT JOIN public.conteo_fisico cf ON k.sku = cf.sku
+LEFT JOIN public."inventario_bodega_JEFE" bj ON k.sku = bj.codigo
+ORDER BY desalineacion_dinero_cop DESC;
 
 
 -- ==============================================================================
--- 5. SLA DE PRODUCCIÓN (CUMPLIMIENTO DE METAS DEL MPS)
+-- 4. CREACIÓN DE VISTA DE RESUMEN EJECUTIVO ERI AGREGADO
+-- ==============================================================================
+
+CREATE OR REPLACE VIEW public.vista_resumen_eri_inventarios AS
+WITH resumen_agrupado AS (
+    SELECT 
+        tipo_rotacion,
+        COUNT(*) AS total_skus,
+        COUNT(CASE WHEN estado_eri LIKE 'Exacto%' THEN 1 END) AS skus_exactos,
+        COUNT(CASE WHEN estado_eri LIKE 'Descuadrado%' THEN 1 END) AS skus_descuadrados,
+        ROUND((COUNT(CASE WHEN estado_eri LIKE 'Exacto%' THEN 1 END)::numeric / COUNT(*) * 100), 2) AS eri_porcentaje_exactitud_num,
+        ROUND((COUNT(CASE WHEN estado_eri LIKE 'Exacto%' THEN 1 END)::numeric / COUNT(*) * 100), 2) || ' %' AS eri_porcentaje_exactitud,
+        ROUND((COUNT(CASE WHEN estado_eri LIKE 'Descuadrado%' THEN 1 END)::numeric / COUNT(*) * 100), 2) || ' %' AS pct_error_discrepancia,
+        SUM(desalineacion_dinero_cop) AS desalineacion_contable_cop_num,
+        '$ ' || TO_CHAR(SUM(desalineacion_dinero_cop), 'FM999,999,999,990') || ' COP' AS desalineacion_contable_bruta
+    FROM public.vista_diagnostico_eri_inventarios
+    GROUP BY tipo_rotacion
+),
+total_general AS (
+    SELECT 
+        'TOTAL GENERAL'::text AS tipo_rotacion,
+        COUNT(*) AS total_skus,
+        COUNT(CASE WHEN estado_eri LIKE 'Exacto%' THEN 1 END) AS skus_exactos,
+        COUNT(CASE WHEN estado_eri LIKE 'Descuadrado%' THEN 1 END) AS skus_descuadrados,
+        ROUND((COUNT(CASE WHEN estado_eri LIKE 'Exacto%' THEN 1 END)::numeric / COUNT(*) * 100), 2) AS eri_porcentaje_exactitud_num,
+        ROUND((COUNT(CASE WHEN estado_eri LIKE 'Exacto%' THEN 1 END)::numeric / COUNT(*) * 100), 2) || ' %' AS eri_porcentaje_exactitud,
+        ROUND((COUNT(CASE WHEN estado_eri LIKE 'Descuadrado%' THEN 1 END)::numeric / COUNT(*) * 100), 2) || ' %' AS pct_error_discrepancia,
+        SUM(desalineacion_dinero_cop) AS desalineacion_contable_cop_num,
+        '$ ' || TO_CHAR(SUM(desalineacion_dinero_cop), 'FM999,999,999,990') || ' COP' AS desalineacion_contable_bruta
+    FROM public.vista_diagnostico_eri_inventarios
+)
+SELECT 
+    tipo_rotacion,
+    total_skus,
+    skus_exactos,
+    skus_descuadrados,
+    eri_porcentaje_exactitud,
+    pct_error_discrepancia,
+    desalineacion_contable_bruta
+FROM resumen_agrupado
+UNION ALL
+SELECT 
+    tipo_rotacion,
+    total_skus,
+    skus_exactos,
+    skus_descuadrados,
+    eri_porcentaje_exactitud,
+    pct_error_discrepancia,
+    desalineacion_contable_bruta
+FROM total_general;
+
+
+-- ==============================================================================
+-- 5. CONSULTA DE CONSUMO DIRECTO SOBRE EL RESUMEN ERI
+-- ==============================================================================
+
+SELECT 
+    tipo_rotacion,
+    total_skus,
+    skus_exactos,
+    skus_descuadrados,
+    eri_porcentaje_exactitud,
+    desalineacion_contable_bruta
+FROM public.vista_resumen_eri_inventarios;
+
+
+-- ==============================================================================
+-- 6. SLA DE PRODUCCIÓN (CUMPLIMIENTO DE METAS DEL MPS)
 -- ==============================================================================
 
 SELECT 
@@ -141,3 +175,4 @@ SELECT
     COUNT(CASE WHEN cantidad_real < cantidad_planeada THEN 1 END) AS metas_incumplidas_count,
     ROUND((COUNT(CASE WHEN cantidad_real >= cantidad_planeada THEN 1 END)::numeric / COUNT(*) * 100), 2) || ' %' AS sla_cumplimiento_metas_mps_pct
 FROM public.plan_produccion;
+
