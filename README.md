@@ -34,6 +34,8 @@ Para resolver la causa raíz del desabastecimiento sin incurrir en alucinaciones
 
 ## 🏛️ 2. Arquitectura Integral del Sistema (Fase E1 Aprobada)
 
+![Diagrama Oficial de Arquitectura del Sistema de Reposición E2 SAS](diagrams/arquitectura-sistema-completo.visual-check.1440x900.light.png)
+
 El sistema opera mediante un circuito cerrado de 4 capas desacopladas que garantiza confiabilidad matemática, gobernanza de datos y trazabilidad operacional:
 
 ```mermaid
