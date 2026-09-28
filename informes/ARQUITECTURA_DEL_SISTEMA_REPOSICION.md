@@ -19,50 +19,67 @@ Esta separación garantiza:
 
 ---
 
-## 🗺️ 2. Diagrama de Arquitectura del Sistema
+## 🗺️ 2. Diagramas de Arquitectura del Sistema
 
-Mapa interactivo (temas claro/oscuro, capítulos guiados, exportación PNG/SVG): abrir [`diagrams/arquitectura-reposicion.html`](../diagrams/arquitectura-reposicion.html) en el navegador. La interfaz fija del visor queda en inglés; el contenido del diagrama está en español.
-
-Fuente tipada: [`diagrams/arquitectura-reposicion.architecture.json`](../diagrams/arquitectura-reposicion.architecture.json).
-
-Vista estática equivalente para GitHub:
+### 🏆 2.1 Diagrama Oficial Final y Aprobado (Fase E1)
+> **Estado:** `APROBADO PARA PRODUCCIÓN / SUSTENTACIÓN FINAL E1`  
+> **Mapa interactivo completo:** [`diagrams/arquitectura-sistema-completo.html`](../diagrams/arquitectura-sistema-completo.html) *(Abrir en navegador para explorador interactivo, temas claro/oscuro, 4 capítulos guiados y exportación en alta resolución SVG/PNG)*.  
+> **Especificación tipada:** [`diagrams/arquitectura-sistema-completo.architecture.json`](../diagrams/arquitectura-sistema-completo.architecture.json).
 
 ```mermaid
 flowchart LR
-    subgraph CICLO["Ciclo de ingestión"]
-        CSV[CSV E2 SAS]
-        SK[Skill limpieza<br/>clean_pipeline.py]
-        CSV -->|CSV nuevos| SK
-        SK -.->|nueva carga| CSV
+    subgraph GOB["1. Ciclo de Ingesta & Gobernanza"]
+        CSV["Archivos CSV Nuevos<br/>(ERP / Kardex / MPS)"]
+        CLEAN["Protocolo Limpieza E2<br/>(clean_pipeline.py)"]
+        CSV -->|"Lote nuevo"| CLEAN
+        CLEAN -.->|"Reintento error"| CSV
     end
 
-    DB[(Supabase 3FN)]
-    Lector[Lector]
+    DB[("Supabase PostgreSQL 3FN<br/>(Única Fuente de Verdad)")]
 
-    subgraph MOT["Motores determinísticos"]
-        ROP[Motor ROP / EOQ]
-        IRA[Motor IRA]
-        ABC[Motor ABC-XYZ]
+    subgraph MOT["2. Capa Determinística Modular (0% Alucinación)"]
+        direction TB
+        IRA["Cálculo IRA<br/>(Exactitud Kardex vs Conteos)"]
+        MRP["Cálculo MRP / BOM<br/>(Explosión Necesidades Netas)"]
+        ABC["Cálculo ABC-XYZ<br/>(Segmentación & Plata Muerta)"]
+        SLA["Cálculo SLA Prov.<br/>(OTIF & Lead Time Real)"]
+        ROP["Cálculo ROP + SS<br/>(Cuándo Pedir: d·LT + Z·σ)"]
+        EOQ["Cálculo EOQ<br/>(Cuánto Pedir: √(2DS/H))"]
     end
 
-    Vig[Vigilante IA]
-    Tab[Tablero]
-    Notif[Notificador]
-    Hum[Compras / bodega]
+    subgraph IA["3. Capa de Inteligencia Artificial"]
+        VIG["Vigilante IA (Orquestador)<br/>(Contexto, Costo Parada $450k/h vs Mantener)"]
+    end
 
-    SK -->|carga 3FN| DB
-    DB --> Lector
-    Lector -->|d, L, σ| ROP
-    Lector -->|3 conteos| IRA
-    Lector -->|consumo $| ABC
-    ROP --> Vig
-    IRA --> Vig
-    ABC --> Vig
-    Vig --> Tab
-    Vig -->|alerta| Notif
-    Notif -->|OC sugerida| Hum
-    Hum -.->|aprueba OC| DB
+    subgraph OUT["4. Cierre Operacional & Decisión Humana"]
+        TAB["Tablero Gerencial<br/>(13 KPIs AS-IS / TO-BE)"]
+        HUM["Compras y Bodega<br/>(Decisión & Aprobación OC)"]
+    end
+
+    CLEAN -->|"3FN Limpia"| DB
+    DB -->|"Kardex + Conteos"| IRA
+    DB -->|"MPS + BOM"| MRP
+    DB -->|"Consumo & Costo"| ABC
+    DB -->|"Órdenes Compra"| SLA
+    MRP -->|"Demanda neta"| ROP
+    ABC -->|"D anual & Costo"| EOQ
+
+    IRA -->|"Alerta saldo dudoso"| VIG
+    ROP -->|"Alerta ROP alcanzado"| VIG
+    EOQ -->|"Lote económico sugerido"| VIG
+    SLA -->|"Mora & OTIF real"| VIG
+
+    VIG -->|"KPIs & Scorecard"| TAB
+    VIG -->|"OC Priorizada con Justificación"| HUM
+    HUM -.->|"Aprobación y registro OC"| DB
 ```
+
+---
+
+### 📂 2.2 Diagrama Base Inicial (Versión Histórica de Referencia)
+* **Mapa interactivo:** [`diagrams/arquitectura-reposicion.html`](../diagrams/arquitectura-reposicion.html)
+* **Especificación:** [`diagrams/arquitectura-reposicion.architecture.json`](../diagrams/arquitectura-reposicion.architecture.json)
+*(Mantenido en el repositorio como trazabilidad de la evolución del diseño de arquitectura).*
 
 ---
 

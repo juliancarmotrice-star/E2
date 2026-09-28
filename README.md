@@ -116,8 +116,12 @@ PA-E2/
 │       └── deep_analysis.py     # Análisis de hipótesis gerenciales, ABC y variación
 │
 ├── 📁 sql/                      # Scripts y esquemas DDL / DML para PostgreSQL / Supabase
-│   ├── limpieza_datos.sql       # Procedimientos de limpieza SQL nativos
+│   ├── 01_auditoria_duplicados_e_integridad.sql # Verificación de integridad referencial
+│   ├── 02_diagnostico_sla_proveedores_y_produccion.sql # Diagnóstico de tiempos y entregas
+│   ├── 03_vistas_analiticas_abc.sql # Vista dinámica de clasificación ABC (Pareto)
+│   ├── 04_vistas_calculo_eoq_rop.sql # Vista determinística de Lote Económico y ROP (95% SL)
 │   ├── consultas_analiticas_kpis.sql # Consultas analíticas y KPIs de línea base
+│   ├── limpieza_datos.sql       # Procedimientos de limpieza SQL nativos
 │   ├── supabase_schema_foreign_keys.sql # DDL de llaves foráneas e integridad referencial
 │   ├── supabase_crear_maestro_productos.sql # Creación de tabla maestra de productos
 │   └── supabase_bom_pk.sql      # Llave primaria compuesta para BOM
@@ -143,8 +147,10 @@ PA-E2/
 │   ├── GUIA_PREPARACION_SUSTENTACION_DIAPOSITIVAS_E1.md  # Libreto diapositiva por diapositiva
 │   └── GUIA_PREPARACION_EXPOSICION_E1.md                # Estrategia de defensa oral
 │
-├── 📁 diagrams/                 # Mapa de arquitectura interactivo (Archify)
-│   ├── arquitectura-reposicion.html
+├── 📁 diagrams/                 # Mapas interactivos de arquitectura (Archify)
+│   ├── arquitectura-sistema-completo.html # 🏆 DIAGRAMA OFICIAL FINAL APROBADO (Fase E1)
+│   ├── arquitectura-sistema-completo.architecture.json
+│   ├── arquitectura-reposicion.html       # Diagrama base inicial (histórico)
 │   └── arquitectura-reposicion.architecture.json
 │
 ├── 📁 .agents/skills/limpieza-datos-e2/  # Protocolo fijo de limpieza para cada carga CSV
@@ -163,9 +169,12 @@ PA-E2/
 
 ## 5. Arquitectura y Modelo Relacional en Supabase
 
-### Diagrama interactivo
+### Diagramas interactivos
 
-El mapa de la solución (ETL → Supabase → Lector → Motor ROP/EOQ → Vigilante IA → tablero y OC) está en [`diagrams/arquitectura-reposicion.html`](diagrams/arquitectura-reposicion.html). Ábrelo en el navegador para cambiar tema, seguir el camino de reorden y exportar PNG/SVG. El detalle conceptual sigue en [`informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md`](informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md).
+* 🏆 **Diagrama Oficial Final Aprobado (Fase E1):** [`diagrams/arquitectura-sistema-completo.html`](diagrams/arquitectura-sistema-completo.html). Presenta el ciclo de ingesta gobernada, base de datos 3FN, motores determinísticos modulares (IRA, MRP/BOM, ABC-XYZ, SLA/Lead Times, ROP+SS, EOQ), Vigilante IA orquestador y cierre de aprobación humana por Compras/Bodega.
+* 📂 **Diagrama Base Inicial (Histórico):** [`diagrams/arquitectura-reposicion.html`](diagrams/arquitectura-reposicion.html).
+
+El detalle conceptual completo y la matriz de responsabilidades se documentan en [`informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md`](informes/ARQUITECTURA_DEL_SISTEMA_REPOSICION.md).
 
 El modelo de datos relacional se estructuró en **Tercera Forma Normal (3FN)** con integridad referencial completa en PostgreSQL (Supabase):
 

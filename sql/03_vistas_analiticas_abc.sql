@@ -2,6 +2,7 @@
 -- PROYECTO E2 SAS - ÉNFASIS 2 (PRODUCCIÓN 4.0)
 -- ARCHIVO: sql/03_vistas_analiticas_abc.sql
 -- DESCRIPCIÓN: Creación de la vista dinámica de clasificación ABC de inventario (Pareto)
+--              con columnas numéricas y columnas formateadas para fácil lectura ($ COP y unidades).
 -- ==============================================================================
 
 -- 1. CREACIÓN O REEMPLAZO DE LA VISTA DINÁMICA ABC
@@ -52,6 +53,7 @@ SELECT
     r.sku,
     r.descripcion,
     r.categoria,
+    -- Columnas numéricas (para cálculos, ordenamiento y agregaciones)
     r.costo_unitario,
     r.lead_time_declarado_dias,
     r.unidades_consumidas_total,
@@ -59,42 +61,49 @@ SELECT
     r.valor_consumo_anual_cop,
     r.pct_participacion_individual,
     r.pct_acumulado_valor,
+    -- Clasificación Pareto 80-15-5
     CASE 
         WHEN r.pct_acumulado_valor <= 80.00 THEN 'A'
         WHEN LAG(r.pct_acumulado_valor, 1, 0) OVER (ORDER BY r.valor_consumo_anual_cop DESC) < 80.00 AND r.pct_acumulado_valor > 80.00 THEN 'A'
         WHEN r.pct_acumulado_valor <= 95.00 THEN 'B'
         WHEN LAG(r.pct_acumulado_valor, 1, 0) OVER (ORDER BY r.valor_consumo_anual_cop DESC) < 95.00 AND r.pct_acumulado_valor > 95.00 THEN 'B'
         ELSE 'C'
-    END AS clasificacion_abc
+    END AS clasificacion_abc,
+    -- Columnas formateadas para lectura visual ejecutiva
+    '$ ' || TO_CHAR(r.costo_unitario, 'FM999,999,999,990') AS costo_unitario_formato,
+    TO_CHAR(r.consumo_anual_unidades, 'FM999,999,990.00') || ' und' AS consumo_anual_formato,
+    '$ ' || TO_CHAR(r.valor_consumo_anual_cop, 'FM999,999,999,990') || ' COP' AS valor_consumo_anual_formato,
+    TO_CHAR(r.pct_participacion_individual, 'FM990.00') || ' %' AS pct_participacion_formato,
+    TO_CHAR(r.pct_acumulado_valor, 'FM990.00') || ' %' AS pct_acumulado_formato
 FROM ranking_abc r
 ORDER BY r.valor_consumo_anual_cop DESC;
 
 
 -- ==============================================================================
--- 2. CONSULTAS DE PRUEBA Y CONSUMO SOBRE LA VISTA
+-- 2. CONSULTAS DE PRUEBA Y CONSUMO CON FORMATEO
 -- ==============================================================================
 
--- A. Resumen ejecutivo de distribución ABC
+-- A. Resumen ejecutivo de distribución ABC formateado
 SELECT 
     clasificacion_abc,
     COUNT(*) AS total_skus,
-    ROUND((COUNT(*)::numeric / (SELECT count(*) FROM public.vista_clasificacion_abc) * 100), 2) AS pct_skus,
-    ROUND(SUM(valor_consumo_anual_cop)::numeric, 0) AS valor_consumo_total_cop,
-    ROUND(SUM(pct_participacion_individual), 2) AS pct_valor_total
+    TO_CHAR(ROUND((COUNT(*)::numeric / (SELECT count(*) FROM public.vista_clasificacion_abc) * 100), 2), 'FM990.00') || ' %' AS pct_skus,
+    '$ ' || TO_CHAR(SUM(valor_consumo_anual_cop), 'FM999,999,999,990') || ' COP' AS valor_consumo_total_cop,
+    TO_CHAR(SUM(pct_participacion_individual), 'FM990.00') || ' %' AS pct_valor_total
 FROM public.vista_clasificacion_abc
 GROUP BY clasificacion_abc
 ORDER BY clasificacion_abc;
 
--- B. Top 30 SKUs Clase A
+-- B. Top 30 SKUs Clase A formateados
 SELECT 
     sku,
     descripcion,
     categoria,
-    costo_unitario,
-    consumo_anual_unidades,
-    valor_consumo_anual_cop,
-    pct_participacion_individual,
-    pct_acumulado_valor
+    costo_unitario_formato,
+    consumo_anual_formato,
+    valor_consumo_anual_formato,
+    pct_participacion_formato,
+    pct_acumulado_formato
 FROM public.vista_clasificacion_abc
 WHERE clasificacion_abc = 'A'
 ORDER BY valor_consumo_anual_cop DESC;
