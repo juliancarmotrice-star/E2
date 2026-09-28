@@ -331,4 +331,4 @@ python python/analisis/deep_analysis.py
 * **Proyecto Académico-Empresarial:** Énfasis 2 / Producción 4.0
 * **Institución:** Universidad de Medellín — Facultad de Ingeniería — Ingeniería Industrial
 * **Empresa Cliente:** E2 SAS
-* **Líder de Proyecto & Consultoría:** Julian Camilo Ortiz Gonzalez ([@juliancarmotrice-star](https://github.com/juliancarmotrice-star))
+* **Líder de Proyecto & Consultoría:** Julian Carmona Madrigal ([@juliancarmotrice-star](https://github.com/juliancarmotrice-star))
