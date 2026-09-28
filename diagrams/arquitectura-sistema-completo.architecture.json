@@ -64,7 +64,7 @@
     {
       "id": "calc-ira",
       "type": "backend",
-      "label": "Cálculo IRA",
+      "label": "Cálculo ERI",
       "sublabel": "Kardex vs. conteos",
       "tag": "exactitud registro",
       "pos": [490, 80],
@@ -92,7 +92,7 @@
       "id": "calc-sla",
       "type": "backend",
       "label": "Cálculo SLA Prov.",
-      "sublabel": "OTIF y retraso real",
+      "sublabel": "SLA y retraso real",
       "tag": "mora de entrega",
       "pos": [490, 500],
       "size": [155, 68]
@@ -156,7 +156,7 @@
     { "id": "ira-a-ia", "from": "calc-ira", "to": "orquestador-ia", "label": "saldo confiable", "variant": "security", "fromSide": "right", "toSide": "top", "labelDy": -25 },
     { "id": "rop-a-ia", "from": "calc-rop-ss", "to": "orquestador-ia", "label": "alerta ROP", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": -25 },
     { "id": "eoq-a-ia", "from": "calc-eoq", "to": "orquestador-ia", "label": "lote óptimo", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": 25 },
-    { "id": "sla-a-ia", "from": "calc-sla", "to": "orquestador-ia", "label": "OTIF y mora real", "fromSide": "right", "toSide": "bottom", "labelDy": 25 },
+    { "id": "sla-a-ia", "from": "calc-sla", "to": "orquestador-ia", "label": "SLA y mora real", "fromSide": "right", "toSide": "bottom", "labelDy": 25 },
     { "id": "ia-a-tablero", "from": "orquestador-ia", "to": "tablero-kpis", "label": "KPIs y scorecard", "fromSide": "right", "toSide": "left", "labelAt": [1155, 170] },
     { "id": "ia-a-compras", "from": "orquestador-ia", "to": "compras-humano", "label": "OC priorizada", "variant": "emphasis", "fromSide": "right", "toSide": "left", "labelDy": 20 },
     { "id": "compras-a-db", "from": "compras-humano", "to": "supabase-db", "label": "OC aprobada en DB", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom", "via": [[1272.5, 600], [335, 600]], "labelAt": [800, 588] }
@@ -176,7 +176,7 @@
       "dot": "emerald",
       "title": "Separación de Capas: Determinístico vs. Inteligencia Artificial",
       "items": [
-        "Módulos Determinísticos: IRA (exactitud), MRP (BOM), ABC-XYZ (Pareto), SLA (OTIF), ROP (cuándo) y EOQ (cuánto).",
+        "Módulos Determinísticos: ERI (exactitud), MRP (BOM), ABC-XYZ (Pareto), SLA (entregas), ROP (cuándo) y EOQ (cuánto).",
         "Cero alucinación matemática: Las fórmulas estadísticas y de IO son ejecutadas 100% en SQL y Python.",
         "Vigilante IA: Contextualiza restricciones multivariables, balancea costo de parada ($450k/h) vs mantener ($H).",
         "Cierre Operativo Humano: Compras/Bodega valida y aprueba; trazabilidad total en PostgreSQL."

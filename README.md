@@ -18,8 +18,8 @@ Al iniciar la consultoría, la Gerencia de Operaciones reportaba una paradoja lo
   ┌─────────────────────────────────────────────────────────────────────────────────┐
   │  • 301 de 420 SKUs (71.7%) sin ningún movimiento en 21 meses: $3.550 M COP      │
   │  • Costo anual de mantener inventario inútil (H=25%): $887.505.577 COP / año     │
-  │  • OTIF de proveedores en lámina de acero: apenas 2.80% (mora promedio 10.99 d)  │
-  │  • Exactitud de Registro (IRA) en SKUs activos: 0.00% (100% de registros en rojo)│
+  │  • SLA de proveedores en lámina de acero: apenas 2.80% (mora promedio 10.99 d)  │
+  │  • Exactitud de Registro (ERI) en SKUs activos: 0.00% (100% de registros en rojo)│
   │  • Desalineación contable bruta Kardex vs. Conteo Físico: $48.760 M COP         │
   │  • Días de Suministro de Inventario (DSI): 736.5 días (24.5 meses de stock)      │
   └─────────────────────────────────────────────────────────────────────────────────┘
@@ -49,10 +49,10 @@ flowchart LR
 
     subgraph MOT["2. Capa Determinística Modular (0% Alucinación)"]
         direction TB
-        IRA["Cálculo IRA<br/>(Exactitud Kardex vs Conteos)"]
+        ERI["Cálculo ERI<br/>(Exactitud Kardex vs Conteos)"]
         MRP["Cálculo MRP / BOM<br/>(Explosión Necesidades Netas)"]
         ABC["Cálculo ABC-XYZ<br/>(Segmentación & Plata Muerta)"]
-        SLA["Cálculo SLA Prov.<br/>(OTIF & Lead Time Real)"]
+        SLA["Cálculo SLA Prov.<br/>(Nivel de Servicio & Lead Time Real)"]
         ROP["Cálculo ROP + SS<br/>(Cuándo Pedir: d·LT + Z·σ)"]
         EOQ["Cálculo EOQ<br/>(Cuánto Pedir: √(2DS/H))"]
     end
@@ -67,17 +67,17 @@ flowchart LR
     end
 
     CLEAN -->|"3FN Limpia"| DB
-    DB -->|"Kardex + Conteos"| IRA
+    DB -->|"Kardex + Conteos"| ERI
     DB -->|"MPS + BOM"| MRP
     DB -->|"Consumo & Costo"| ABC
     DB -->|"Órdenes Compra"| SLA
     MRP -->|"Demanda neta"| ROP
     ABC -->|"D anual & Costo"| EOQ
 
-    IRA -->|"Alerta saldo dudoso"| VIG
+    ERI -->|"Alerta saldo dudoso"| VIG
     ROP -->|"Alerta ROP alcanzado"| VIG
     EOQ -->|"Lote económico sugerido"| VIG
-    SLA -->|"Mora & OTIF real"| VIG
+    SLA -->|"Mora & SLA real"| VIG
 
     VIG -->|"KPIs & Scorecard"| TAB
     VIG -->|"OC Priorizada con Justificación"| HUM
@@ -97,9 +97,9 @@ Durante la auditoría de 21 meses de transacciones (Julio 2024 a Marzo 2026), se
 
 | # | Queja de la Gerencia | Dictamen Pericial con Evidencia de Datos | Informe Técnico |
 |---|---|---|:---:|
-| **1** | *"Se agota la lámina cuando más pedidos hay y llega tarde."* | **Confirmado:** Lead Time real de lámina de **20.78 días vs. 12.11 días** declarados (+71.5% desfase). OTIF de lámina de apenas **2.80%**, acumulando **1.056 días de retraso** que expusieron a la planta a **8.448 horas de riesgo de parada** ($3.801.6M COP). | [`Ver Informe`](informes/INFORME_INVESTIGACION_QUEJA_GERENCIA_LAMINA.md) |
+| **1** | *"Se agota la lámina cuando más pedidos hay y llega tarde."* | **Confirmado:** Lead Time real de lámina de **20.78 días vs. 12.11 días** declarados (+71.5% desfase). Cumplimiento de **SLA de entrega de apenas 2.80%**, acumulando **1.056 días de retraso** que expusieron a la planta a **8.448 horas de riesgo de parada** ($3.801.6M COP). | [`Ver Informe`](informes/INFORME_INVESTIGACION_QUEJA_GERENCIA_LAMINA.md) |
 | **2** | *"La bodega está llena de plata muerta que no rota."* | **Confirmado:** **301 de 420 SKUs (71.67%)** no registraron ninguna salida en 21 meses. Representan **$3.550.022.309 COP inmovilizados**, costándole a la empresa **$887.505.577 COP anuales** en costo de posesión ($H=25\%$). | [`Ver Informe`](informes/INFORME_INVESTIGACION_QUEJA_GERENCIA_PLATA_MUERTA.md) |
-| **3** | *"El sistema dice que hay stock, pero en bodega no está."* | **Confirmado:** **IRA del 0.00% en los 119 SKUs activos**. El 100% de los insumos en movimiento presentan saldos desalineados por consumos asentados sin recepción previa, generando una brecha contable de **$48.760.853.889 COP** y el uso del *"cuaderno paralelo"*. | [`Ver Informe`](informes/INFORME_INVESTIGACION_QUEJA_GERENCIA_INEXACTITUD_INVENTARIO.md) |
+| **3** | *"El sistema dice que hay stock, pero en bodega no está."* | **Confirmado:** **ERI (Exactitud en el Registro de Inventario) del 0.00% en los 119 SKUs activos**. El 100% de los insumos en movimiento presentan saldos desalineados por consumos asentados sin recepción previa, generando una brecha contable de **$48.760.853.889 COP** y el uso del *"cuaderno paralelo"*. | [`Ver Informe`](informes/INFORME_INVESTIGACION_QUEJA_GERENCIA_INEXACTITUD_INVENTARIO.md) |
 | **4** | *"La demanda de archivadores y estanterías nos coge por sorpresa."* | **Confirmado:** Coeficiente de variación de demanda ($CV = 48.7\%$) en archivadores operando sin **Stock de Seguridad dinámico ($SS$)** ni explosión automatizada de BOM, amplificando el efecto látigo hacia láminas y correderas. | [`Ver Informe`](informes/INFORME_INVESTIGACION_QUEJA_GERENCIA_VARIABILIDAD_DEMANDA_BOM.md) |
 
 ---
@@ -110,11 +110,11 @@ Cuantificación monetaria de las ineficiencias según los parámetros oficiales 
 
 | Dimensión | Indicador Clave (KPI) | Valor Medido Actual (Línea Base AS-IS) | Meta Esperada (Fase TO-BE) | Brecha Operativa | Impacto Financiero en Riesgo ($ COP) |
 |---|---|:---:|:---:|:---:|:---:|
-| **Suministro** | **OTIF Global de Proveedores** | **`6.08%`** | $\ge 95.00\%$ | -88.92% | Desabastecimiento crónico de insumos |
-| **Suministro** | **OTIF en Láminas de Acero** | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal cuello de botella de corte |
+| **Suministro** | **SLA Global de Proveedores (A Tiempo)** | **`6.08%`** | $\ge 95.00\%$ | -88.92% | Desabastecimiento crónico de insumos |
+| **Suministro** | **SLA en Láminas de Acero** | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal cuello de botella de corte |
 | **Suministro** | **Lead Time Real Lámina vs. ERP** | **`20.78d` vs `12.11d`** | $LT_{\text{real}} = LT_{\text{ERP}}$ | +8.67 días (+71.5%) | Compras emitidas a destiempo |
 | **Suministro** | **Mora Promedio en OC Atrasadas** | **`10.99 días`** | $0\text{ días}$ | +10.99 días | 14.417 días de mora acumulada |
-| **Inventario** | **Exactitud de Registro (IRA Activos)** | **`0.00%`** | $\ge 98.00\%$ | -98.00% | 119 de 119 SKUs activos desalineados |
+| **Inventario** | **Exactitud de Registro (ERI Activos)** | **`0.00%`** | $\ge 98.00\%$ | -98.00% | 119 de 119 SKUs activos desalineados |
 | **Inventario** | **Desalineación Contable Bruta** | **`$48.760 M COP`** | $< \$500\text{ M COP}$ | Descuadre Kardex vs Piso | Incongruencia en estados financieros |
 | **Inventario** | **Días de Suministro (DSI Global)** | **`736.5 días` (24.5 m)** | $\le 60\text{ días}$ (2 m) | +676.5 días de exceso | Exceso masivo de capital de trabajo |
 | **Inventario** | **Rotación Anual de Inventario (ITR)** | **`0.495 veces/año`** | $\ge 6.00\text{ veces/año}$ | -91.74% de lentitud | Inmovilidad severa del inventario |
