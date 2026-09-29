@@ -268,7 +268,12 @@ PA-E2/
 │   ├── arquitectura-reposicion.html       # Diagrama base inicial (histórico)
 │   └── arquitectura-reposicion.architecture.json
 │
-├── 📁 .agents/skills/limpieza-datos-e2/  # Protocolo fijo de limpieza para cada nueva carga CSV
+├── 📁 .agents/skills/            # Skills ejecutables para agentes y motores determinísticos
+│   ├── 📁 limpieza-datos-e2/     # Protocolo fijo de ingesta y saneamiento 3FN para nuevos lotes CSV
+│   ├── 📁 reposicion-eoq-rop-e2/ # Motor de reposición continua (EOQ, ROP y SS al 95% SL)
+│   ├── 📁 analitica-abc-xyz-e2/  # Segmentación Pareto 80/15/5 y detección de Plata Muerta
+│   ├── 📁 exactitud-inventarios-eri-e2/ # Auditoría ERI y reconciliación tridimensional
+│   └── 📁 sla-proveedores-mrp-e2/ # Auditoría SLA de proveedores y explosión de necesidades MRP
 │
 ├── 📁 resultados_auditoria/     # Salidas estructuradas en JSON de auditorías
 │   ├── audit_findings.json      # Reporte detallado de hallazgos por tabla

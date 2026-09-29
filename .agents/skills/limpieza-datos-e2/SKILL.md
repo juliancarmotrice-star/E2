@@ -1,58 +1,82 @@
 ---
 name: limpieza-datos-e2
 description: >-
-  Applies the canonical E2 SAS data-cleaning protocol to raw CSVs. Use when
-  ingesting new files into datos_iniciales, running or changing
-  python/clean_pipeline.py, normalizing to 3FN, or loading datos_limpios into
-  Supabase. Never invent ad-hoc cleaning; reuse the same rules for every table
-  and every new load.
+  Aplica el protocolo canónico de limpieza, normalización a 3FN e ingesta de datos
+  para E2 SAS. Utilícese al procesar nuevos archivos CSV en datos_iniciales, ejecutar
+  o modificar python/clean_pipeline.py, auditar integridad referencial y cargar
+  datos_limpios en Supabase.
 ---
 
-# Limpieza de datos E2 SAS
+# Protocolo de Limpieza, Normalización 3FN e Ingesta de Datos — E2 SAS
 
-Toda carga nueva (Kardex, OC, BOM, conteos) entra al **mismo protocolo**. No limpiar a mano en Excel, no saltarse tablas, no subir CSV crudo a Supabase.
+Este skill estandariza la **Capa 1 (Ingesta & Gobernanza)** de la arquitectura de E2 SAS. Toda nueva carga de datos (lotes periódicos de ERP, Kardex, Órdenes de Compra, BOM, Conteo Físico y MPS) debe procesarse bajo este protocolo determinístico estricto.
 
-Ejecutable canónico: `python python/clean_pipeline.py`  
-Entrada: `datos_iniciales/` (intacta). Salida: `datos_limpios/*_clean.csv`. Carga: `python python/upload_to_supabase.py`.
+**Regla de Oro:** Queda estrictamente prohibido limpiar datos manualmente en hojas de cálculo o cargar archivos CSV crudos directamente a Supabase.
 
-## Ciclo obligatorio
+---
 
-1. Copiar los CSV nuevos a `datos_iniciales/` con los nombres canónicos (no renombrar columnas ad hoc).
-2. Correr `clean_pipeline.py` completo (las 8 fuentes + `maestro_productos`).
-3. Revisar el log `[OK]` y comparar filas vs bitácora si el volumen cambió.
-4. Solo entonces `upload_to_supabase.py`.
-5. La siguiente carga **repite desde el paso 1**. No hay pipeline “rápido”.
+## 🔄 Flujo Canónico de Ingesta
 
-## Nombres canónicos de entrada
+```
+    ┌───────────────────────────────┐
+    │ 1. ARCHIVOS CSV CRUDOS        │
+    │ Copiados a: datos_iniciales/  │
+    └───────────────┬───────────────┘
+                    │
+                    ▼
+    ┌───────────────────────────────┐
+    │ 2. PIPELINE DE LIMPIEZA       │
+    │ python/clean_pipeline.py      │
+    └───────────────┬───────────────┘
+                    │
+                    ▼
+    ┌───────────────────────────────┐
+    │ 3. CSVs LIMPIOS (3FN)         │
+    │ Guardados en: datos_limpios/  │
+    └───────────────┬───────────────┘
+                    │
+                    ▼
+    ┌───────────────────────────────┐
+    │ 4. CARGA A SUPABASE (POSTGRES)│
+    │ python/upload_to_supabase.py  │
+    └───────────────────────────────┘
+```
 
-| Archivo | Notas |
-|---|---|
-| `maestro_materiales.csv` | SKU, categoría, unidad, costo, LT, stock min/max |
-| `movimientos_inventario.csv` | Kardex |
-| `ordenes_compra.csv` | Cerradas vs abiertas (`fecha_recepcion` nula = tránsito) |
-| `bom.csv` | Puede traer `nombre_producto` redundante |
-| `plan_produccion.csv` | Idem |
-| `inventario_inicial.csv` | Tabla madre; no alterar saldos |
-| `conteo_fisico.csv` | Auditoría IRA |
-| `Inventario_bodega_JEFE.csv` | Cuaderno paralelo; columna `codigo` |
+---
 
-## Reglas por tabla (no improvisar)
+## 📋 Catálogo de Fuentes de Entrada
 
-- **Categorías y unidades:** usar los `cat_map` / `unit_map` de `clean_pipeline.py` (8 familias). Extender el mapa si aparece un sinónimo nuevo; no crear una novena familia sin documentarlo en la bitácora.
-- **Lead time nulo:** imputar media de LT real por SKU desde OC; si no hay, mediana por proveedor; fallback 14. No usar el LT teórico de 15 días de lámina.
-- **Kardex:** cantidad = `|cantidad|`. El sentido lo da `tipo_movimiento`. Fechas `2026-13-05` → el pipeline vigente corrige a `2026-03-05`; no mezclar otro criterio en la misma carga.
-- **OC:** año de recepción `2035` → año del `fecha_pedido` (o +1 si la fecha quedaría antes del pedido). **No borrar** las  OC sin recepción: son tránsito para ROP.
-- **BOM / plan:** generar `id_bom = producto + '_' + sku_material`; quitar `nombre_producto`; crear/actualizar `maestro_productos_clean.csv` con pares únicos.
-- **Inventario inicial:** copiar íntegro. Es el ancla del Kardex teórico.
-- **Conteo físico y bodega jefe:** `|stock|` / `|conteo_jefe|`; deduplicar por `sku` / `codigo`; observaciones nulas del jefe → `Sin observación`.
+| Archivo Crudo | Tabla Destino en Supabase | Reglas Obligatorias de Limpieza |
+|---|---|---|
+| `maestro_materiales.csv` | `maestro_materiales` | Estandarización a 8 familias (`cat_map`) y unidades (`unit_map`). Imputación de Lead Time por SKU/Proveedor. Eliminación de SKUs duplicados (`MP-9...` / `(dup)`). |
+| `movimientos_inventario.csv` | `movimientos_inventarios` | Conversión a valores absolutos `\|cantidad\|` (el sentido lo da `tipo_movimiento`). Corrección de formato de fechas invertidas (`2026-13-05` ➔ `2026-03-05`). |
+| `ordenes_compra.csv` | `ordenes_compra` | Corrección de año anómalo (`2035` ➔ año del pedido). **No borrar** OCs con `fecha_recepcion` nula (representan inventario en tránsito para $ROP$). |
+| `bom.csv` | `bom` y `maestro_productos` | Generación de clave primaria compuesta `id_bom = producto + '_' + sku_material`. Separación del catálogo de productos terminados en `maestro_productos` (3FN). |
+| `plan_produccion.csv` | `plan_produccion` | Desacoplamiento de nombres redundantes y validación de tipos fecha (`periodo` = primer día de mes). |
+| `inventario_inicial.csv` | `inventario_inicial` | Tabla madre de anclaje histórico. Se preserva íntegra como punto de partida del Kardex. |
+| `conteo_fisico.csv` | `conteo_fisico` | Aplicación de valor absoluto a cantidades negativas por digitación. Deduplicación estricta por `sku`. |
+| `Inventario_bodega_JEFE.csv` | `inventario_bodega_JEFE` | Mapeo de columna `codigo` a SKU. Observaciones nulas convertidas a `'Sin observación'`. |
 
-## Qué no va en este skill
+---
 
-No calcular **ROP, SS, EOQ** (motor de reposición).  
-No calcular **IRA** (motor de exactitud: Kardex vs físico vs jefe).  
-No calcular **ABC-XYZ** (motor de segmentación / plata muerta).  
-Esos motores leen `datos_limpios` / Supabase **después** de este ciclo.
+## 🛠️ Comandos de Ejecución
 
-## Si el código y la bitácora discrepan
+1. **Ejecutar Pipeline de Limpieza Completo:**
+   ```bash
+   python python/clean_pipeline.py
+   ```
+2. **Cargar Datos Normalizados a Supabase:**
+   ```bash
+   python python/upload_to_supabase.py
+   ```
 
-Gana `clean_pipeline.py` para la corrida. Documenta la diferencia en `informes/BITACORA_DE_LIMPIEZA.md` y cambia el pipeline en un solo lugar para la siguiente carga.
+---
+
+## 🚫 Fronteras del Skill (Qué NO va en este Skill)
+
+* **NO calcular ROP, SS, EOQ:** Es responsabilidad del skill [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md).
+* **NO calcular ERI / Desalineación:** Es responsabilidad del skill [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md).
+* **NO calcular segmentación ABC-XYZ:** Es responsabilidad del skill [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md).
+* **NO auditar SLA de proveedores:** Es responsabilidad del skill [`sla-proveedores-mrp-e2`](../sla-proveedores-mrp-e2/SKILL.md).
+
+Los motores analíticos consumen la base de datos **después** de que este ciclo de limpieza ha finalizado exitosamente.

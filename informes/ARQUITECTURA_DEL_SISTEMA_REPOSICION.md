@@ -87,7 +87,7 @@ flowchart LR
 
 ### 3.1 Capa 1: Ciclo de ingestión y persistencia
 
-**Skill de limpieza** (`.agents/skills/limpieza-datos-e2` + `python/clean_pipeline.py`): cualquier CSV nuevo —el lote E1 o una carga posterior— entra al mismo protocolo (categorías, fechas, absolutos, OC abiertas vs cerradas, 3FN). Las fuentes en `datos_iniciales/` no se alteran. Solo los `*_clean.csv` se cargan a Supabase. La siguiente carga **repite el ciclo**; no hay atajo.
+**Skill de limpieza** ([`.agents/skills/limpieza-datos-e2`](../.agents/skills/limpieza-datos-e2/SKILL.md) + [`python/clean_pipeline.py`](../python/clean_pipeline.py)): cualquier CSV nuevo —el lote E1 o una carga posterior— entra al mismo protocolo (categorías, fechas, absolutos, OC abiertas vs cerradas, 3FN). Las fuentes en `datos_iniciales/` no se alteran. Solo los `*_clean.csv` se cargan a Supabase. La siguiente carga **repite el ciclo**; no hay atajo.
 
 **Supabase / PostgreSQL** es la fuente única de la verdad, estructurada en **Tercera Forma Normal (3FN)** con integridad referencial estricta:
 * **`maestro_materiales`**: Catálogo normalizado de materias primas con costos unitarios reales, stock mínimo y máximo, lead times declarados y familias estandarizadas.
