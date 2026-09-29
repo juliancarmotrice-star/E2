@@ -29,7 +29,7 @@ A continuación se presenta el mapa consolidado de hallazgos de valores nulos o 
 | **2** | `maestro_materiales` | `lead_time_declarado_dias` | **54 SKUs** (12.27%) | `ordenes_compra` (1.397 OC cerradas: $\text{recepción} - \text{pedido}$) | **Lead Time Real Empírico:** 52 por media histórica de SKU + 2 por mediana de proveedor. | Habilita el cálculo exacto del Punto de Reorden ($ROP$) y Stock de Seguridad ($SS$), previniendo quiebres de planta. |
 | **3** | `maestro_materiales` | Cruce con `inventario_inicial` | **20 SKUs** (`MP-90XXX`) | `inventario_inicial`, `movimientos`, `conteo_fisico`, `bom`, `ordenes_compra` | **Catálogo Inactivo / Duplicados:** 0 saldo inicial, 0 movimientos, 0 compras, 0 presencia en BOM. | Aislamiento de métricas operacionales para no distorsionar indicadores de rotación ni planes de compra. |
 | **4** | `inventario_bodega_JEFE` | `observacion` | **23 registros** (19.17%) | `conteo_fisico`, `inventario_inicial`, Kardex Teórico | **Condición Normal de Almacén:** Imputación canónica con `'Sin observación'`. | Normalización de campos de texto para consultas analíticas y reportería sin fallas de filtro. |
-| **5** | `ordenes_compra` vs `movimientos` | Desfase de Entradas (`REC-`) | **228 órdenes** | `movimientos_inventarios` (`REC-`), corte `2026-03-31` | **209 recibidas post-corte + 19 consumidas en muelle sin registro.** | Diagnostica la causa raíz del bajo IRA: recepción física informal sin legalización en el ERP. |
+| **5** | `ordenes_compra` vs `movimientos` | Desfase de Entradas (`REC-`) | **228 órdenes** | `movimientos_inventarios` (`REC-`), corte `2026-03-31` | **209 recibidas post-corte + 19 consumidas en muelle sin registro.** | Diagnostica la causa raíz del bajo ERI: recepción física informal sin legalización en el ERP. |
 | **6** | `movimientos_inventarios` | Salidas de Consumo | **301 SKUs** con 0 salidas | `inventario_inicial`, `maestro_materiales` (Costos) | **Plata Muerta / Inventario Inmovilizado:** Sin rotación durante 21 meses. | Genera un costo de mantener inventario ($H=25\%$) de **$887.505.577 COP/año** sobre $3.550 millones COP. |
 
 ---
@@ -188,7 +188,7 @@ pie title Distribución de las 228 Órdenes Cerradas no Registradas en Kardex
 2. **19 Órdenes:** Fueron recibidas antes del 31 de marzo de 2026, pero **nunca se les generó documento de entrada `REC-` en el Kardex**.
 
 #### Implicación Operacional y de Control Interno
-Este hallazgo aporta la evidencia cuantitativa irrefutable que explica la queja directiva **"Nadie se fía del sistema (IRA bajo)"**:  
+Este hallazgo aporta la evidencia cuantitativa irrefutable que explica la queja directiva **"Nadie se fía del sistema (ERI bajo)"**:  
 La planta recibía materiales de proveedores críticos directamente en el muelle de descarga y los ingresaba a la línea de ensamble sin legalizar la entrada formal en el ERP, provocando que el Kardex registrara saldos teóricos menores a las existencias físicas reales de almacén.
 
 ---
@@ -220,7 +220,7 @@ Balance de Movilidad de Inventarios (420 SKUs Activos):
 | **Nulos en `fecha_recepcion` (OC)** | 74 órdenes sin fecha | **74 órdenes clasificadas formalmente como $I_T$** | Integración del stock en tránsito ($6.746 M COP) en el balance de compras. |
 | **Integridad de SKUs MP-90XXX** | 20 registros sin trazabilidad | **20 SKUs clasificados como inactivos** | Catálogo depurado; no contaminan el MRP ni indicadores de rotación. |
 | **Nulos en Notas de Bodega JEFE** | 23 observaciones vacías | **0 nulos** (`'Sin observación'`) | Estandarización completa para consultas relacionales en Supabase. |
-| **Signos Negativos en Conteos** | 94 en conteo físico + 32 en jefe | **0 negativos** ($\lvert Q \rvert$ por corrección de digitación) | IRA calculado sobre magnitudes físicas reales ($r = 0.9954$). |
+| **Signos Negativos en Conteos** | 94 en conteo físico + 32 en jefe | **0 negativos** ($\lvert Q \rvert$ por corrección de digitación) | ERI calculado sobre magnitudes físicas reales ($r = 0.9954$). |
 | **Entidad Maestra PT (3FN)** | Inexistente (texto repetido en BOM y Plan) | **`maestro_productos` creada con 18 PT** | Normalización 3FN; integridad referencial mediante Foreign Keys. |
 
 ---

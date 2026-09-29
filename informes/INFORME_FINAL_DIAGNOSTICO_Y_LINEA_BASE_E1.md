@@ -19,7 +19,7 @@
 3. [3. Diagnóstico AS-IS y Validación Pericial de las 4 Quejas de Gerencia](#3-diagnóstico-as-is-y-validación-pericial-de-las-4-quejas-de-gerencia)
    - [3.1 Queja 1: Desabastecimiento de Lámina y Retraso de Proveedores](#31-queja-1-desabastecimiento-de-lámina-y-retraso-de-proveedores)
    - [3.2 Queja 2: Exceso de Inventario y "Plata Muerta"](#32-queja-2-exceso-de-inventario-y-plata-muerta)
-   - [3.3 Queja 3: Inexactitud del Registro (IRA) y Sistema Paralelo de Bodega](#33-queja-3-inexactitud-del-registro-ira-y-sistema-paralelo-de-bodega)
+   - [3.3 Queja 3: Inexactitud del Registro (ERI) y Sistema Paralelo de Bodega](#33-queja-3-inexactitud-del-registro-ira-y-sistema-paralelo-de-bodega)
    - [3.4 Queja 4: Picos de Demanda en Archivadores/Estanterías y Desborde BOM](#34-queja-4-picos-de-demanda-en-archivadoresestanterías-y-desborde-bom)
 4. [4. Scorecard Maestro de Línea Base y Cuantificación Financiera](#4-scorecard-maestro-de-línea-base-y-cuantificación-financiera)
    - [4.1 Parámetros de Costo de E2 SAS](#41-parámetros-de-costo-de-e2-sas)
@@ -43,7 +43,7 @@ Su cadena de valor opera bajo un esquema de programación mensual contra pedidos
 
 ```mermaid
 flowchart LR
-    A[Proveedores MP] -->|OTIF: 6.08% / Mora Media: 11d| B[(Bodega E2 SAS)]
+    A[Proveedores MP] -->|SLA: 6.08% / Mora Media: 11d| B[(Bodega E2 SAS)]
     B -->|Desfase: 162k unids sin asentar| C[Kardex ERP vs Libreta Jefe]
     C -->|Faltantes Fantasma: $2.029M| D[Líneas de Producción]
     D -->|Quiebre en 19 de 21 meses| E[Productos Terminados]
@@ -113,9 +113,9 @@ El equipo consultor sometió a prueba estadística las cuatro declaraciones de l
 ```mermaid
 flowchart TD
     subgraph Quejas["VEREDICTO PERICIAL: LAS 4 QUEJAS RESULTARON 100% CIERTAS"]
-        Q1["🔴 Queja 1: Desabastecimiento Lámina<br>LT real 20.8d vs 12.1d ERP | OTIF: 2.8%"]
+        Q1["🔴 Queja 1: Desabastecimiento Lámina<br>LT real 20.8d vs 12.1d ERP | SLA: 2.8%"]
         Q2["🔴 Queja 2: Plata Muerta en Bodega<br>71.67% SKUs inmóviles | $3.550M COP"]
-        Q3["🔴 Queja 3: Inexactitud IRA / Bodega<br>IRA Activos: 0% | 162k unids sin asentar"]
+        Q3["🔴 Queja 3: Inexactitud ERI / Bodega<br>ERI Activos: 0% | 162k unids sin asentar"]
         Q4["🔴 Queja 4: Picos de Demanda & BOM<br>Picos +106% | Desborde 3.6x del Stock Máx"]
     end
 ```
@@ -127,7 +127,7 @@ flowchart TD
 * **Veredicto:** 🔴 **CONFIRMADA (100% Cierta).**
 * **Evidencia Cuantitativa:**
   - El sistema ERP asume un Lead Time de **12.11 días**, pero los proveedores de lámina tardan en promedio **20.78 días (+71.5% de desfase)**.
-  - El cumplimiento de fecha promesa (**OTIF**) en láminas es de apenas **2.80%** (97.2% de órdenes fuera de tiempo con mora media de **+9.80 días**).
+  - El cumplimiento de fecha promesa (**SLA**) en láminas es de apenas **2.80%** (97.2% de órdenes fuera de tiempo con mora media de **+9.80 días**).
   - El consumo de lámina tiene una correlación del **94.45% ($r = 0.9445$)** con el plan de producción de muebles.
   - El desabastecimiento provocó **19 de 21 meses con caídas en el Plan de Producción**, acumulando **1.056 días de mora en compras (8.448 horas turno en riesgo)**, valoradas en **`$3.801.600.000 COP`** en riesgo de paradas de planta ($450.000 COP/hora).
 * **Causa Raíz vs. Síntoma:** La falta de lámina es un *síntoma*; la *causa raíz* es la desactualización del parámetro de Lead Time en el ERP y la ausencia de un colchón de seguridad dinámico.
@@ -148,11 +148,11 @@ flowchart TD
 
 ---
 
-### 3.3 Queja 3: Inexactitud del Registro (IRA) y Sistema Paralelo de Bodega
+### 3.3 Queja 3: Inexactitud del Registro (ERI) y Sistema Paralelo de Bodega
 > *"El sistema dice que hay stock de un material, vamos a la bodega y no está. Nadie se fía del inventario del sistema."*
 * **Veredicto:** 🔴 **CONFIRMADA (100% Cierta).**
 * **Evidencia Cuantitativa:**
-  - En los **119 SKUs activos** que abastecen a la fábrica, la Exactitud del Registro (**IRA**) es del **`0.00%`**: el 100% presenta descuadres entre el Kardex y el conteo físico.
+  - En los **119 SKUs activos** que abastecen a la fábrica, la Exactitud del Registro (**ERI**) es del **`0.00%`**: el 100% presenta descuadres entre el Kardex y el conteo físico.
   - Se identificaron **17 SKUs con materiales "fantasmas"** (el ERP dice que hay saldo pero físicamente faltan insumos por valor de **`$2.029.022.373 COP`** en vidrios, correderas, empaques y pinturas).
   - Se identificaron **102 SKUs con saldos negativos en Kardex** o sobrantes por descontrol transaccional.
   - La desalineación absoluta total entre el software y la bodega asciende a **`$48.760.853.888 COP`**.
@@ -186,11 +186,11 @@ flowchart TD
 
 | Dimensión | Indicador Clave (KPI) | Valor Medido Actual (Línea Base AS-IS) | Meta de Mejora (Fase TO-BE) | Desviación Actual | Impacto Financiero en Negocio ($ COP) |
 |---|---|:---:|:---:|:---:|:---:|
-| **Suministro** | **OTIF Global (Entregas a Tiempo)** | **`6.08%`** | $\ge 95.00\%$ | -88.92% | Insumos no disponibles para producción |
-| **Suministro** | **OTIF en Láminas de Acero** | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal insumo estrangulado |
+| **Suministro** | **SLA Global de Proveedores (A Tiempo)** | **`6.08%`** | $\ge 95.00\%$ | -88.92% | Insumos no disponibles para producción |
+| **Suministro** | **SLA en Láminas de Acero** | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal insumo estrangulado |
 | **Suministro** | **Desfase de Lead Time (Lámina)** | **`20.78d` vs `12.11d`** | $LT_{\text{real}} = LT_{\text{ERP}}$ | +8.66 días (+71.5%) | Compras emitidas a destiempo |
 | **Suministro** | **Mora Promedio en Compras Atrasadas**| **`10.99 días`** | $0 \text{ días}$ | +10.99 días de mora | 14.417 días de mora acumulada |
-| **Inventario** | **Exactitud de Registro (IRA Activos)**| **`0.00%`** | $\ge 98.00\%$ | -98.00% (Total) | 100% de SKUs activos desalineados |
+| **Inventario** | **Exactitud de Registro (ERI Activos)**| **`0.00%`** | $\ge 98.00\%$ | -98.00% (Total) | 100% de SKUs activos desalineados |
 | **Inventario** | **Desalineación Contable Bruta** | **`$48.760 M COP`** | $< \$500 \text{ M COP}$ | Descontrol contable | Brecha Kardex vs Conteo Físico |
 | **Inventario** | **Días de Cobertura (DSI Global)** | **`736.5 días` (24.5 m)** | $\le 60 \text{ días}$ | +676.5 días de sobre-stock | Exceso masivo de capital de trabajo |
 | **Inventario** | **Rotación Anual (ITR)** | **`0.495 veces/año`** | $\ge 6.00 \text{ veces/año}$ | -91.74% de lentitud | Inventario rota menos de media vez/año |
@@ -251,15 +251,15 @@ A continuación se presentan las respuestas técnicas oficiales que cualquier mi
 ### 2. ¿Qué defecto de los datos casi los lleva a una conclusión equivocada?
 > *"Tres defectos principales estuvieron a punto de falsear el diagnóstico si no se hubieran auditado rigurosamente:
 > 1. **Las 22 fechas de recepción con año 2035** en órdenes de compra: habrían distorsionado el Lead Time histórico a más de 3.000 días de retraso artificial.
-> 2. **Las 74 órdenes abiertas sin fecha de recepción (`NaN`):** si se hubieran interpretado como compras cerradas o descartado como error, habrían arruinado el cálculo de la posición neta de inventario en tránsito y el OTIF real.
-> 3. **Los conteos físicos negativos (hasta -18.018 unidades) y el IRA del 71.67%:** si nos hubiéramos quedado con el dato crudo, habríamos asumido que el 71% del inventario estaba cuadrado, cuando en realidad el 100% de los insumos activos de producción presentaba descuadre absoluto."*
+> 2. **Las 74 órdenes abiertas sin fecha de recepción (`NaN`):** si se hubieran interpretado como compras cerradas o descartado como error, habrían arruinado el cálculo de la posición neta de inventario en tránsito y el SLA real.
+> 3. **Los conteos físicos negativos (hasta -18.018 unidades) y el ERI del 67.14% (exactitud binaria estricta; ~75% con tolerancia operativa):** si nos hubiéramos quedado con el dato crudo, habríamos asumido que el 71% del inventario estaba cuadrado, cuando en realidad el 100% de los insumos activos de producción presentaba descuadre absoluto."*
 
 ### 3. ¿Por qué eligieron esas métricas como línea base?
 > *"Porque se diseñaron en acople directo con la estructura financiera y operativa del encargo de E2 SAS:
-> - El **OTIF** y las **horas de mora** miden directamente el riesgo de **$450.000 COP / hora por parada de planta**.
+> - El **SLA** y las **horas de mora** miden directamente el riesgo de **$450.000 COP / hora por parada de planta**.
 > - El **DSI**, el **ITR** y el **capital inmovilizado** cuantifican la fuga financiera del **25% anual ($H$) por posesión de stock**.
 > - El **conteo de órdenes de compra** monitorea el costo administrativo de **$80.000 COP por emisión ($S$)**.
-> - El **IRA** mide la confiabilidad del sistema de información sin la cual ninguna política de compras puede operar."*
+> - El **ERI** mide la confiabilidad del sistema de información sin la cual ninguna política de compras puede operar."*
 
 ### 4. ¿Qué parte del problema no piensan resolver con IA, y por qué?
 > *"No pensamos resolver con IA el **control transaccional del Kardex, la explosión de materiales del BOM (MRP), el cálculo determinístico de puntos de reorden (ROP), el lote económico (EOQ) ni el balance contable**. La ingeniería industrial clásica ofrece fórmulas determinísticas cerradas, exactas y transparentes para estas funciones. La Inteligencia Artificial se reserva exclusivamente para los problemas estocásticos de alta incertidumbre: **el pronóstico de demanda de productos terminados (series de tiempo) y la clasificación dinámica de patrones de consumo (clustering ABC/XYZ)**."*
@@ -275,7 +275,7 @@ Todos los análisis, códigos y diagnósticos se encuentran versionados y dispon
 3. **Diagnóstico de Base de Datos y Modelo Relacional (Supabase):** [`DIAGNOSTICO_BASE_DE_DATOS_SUPABASE.md`](DIAGNOSTICO_BASE_DE_DATOS_SUPABASE.md)
 4. **Informe Pericial Queja 1 (Lámina y Proveedores):** [`INFORME_INVESTIGACION_QUEJA_GERENCIA_LAMINA.md`](INFORME_INVESTIGACION_QUEJA_GERENCIA_LAMINA.md)
 5. **Informe Pericial Queja 2 (Plata Muerta y $3.550M COP):** [`INFORME_INVESTIGACION_QUEJA_GERENCIA_PLATA_MUERTA.md`](INFORME_INVESTIGACION_QUEJA_GERENCIA_PLATA_MUERTA.md)
-6. **Informe Pericial Queja 3 (Inexactitud IRA y Sistema Paralelo):** [`INFORME_INVESTIGACION_QUEJA_GERENCIA_INEXACTITUD_INVENTARIO.md`](INFORME_INVESTIGACION_QUEJA_GERENCIA_INEXACTITUD_INVENTARIO.md)
+6. **Informe Pericial Queja 3 (Inexactitud ERI y Sistema Paralelo):** [`INFORME_INVESTIGACION_QUEJA_GERENCIA_INEXACTITUD_INVENTARIO.md`](INFORME_INVESTIGACION_QUEJA_GERENCIA_INEXACTITUD_INVENTARIO.md)
 7. **Informe Pericial Queja 4 (Variabilidad de Demanda y BOM):** [`INFORME_INVESTIGACION_QUEJA_GERENCIA_VARIABILIDAD_DEMANDA_BOM.md`](INFORME_INVESTIGACION_QUEJA_GERENCIA_VARIABILIDAD_DEMANDA_BOM.md)
 8. **Documento Técnico de Línea Base y Costos:** [`LINEA_BASE_Y_CUANTIFICACION_DE_COSTOS.md`](LINEA_BASE_Y_CUANTIFICACION_DE_COSTOS.md)
 9. **Guía de Preparación para la Exposición Oral:** [`GUIA_PREPARACION_EXPOSICION_E1.md`](GUIA_PREPARACION_EXPOSICION_E1.md)

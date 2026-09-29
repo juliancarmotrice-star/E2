@@ -116,7 +116,7 @@ ORDER BY c.valor_consumo_cop DESC;
 
 
 -- ==============================================================================
--- 5. VALIDACIÓN DE QUEJA 3: EXACTITUD DE REGISTROS DE INVENTARIO (IRA)
+-- 5. VALIDACIÓN DE QUEJA 3: EXACTITUD DE REGISTROS DE INVENTARIO (ERI)
 -- Discrepancia entre Kardex Teórico, Conteo Físico Oficial y Bodega Jefe
 -- ==============================================================================
 
@@ -151,7 +151,7 @@ LEFT JOIN public."inventario_bodega_JEFE" bj ON m.sku = bj.codigo
 ORDER BY ABS(cf.stock_fisico_contado - ROUND(k.stock_teorico::numeric, 0)) DESC;
 
 
--- Resumen Global de Exactitud de Registros (KPI IRA):
+-- Resumen Global de Exactitud de Registros (KPI ERI):
 WITH comparacion_ira AS (
     SELECT 
         m.sku,

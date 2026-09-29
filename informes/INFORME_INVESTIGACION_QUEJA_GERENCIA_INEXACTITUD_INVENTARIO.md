@@ -15,7 +15,7 @@
 > *"El sistema dice que hay stock de un material, vamos a la bodega y no está. Nadie se fía del inventario del sistema."*
 
 ### Descomposición de Hipótesis a Contrastar:
-1. **Hipótesis 3A (Inexactitud Crítica del Registro de Inventario - IRA):** Existe una discrepancia sistemática y estadísticamente significativa entre los saldos teóricos registrados en el Kardex del ERP y las existencias físicas reales constatadas en la auditoría de piso.
+1. **Hipótesis 3A (Inexactitud Crítica del Registro de Inventario (ERI)):** Existe una discrepancia sistemática y estadísticamente significativa entre los saldos teóricos registrados en el Kardex del ERP y las existencias físicas reales constatadas en la auditoría de piso.
 2. **Hipótesis 3B (Existencia de 'Materiales Fantasmas' y Quiebres Ocultos):** El sistema reporta saldo disponible en insumos clave para los cuales la bodega física se encuentra desabastecida o en déficit severo, induciendo a errores graves en la programación de la producción.
 3. **Hipótesis 3C (Desfase Transaccional Muelle vs. ERP como Causa Raíz):** La divergencia no proviene de mermas aleatorias, sino de un desfase temporal y procedimental en el que las recepciones de órdenes de compra físicas no se asientan oportunamente en el Kardex mientras que el consumo de manufactura continúa registrándose.
 4. **Hipótesis 3D (Proliferación de Sistemas de Información Paralelos):** La desconfianza justificada en el ERP obligó al personal de bodega a crear un registro manual informal (`Inventario_bodega_JEFE.csv`), el cual opera de forma desconectada y genera compras reactivas basadas en corazonadas.
@@ -24,12 +24,12 @@
 
 ## 📊 2. Scorecard Resumen de Evidencia Cuantitativa
 
-A continuación se sintetiza el diagnóstico de exactitud de registros (IRA) y conciliación a tres bandas en **E2 SAS**:
+A continuación se sintetiza el diagnóstico de exactitud de registros (ERI) y conciliación a tres bandas en **E2 SAS**:
 
 | Indicador / Métrica | Valor Estándar / Esperado (World Class) | Valor Real Observado (Línea Base AS-IS) | Brecha / Desviación | Estado de Calidad |
 |---|:---:|:---:|:---:|:---:|
-| **Exactitud de Registro (IRA Global en Catálogo)** | **$\ge 95.0\%$** | **71.67%** (301 de 420 SKUs) | **-23.33% de exactitud** | 🔴 Inaceptable |
-| **Exactitud de Registro (IRA en SKUs Activos)** | **$\ge 98.0\%$** | **0.00%** (0 de 119 SKUs) | **-98.00% (Descuadre Total)** | 🔴 Crítico |
+| **Exactitud de Registro (ERI Global en Catálogo)** | **$\ge 95.0\%$** | **67.14%** (282 de 420 SKUs exactos; ~75% con tolerancia operativa) | **-23.33% de exactitud** | 🔴 Inaceptable |
+| **Exactitud de Registro (ERI en SKUs Activos)** | **$\ge 98.0\%$** | **0.00%** (0 de 119 SKUs) | **-98.00% (Descuadre Total)** | 🔴 Crítico |
 | **SKUs con Descuadre Físico vs. Kardex** | **$0$ SKUs** | **119 SKUs** (28.33% del catálogo) | **100% de SKUs con rotación** | 🔴 Crítico |
 | **'Materiales Fantasmas' (Kardex > Físico)** | **$0$ SKUs** | **17 SKUs** (Faltante en piso) | Insumos críticos bloqueados | 🔴 Paradas Planta |
 | **Sobrantes en Piso por Desfase (Físico > Kardex)** | **$0$ SKUs** | **102 SKUs** (Kardex subestimado) | Kardex con saldos negativos | 🔴 Descontrol |
@@ -55,7 +55,7 @@ flowchart TD
     end
 
     subgraph Comparaciones["Análisis de Discrepancias"]
-        K <-->|Descuadre Bruto: $48.760 M COP<br>IRA Activos: 0.0%| F
+        K <-->|Descuadre Bruto: $48.760 M COP<br>ERI Activos: 0.0%| F
         K <-->|Coincidencia: 0.83% (1 SKU)| J
         F <-->|Coincidencia: 0.83% (1 SKU)| J
     end
@@ -69,13 +69,13 @@ flowchart TD
     Comparaciones --> Consecuencias
 ```
 
-### 3.1 La Ilusión Estadística del IRA Global (El Efecto 'Plata Muerta')
+### 3.1 La Ilusión Estadística del ERI Global (El Efecto 'Plata Muerta')
 A primera vista, un análisis superficial del archivo `conteo_fisico.csv` reporta que **301 de 420 SKUs (71.67%)** tienen un descuadre de 0 unidades entre el Kardex y el conteo físico. 
 
 Sin embargo, el cruce analítico revela que estos 301 SKUs corresponden **exactamente al inventario obsoleto e inmovilizado ("Plata Muerta")** que nunca tuvo un solo movimiento transaccional durante los 21 meses. Su saldo es exacto únicamente porque nadie los ha tocado desde el inventario inicial del 1 de julio de 2024.
 
 Al aislar los **119 SKUs activos** que abastecen las líneas de manufactura:
-$$\text{IRA}_{\text{Activos}} = \frac{0 \text{ SKUs con coincidencia exacta}}{119 \text{ SKUs activos}} = \mathbf{0.00\%}$$
+$$\text{ERI}_{\text{Activos}} = \frac{0 \text{ SKUs con coincidencia exacta}}{119 \text{ SKUs activos}} = \mathbf{0.00\%}$$
 
 El **100% de los insumos que utiliza la fábrica para producir mobiliario metálico presenta descuadre entre el software y la bodega real**.
 
@@ -208,6 +208,6 @@ Para erradicar la inexactitud de inventarios y restaurar la confianza operativa 
 ## 🏁 8. Conclusión del Dictamen Pericial
 
 La queja de la Gerencia es **100% CIERTA y está plenamente justificada por los datos**:
-- El sistema de información ERP no es confiable para los 119 insumos activos de la compañía ($\text{IRA} = 0\%$).
+- El sistema de información ERP no es confiable para los 119 insumos activos de la compañía ($\text{ERI} = 0\%$).
 - Existen **$2.029 millones COP** en materiales faltantes "fantasma" que detienen la producción.
 - La causa raíz demostrada es el **desfase de 162.142 unidades de compras recibidas en muelle que no se cargaron al Kardex**, sumado a la falta de conteos cíclicos y al uso ineficaz de registros manuales paralelos.

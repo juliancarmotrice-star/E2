@@ -26,7 +26,7 @@
 | Indicador / Métrica | Valor Teórico / Esperado en ERP | Valor Real Observado en Datos | Desviación / Desfase | Estado de Calidad |
 |---|:---:|:---:|:---:|:---:|
 | **Lead Time Promedio de Lámina** | **12.11 días** | **20.78 días** | **+8.66 días (+71.5%)** | 🔴 Crítico |
-| **Cumplimiento de Fecha Promesa (OTIF)** | **100.0%** | **2.80%** (3 de 107 OC) | **-97.20% de incumplimiento** | 🔴 Inaceptable |
+| **Cumplimiento de Fecha Promesa (SLA)** | **100.0%** | **2.80%** (3 de 107 OC) | **-97.20% de incumplimiento** | 🔴 Inaceptable |
 | **Retraso Promedio frente a Promesa** | **0 días** | **9.80 días** (Máx: 39 días) | **+9.80 días de mora** | 🔴 Severo |
 | **Correlación Plan PT vs Consumo Lámina** | Alto ($r > 0.8$) | **$r = 0.9445$ (94.45%)** | Acople directo con manufactura | 🟡 Muy Alta |
 | **Meses con Incumplimiento del Plan PT** | **0 meses** | **19 de 21 meses (90.5%)** | Brecha promedio: -23 unidades/mes | 🔴 Afectación directa |
@@ -67,7 +67,7 @@ Al analizar las **112 órdenes de compra** de materias primas de la categoría `
 * **Lead Time Real Observado:** La diferencia real transaccional ($\text{fecha\_recepcion} - \text{fecha\_pedido}$) arroja un promedio de **20.78 días** (mediana: **19.0 días**).
 * **Conclusión:** El sistema ERP subestima el tiempo de entrega en **+8.66 días (+71.5%)**. Cuando compras coloca una orden esperando recibirla en 12 días, el material llega casi 9 días después de lo previsto.
 
-#### 2. Incumplimiento Masivo de la Fecha Promesa (OTIF):
+#### 2. Incumplimiento Masivo de la Fecha Promesa (SLA):
 * De las 107 órdenes cerradas, **solo 3 órdenes llegaron en o antes de la `fecha_promesa` (2.80%)**.
 * **104 órdenes llegaron con retraso (97.20%)**, con una mora promedio de **9.80 días** y casos extremos de hasta **39 días de retraso**.
 
@@ -145,13 +145,13 @@ Para cuantificar el estado inicial de la operación y proyectar el impacto de la
 ```mermaid
 graph LR
     subgraph Linea_Base_AS_IS["LÍNEA BASE (AS-IS)"]
-        K1["OTIF Lámina: 2.80%"]
+        K1["SLA Lámina: 2.80%"]
         K2["Desfase LT: +8.66 días (+71.5%)"]
         K3["Riesgo Downtime: $3.801 M COP"]
     end
 
     subgraph Meta_TO_BE["OBJETIVO OPTIMIZADO (TO-BE)"]
-        M1["OTIF Meta: >= 95.0%"]
+        M1["SLA Meta: >= 95.0%"]
         M2["Desfase LT: <= 0.0 días"]
         M3["Cero Paradas de Planta ($0 COP)"]
     end
@@ -161,10 +161,10 @@ graph LR
     K3 -->|ROP y Stock de Seguridad Dinámico| M3
 ```
 
-### 4.1 KPI Principal: Nivel de Cumplimiento de Entrega del Proveedor (OTIF — On-Time In-Full)
-$$\text{OTIF}_{\text{Lámina}} = \frac{\sum \mathbb{I}_{\{\text{fecha\_recepcion} \le \text{fecha\_promesa} \land \text{cantidad\_recibida} = \text{cantidad\_pedida}\}}}{\text{Total Órdenes Cerradas de Lámina}} \times 100$$
+### 4.1 KPI Principal: Nivel de Cumplimiento de Entrega del Proveedor (SLA de Entrega a Tiempo de Proveedores)
+$$\text{SLA}_{\text{Lámina}} = \frac{\sum \mathbb{I}_{\{\text{fecha\_recepcion} \le \text{fecha\_promesa} \land \text{cantidad\_recibida} = \text{cantidad\_pedida}\}}}{\text{Total Órdenes Cerradas de Lámina}} \times 100$$
 
-$$\text{OTIF}_{\text{Lámina (AS-IS)}} = \frac{3}{107} \times 100 = \mathbf{2.80\%} \quad (\mathbf{\text{Meta TO-BE}} \ge \mathbf{95.0\%})$$
+$$\text{SLA}_{\text{Lámina (AS-IS)}} = \frac{3}{107} \times 100 = \mathbf{2.80\%} \quad (\mathbf{\text{Meta TO-BE}} \ge \mathbf{95.0\%})$$
 
 ---
 
@@ -192,13 +192,13 @@ $$\text{Costo Potencial por Desabastecimiento} = 8.448\text{ horas} \times \$450
 graph LR
     A[Causa 1: Lead Time ERP Falso<br>12d configurados vs 21d reales] --> D[Falla de Reposición]
     B[Causa 2: Ausencia de Stock de Seguridad Dinámico<br>SS estático insuficiente ante variabilidad] --> D
-    C[Causa 3: Inexistencia de SLA con Proveedores<br>PROV-08 y PROV-29 con 0% OTIF] --> D
+    C[Causa 3: Inexistencia de SLA con Proveedores<br>PROV-08 y PROV-29 con 0% SLA] --> D
     D --> E[Quiebre de Stock en Picos de Demanda]
 ```
 
 1. **Parámetros Estáticos y Desactualizados:** El ERP utiliza un tiempo de entrega teórico de 12 días que ningún proveedor cumple, provocando que las órdenes de compra se emitan tarde por diseño.
 2. **Inexistencia de Stock de Seguridad Probabilístico:** No se contempla la fórmula que amortigua la doble variabilidad (variabilidad en la demanda $\sigma_d$ y variabilidad en el tiempo de entrega $\sigma_{LT}$).
-3. **Cero Penalización y Gestión de Proveedores:** No se monitorea el indicador OTIF ni se han establecido acuerdos de nivel de servicio (SLA) con proveedores críticos como `PROV-08` y `PROV-07`.
+3. **Cero Penalización y Gestión de Proveedores:** No se monitorea el indicador SLA ni se han establecido acuerdos de nivel de servicio (SLA) con proveedores críticos como `PROV-08` y `PROV-07`.
 
 ---
 
@@ -221,7 +221,7 @@ Ajustar el tamaño de lote $Q^*$ considerando el costo de emisión de orden ($S 
 $$Q^* = \sqrt{\frac{2 \cdot D \cdot S}{H}}$$
 
 ### 4. Programa de Evaluación y Desarrollo de Proveedores
-* Establecer contratos de suministro con penalización por día de mora para proveedores con OTIF $< 80\%$.
+* Establecer contratos de suministro con penalización por día de mora para proveedores con SLA $< 80\%$.
 * Desarrollar proveedores secundarios con entregas locales rápidas (como `PROV-33` con 12 días) para responder a picos imprevistos de producción.
 
 ---
@@ -230,7 +230,7 @@ $$Q^* = \sqrt{\frac{2 \cdot D \cdot S}{H}}$$
 
 | Eje Problemático | Indicador Clave de Desempeño (KPI) | Línea Base Actual (AS-IS) | Meta de Optimización (TO-BE) | Impacto Económico Cuantificado |
 |---|---|:---:|:---:|---|
-| **Queja 1: Abastecimiento y Retrasos de Lámina** | **OTIF Proveedores de Lámina** | **2.80%** | **$\ge 95.0\%$** | Evita pérdidas por parada de planta de **$3.801.600.000 COP**. |
+| **Queja 1: Abastecimiento y Retrasos de Lámina** | **SLA Proveedores de Lámina** | **2.80%** | **$\ge 95.0\%$** | Evita pérdidas por parada de planta de **$3.801.600.000 COP**. |
 | | **Desfase de Lead Time ($\Delta LT$)** | **+8.66 días (+71.5%)** | **$\le 0.0$ días** | |
 | **Queja 2: Plata Muerta y Sobre-stock** | **Índice de Rotación (ITR Global)** | **0.4956 veces/año** | **$\ge 6.0$ veces/año** | Libera capital atrapado de **$3.550.022.309 COP** y ahorra **$887.505.577 COP/año** en costo $H$. |
 | | **Días de Cobertura (DSI)** | **736.5 días** | **$\le 60.0$ días** | |

@@ -48,7 +48,7 @@ La empresa experimenta una crisis de doble vía en su cadena de abastecimiento:
 
 ```mermaid
 flowchart LR
-    A["Crisis Operativa E2 SAS"] --> B["🔴 Queja 1: Desabastecimiento Lámina<br>LT Real 20.8d vs 12.1d ERP | OTIF: 2.80%<br><b>Riesgo: $3.801.600.000 COP</b>"]
+    A["Crisis Operativa E2 SAS"] --> B["🔴 Queja 1: Desabastecimiento Lámina<br>LT Real 20.8d vs 12.1d ERP | SLA: 2.80%<br><b>Riesgo: $3.801.600.000 COP</b>"]
     A --> C["🔴 Queja 2: Plata Muerta en Bodega<br>71.67% SKUs Inertes | $3.550M COP<br><b>Drenaje: $887.505.577 COP / año</b>"]
 ```
 
@@ -115,7 +115,7 @@ Todas las transformaciones se codificaron en el pipeline automatizado [`clean_pi
    * *Defecto Año 2035:* En `ordenes_compra.csv`, 22 órdenes registraban recepción en el año `2035`. Se reasignó el año al periodo de compra real (2024/2025), preservando mes y día, evitando distorsionar los Lead Times a más de 3.000 días falsos.
 
 4. **Tratamiento Metodológico de Órdenes Abiertas (74 órdenes con `fecha_recepcion = NaN`):**
-   * *Criterio:* No se eliminaron ni se trataron como error. Se particionaron metodológicamente: las 1.397 órdenes cerradas se utilizaron para medir el Lead Time real y el OTIF, mientras que las 74 órdenes abiertas se tipificaron como **Inventario en Tránsito / Pedidos Pendientes**, dato indispensable para calcular la posición neta de inventario en el Punto de Reorden ($ROP$).
+   * *Criterio:* No se eliminaron ni se trataron como error. Se particionaron metodológicamente: las 1.397 órdenes cerradas se utilizaron para medir el Lead Time real y el SLA, mientras que las 74 órdenes abiertas se tipificaron como **Inventario en Tránsito / Pedidos Pendientes**, dato indispensable para calcular la posición neta de inventario en el Punto de Reorden ($ROP$).
 
 5. **Sentido Contable y Cantidades Negativas:**
    * *Defecto:* 466 movimientos de inventario y 94 conteos físicos estaban digitados con signo negativo (hasta -18.018 unidades).
@@ -206,8 +206,8 @@ flowchart TD
     end
 
     subgraph Evidencia["2. Evidencia Operativa"]
-        DELAY --> OTIF["OTIF Láminas: 2.80% (97.2% en mora)"]
-        OTIF --> MORA["Mora Promedio: +9.80 días"]
+        DELAY --> SLA["SLA Láminas: 2.80% (97.2% en mora)"]
+        SLA --> MORA["Mora Promedio: +9.80 días"]
         PICO["Picos de Demanda >4.300 láminas/mes<br>(r = 0.9445 con producción de muebles)"] --> STOCKOUT["1.167 Eventos de Desabastecimiento"]
         MORA --> STOCKOUT
     end
@@ -222,8 +222,8 @@ flowchart TD
 1. **Desfase Estructural de Lead Time:**
    * El catálogo maestro del ERP tiene registrado un tiempo de entrega promedio de **12.11 días**.
    * La realidad transaccional en `ordenes_compra.csv` demuestra que los proveedores de lámina tardan en promedio **20.78 días (+8.66 días de retraso / +71.5% de desfase)**. Cuando compras emite una orden esperando recibirla en 12 días, el material llega casi 9 días después de lo previsto.
-2. **Incumplimiento Masivo de Fecha Promesa (OTIF):**
-   * De 107 órdenes de compra cerradas de lámina, **solo 3 llegaron a tiempo (OTIF = 2.80%)**.
+2. **Incumplimiento Masivo de Fecha Promesa (SLA):**
+   * De 107 órdenes de compra cerradas de lámina, **solo 3 llegaron a tiempo (SLA = 2.80%)**.
    * El **97.20% de los pedidos de lámina llegaron con mora**, con un retraso promedio de **+9.80 días** (máximo: 39 días).
    * Los tres mayores proveedores (`PROV-08`, `PROV-29` y `PROV-07`), que representan el 36.4% de todas las compras de lámina, tienen un cumplimiento a tiempo del **0.0%** y tardan entre 21 y 26 días.
 3. **Acople Directo con la Producción de Muebles:**
@@ -298,7 +298,7 @@ Para la monetización se utilizaron los parámetros oficiales provistos por la G
 
 | Eje Problemático | Indicador Clave de Desempeño (KPI) | Fórmula Matemática | Valor Línea Base (AS-IS) | Meta de Optimización (TO-BE) | Desviación / Brecha | Impacto Financiero en el Negocio ($ COP) |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| **Queja 1: Abastecimiento y Lámina** | **Cumplimiento de Proveedores (OTIF Lámina)** | $\frac{N_{\text{a tiempo}}}{N_{\text{total}}} \times 100$ | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal insumo estrangulado |
+| **Queja 1: Abastecimiento y Lámina** | **Cumplimiento de Proveedores (SLA Lámina)** | $\frac{N_{\text{a tiempo}}}{N_{\text{total}}} \times 100$ | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal insumo estrangulado |
 | | **Desfase de Lead Time ($\Delta LT$)** | $LT_{\text{real}} - LT_{\text{ERP}}$ | **`+8.66 días`** (20.8d vs 12.1d) | $\le 0.00\text{ días}$ | +71.5% de retraso | Pedidos de compra generados a destiempo |
 | | **Mora Promedio en Pedidos de Lámina** | $\frac{\sum \text{Días Mora}}{N_{\text{retrasos}}}$ | **`9.80 días`** | $0.00\text{ días}$ | +9.80 días | 1.056 días de mora acumulada |
 | | **Cumplimiento del Plan Maestro (MPS)** | $\frac{Q_{\text{real}}}{Q_{\text{plan}}} \times 100$ | **`90.5% meses en caída`** | $\ge 99.50\%$ | 19 de 21 meses | -753 unidades terminadas no producidas |

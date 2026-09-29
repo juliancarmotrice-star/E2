@@ -55,7 +55,7 @@ mindmap
     Inventario Bodega Jefe
       Justificar rol en el modelo
       Fuente de verificación paralela
-      Análisis de descuadre IRA
+      Análisis de descuadre ERI
 ```
 
 ### 2.1 Pista 1: Reconstrucción Deductiva mediante la "Tabla Madre" (`inventario_inicial.csv`)
@@ -63,7 +63,7 @@ mindmap
 * **Implementación:** Se utilizó el saldo al 2024-07-01 como condición inicial inmutable para recalcular el Kardex cronológico exacto de cada SKU.
 
 ### 2.2 Pista 2: Separación Metodológica de Órdenes de Compra (Abiertas vs. Cerradas)
-* **Diagnóstico Docente:** En `ordenes_compra.csv` existen 74 órdenes sin fecha de recepción (`NaN`) que no deben descartarse como error ni mezclarse en el cálculo de Lead Times o cumplimiento del proveedor (OTIF).
+* **Diagnóstico Docente:** En `ordenes_compra.csv` existen 74 órdenes sin fecha de recepción (`NaN`) que no deben descartarse como error ni mezclarse en el cálculo de Lead Times o cumplimiento del proveedor (SLA).
 * **Implementación:** 
   1. **Órdenes Cerradas (`fecha_recepcion` no nula):** Utilizadas exclusivamente para medir el Lead Time real ($LT_{\text{real}} = \text{Fecha Recepción} - \text{Fecha Pedido}$) y la tasa de entregas a tiempo.
   2. **Órdenes Abiertas (`fecha_recepcion = NaN`):** Tipificadas como *Inventario en Tránsito / Pedidos Pendientes*, insumo fundamental para el cálculo del punto de reorden ($ROP$) y la posición neta de inventario.
@@ -88,7 +88,7 @@ $$\text{Stock}(t) = \text{Stock}(t-1) + \mathbb{I}_{\{\text{entrada}\}} \cdot Q 
 * **Implementación y Justificación Arquitectónica:**
   1. **No es entidad transaccional primaria:** No sustituye al Kardex ni al Maestro de Materiales.
   2. **Rol Oficial en el Proyecto:** Actúa como **Fuente de Verificación Paralela y Registro Auxiliar de Auditoría de Piso**.
-  3. **Valor Analítico:** Permite cuantificar la brecha de confianza operacional (IRA) y diagnosticar el uso de sistemas informales paralelos ("libretas de bodega") cuando el ERP pierde credibilidad frente a los operarios.
+  3. **Valor Analítico:** Permite cuantificar la brecha de confianza operacional (ERI) y diagnosticar el uso de sistemas informales paralelos ("libretas de bodega") cuando el ERP pierde credibilidad frente a los operarios.
 
 ---
 
@@ -162,7 +162,7 @@ Estructura: 1,471 filas × 8 columnas | Llave Primaria: orden_compra (100% únic
 
 #### B. Órdenes Abiertas (Inventario en Tránsito)
 * **74 órdenes (5.03%)** tienen `fecha_recepcion = NaN`.
-* *Regla Metodológica:* No representan registros defectuosos, sino **compras activas en curso / inventario en tránsito**. Se excluyen de las métricas históricas cerradas de Lead Time y OTIF, pero se preservan e integran en la ecuación de balance para el cálculo del Punto de Reorden ($ROP$).
+* *Regla Metodológica:* No representan registros defectuosos, sino **compras activas en curso / inventario en tránsito**. Se excluyen de las métricas históricas cerradas de Lead Time y SLA, pero se preservan e integran en la ecuación de balance para el cálculo del Punto de Reorden ($ROP$).
 
 ---
 
@@ -229,7 +229,7 @@ $$\text{conteo\_jefe}_{\text{corregido}} = \lvert \text{conteo\_jefe} \rvert$$
 
 ---
 
-## 📊 4. Reconciliación Transversal y Exactitud de Inventarios (IRA)
+## 📊 4. Reconciliación Transversal y Exactitud de Inventarios (ERI)
 
 La comparación tridimensional entre el **Inventario Inicial** ("Tabla Madre"), el **Conteo Físico Auditado**, el **Registro del Jefe de Bodega** y el **Kardex Teórico Reconstruido** arrojó los siguientes hallazgos e indicadores clave de exactitud:
 
@@ -244,12 +244,12 @@ La comparación tridimensional entre el **Inventario Inicial** ("Tabla Madre"), 
 │ Diferencia Absoluta Media (|Físico-Jefe|)│ 283.35 unidades (desfase natural de corte/estante)│
 │ SKUs con Diferencia Relativa > 20%      │ 0 SKUs (sin outliers extremos)                    │
 │ Coincidencias Exactas con Kardex ERP    │ 53 SKUs (12.62% de inventario sin descuadre)      │
-│ SKUs con Descuadre vs Kardex (IRA)      │ 367 SKUs (87.38% de inexactitud de registro ERP)  │
+│ SKUs con Descuadre vs Kardex (ERI)      │ 367 SKUs (87.38% de inexactitud de registro ERP)  │
 │ Descuadre Absoluto Promedio vs Kardex   │ 2.873,97 unidades                                 │
 └─────────────────────────────────────────┴───────────────────────────────────────────────────┘
 ```
 
-$$\text{IRA} = \left(1 - \frac{\text{SKUs con } \lvert \text{Stock Teórico ERP} - \text{Stock Físico} \rvert \le \text{Tolerancia}}{\text{Total SKUs}} \right) \times 100 = 87.38\%$$
+$$\text{ERI} = \left(1 - \frac{\text{SKUs con } \lvert \text{Stock Teórico ERP} - \text{Stock Físico} \rvert \le \text{Tolerancia}}{\text{Total SKUs}} \right) \times 100 = 87.38\%$$
 
 ### 📌 Diagnóstico Integral del Cruce de Tablas:
 1. **Consistencia Física (Conteo Físico vs. Libreta del Jefe):**
@@ -270,7 +270,7 @@ A partir de los datos limpios y las directrices del docente, se verificaron form
 graph TD
     Q1["Queja 1: Desabastecimiento de Lámina"] -->|Comprobada| R1["Lead Time Real: 20.8d vs Declarado: 11.1d (+87.4% retraso)"]
     Q2["Queja 2: Plata Muerta / Inventario Ocioso"] -->|Comprobada| R2["301 SKUs (68.4%) sin salidas en 21 meses. 86.6% es Clase C"]
-    Q3["Queja 3: Nadie se fía del Inventario"] -->|Comprobada| R3["IRA del 28.33% y 93 SKUs con saldos negativos por desfase de muelle"]
+    Q3["Queja 3: Nadie se fía del Inventario"] -->|Comprobada| R3["ERI del 28.33% y 93 SKUs con saldos negativos por desfase de muelle"]
     Q4["Queja 4: Picos Imprevistos en Archivadores"] -->|Comprobada| R4["CV Demanda > 0.53 en archivadores y escritorios (alta volatilidad)"]
 ```
 
@@ -283,7 +283,7 @@ graph TD
 * **301 SKUs no tuvieron un solo movimiento de consumo** durante los 21 meses evaluados, generando un sobrecosto financiero del **25% anual ($H$)** sobre inventario inmovilizado.
 
 ### 5.3 Queja 3: Desconfianza Generalizada en el Sistema $\rightarrow$ **CIERTA (Causa Raíz Operacional)**
-* **Inexactitud de Registros (IRA) del 28.33%**.
+* **Inexactitud de Registros (ERI) del 28.33%**.
 * *Causa Raíz:* Para evitar paradas de planta ($450.000 COP/hora), producción consume materiales descargados en muelle antes de que bodega formalice la entrada en el ERP, forzando salidas sobre saldo cero y negativizando el sistema.
 
 ### 5.4 Queja 4: Sorpresa ante Picos de Archivadores y Estanterías $\rightarrow$ **CIERTA**
