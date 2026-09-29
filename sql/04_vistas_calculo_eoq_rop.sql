@@ -157,6 +157,7 @@ SELECT
     '$ ' || TO_CHAR(cb.costo_mantenimiento_unitario_h_cop, 'FM999,999,999,990.00') AS costo_mantenimiento_unitario_formato,
     -- Cálculos de Lote Económico (EOQ)
     cb.eoq_lote_economico,
+    cb.eoq_lote_economico AS eoq_lote_economico_und,
     TO_CHAR(cb.eoq_lote_economico, 'FM999,999') || ' und' AS eoq_formato,
     CASE 
         WHEN cb.eoq_lote_economico = 0 THEN 0
@@ -168,26 +169,38 @@ SELECT
     END AS frecuencia_pedido_dias,
     -- Cálculos de Stock de Seguridad (SS) y Punto de Reorden (ROP)
     cb.demanda_durante_lead_time,
+    cb.demanda_durante_lead_time AS demanda_lead_time_und,
     cb.sigma_periodo_entrega_dl,
     cb.stock_seguridad_ss,
+    cb.stock_seguridad_ss AS stock_seguridad_und,
     TO_CHAR(cb.stock_seguridad_ss, 'FM999,999') || ' und' AS stock_seguridad_formato,
     ROUND((cb.stock_seguridad_ss * cb.costo_unitario)::numeric, 2) AS valor_stock_seguridad_cop,
     '$ ' || TO_CHAR(cb.stock_seguridad_ss * cb.costo_unitario, 'FM999,999,999,990') || ' COP' AS valor_stock_seguridad_formato,
     cb.punto_reorden_rop,
+    cb.punto_reorden_rop AS rop_punto_reorden,
+    cb.punto_reorden_rop AS rop_punto_reorden_und,
     TO_CHAR(cb.punto_reorden_rop, 'FM999,999') || ' und' AS punto_reorden_formato,
+    TO_CHAR(cb.punto_reorden_rop, 'FM999,999') || ' und' AS rop_formato,
     ROUND((cb.punto_reorden_rop * cb.costo_unitario)::numeric, 2) AS valor_rop_cop,
     '$ ' || TO_CHAR(cb.punto_reorden_rop * cb.costo_unitario, 'FM999,999,999,990') || ' COP' AS valor_rop_formato,
     (cb.punto_reorden_rop + cb.eoq_lote_economico) AS stock_maximo_sugerido,
     TO_CHAR(cb.punto_reorden_rop + cb.eoq_lote_economico, 'FM999,999') || ' und' AS stock_maximo_formato,
     -- Estado Físico y Posición de Inventario
     cb.stock_actual_kardex,
+    cb.stock_actual_kardex AS stock_actual_kardex_und,
     TO_CHAR(cb.stock_actual_kardex, 'FM999,999,990.00') || ' und' AS stock_actual_formato,
     cb.ordenes_en_transito,
+    cb.ordenes_en_transito AS ordenes_en_transito_und,
     TO_CHAR(cb.ordenes_en_transito, 'FM999,999,990') || ' und' AS ordenes_transito_formato,
     cb.posicion_inventario,
+    cb.posicion_inventario AS stock_posicion_neta,
+    cb.posicion_inventario AS stock_actual_disponible_und,
     TO_CHAR(cb.posicion_inventario, 'FM999,999,990.00') || ' und' AS posicion_inventario_formato,
+    TO_CHAR(cb.posicion_inventario, 'FM999,999,990.00') || ' und' AS stock_disponible_formato,
     ROUND((cb.posicion_inventario * cb.costo_unitario)::numeric, 2) AS valor_posicion_cop,
     '$ ' || TO_CHAR(cb.posicion_inventario * cb.costo_unitario, 'FM999,999,999,990') || ' COP' AS valor_posicion_formato,
+    ROUND((cb.eoq_lote_economico * cb.costo_unitario)::numeric, 2) AS inversion_eoq_cop,
+    '$ ' || TO_CHAR(cb.eoq_lote_economico * cb.costo_unitario, 'FM999,999,999,990') || ' COP' AS inversion_eoq_formato,
     -- Semáforo de Reposición Dinámico
     CASE 
         WHEN cb.demanda_anual_unidades = 0 THEN '🔵 Plata Muerta'
@@ -196,6 +209,13 @@ SELECT
         WHEN cb.posicion_inventario <= (cb.punto_reorden_rop + cb.eoq_lote_economico) THEN '🟢 Zona Segura'
         ELSE '🔵 Sobreabastecimiento'
     END AS estado_semaforo,
+    CASE 
+        WHEN cb.demanda_anual_unidades = 0 THEN '🔵 Plata Muerta'
+        WHEN cb.posicion_inventario <= cb.stock_seguridad_ss THEN '🔴 Quiebre Inminente'
+        WHEN cb.posicion_inventario <= cb.punto_reorden_rop THEN '🟡 Reorden Requerido'
+        WHEN cb.posicion_inventario <= (cb.punto_reorden_rop + cb.eoq_lote_economico) THEN '🟢 Zona Segura'
+        ELSE '🔵 Sobreabastecimiento'
+    END AS semaforo_inventario,
     -- Disparador y Cantidad Sugerida a Pedir
     CASE 
         WHEN cb.demanda_anual_unidades > 0 AND cb.posicion_inventario <= cb.punto_reorden_rop THEN TRUE
@@ -221,7 +241,14 @@ SELECT
         WHEN cb.posicion_inventario <= cb.punto_reorden_rop THEN 'EMITIR ORDEN DE COMPRA: Posición alcanzó Punto de Reorden'
         WHEN cb.posicion_inventario <= (cb.punto_reorden_rop + cb.eoq_lote_economico) THEN 'OPERACIÓN NORMAL: No requiere reposición en este ciclo'
         ELSE 'SUSPENDER COMPRAS: Exceso de inventario sobre stock máximo'
-    END AS accion_operativa_sugerida
+    END AS accion_operativa_sugerida,
+    CASE 
+        WHEN cb.demanda_anual_unidades = 0 THEN 'Liquidación / Depuración de Catálogo (Sin Movimiento)'
+        WHEN cb.posicion_inventario <= cb.stock_seguridad_ss THEN 'EMITIR ORDEN URGENTE: Posición bajo Stock de Seguridad'
+        WHEN cb.posicion_inventario <= cb.punto_reorden_rop THEN 'EMITIR ORDEN DE COMPRA: Posición alcanzó Punto de Reorden'
+        WHEN cb.posicion_inventario <= (cb.punto_reorden_rop + cb.eoq_lote_economico) THEN 'OPERACIÓN NORMAL: No requiere reposición en este ciclo'
+        ELSE 'SUSPENDER COMPRAS: Exceso de inventario sobre stock máximo'
+    END AS accion_sugerida
 FROM calculo_base cb
 ORDER BY 
     CASE 
