@@ -59,13 +59,14 @@ SELECT
     sku,
     descripcion,
     categoria,
-    costo_unitario_formato,
-    consumo_unidades_total,
-    valor_consumo_formato,
+    costo_unitario,
+    lead_time_declarado_dias,
+    unidades_consumidas_total,
+    consumo_anual_unidades,
+    valor_consumo_anual_cop,
     pct_participacion_individual,
-    pct_participacion_acumulada,
-    clasificacion_abc,
-    tipo_rotacion
+    pct_acumulado_valor,
+    clasificacion_abc
 FROM public.vista_clasificacion_abc
-ORDER BY valor_consumo_cop DESC;
+ORDER BY valor_consumo_anual_cop DESC;
 ```
