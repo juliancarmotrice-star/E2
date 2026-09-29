@@ -110,29 +110,37 @@ flowchart LR
 
 ---
 
-### 3.3 Capa 3: Motores determinísticos (separados a propósito)
+### 3.3 Capa 3: Motores determinísticos (separados a propósito en Skills)
 
-No hay un único “motor de fórmulas”. Cada política responde a una pregunta distinta y usa insumos distintos:
+No hay un único “motor de fórmulas”. Cada política responde a una pregunta distinta, usa insumos distintos y está formalizada como un **Skill ejecutable** dentro de `.agents/skills/`:
 
 #### A. Motor de reposición ($ROP$, $SS$, $EOQ$)
+* **Skill canónico:** [`.agents/skills/reposicion-eoq-rop-e2`](../.agents/skills/reposicion-eoq-rop-e2/SKILL.md) + [`sql/04_vistas_calculo_eoq_rop.sql`](../sql/04_vistas_calculo_eoq_rop.sql)
 * **Pregunta:** ¿cuándo y cuánto pedir?
-* **Insumos:** consumo $\bar{d}$, $\sigma_d$, lead time real $\bar{L}$, $\sigma_L$, $S=\$80.000$, $H=25\%$.
+* **Insumos:** consumo $\bar{d}$, $\sigma_d$, lead time real $\bar{L}$, $\sigma_L$, $S=\$80.000$, $H=25\%$, $Z=1.64485$ (95% SL).
 * **Fórmulas:**
 $$ROP_i = \bar{d}_i \cdot \bar{L}_i + SS_i$$
 $$SS_i = Z \cdot \sqrt{\bar{L}_i \cdot \sigma_{d,i}^2 + \bar{d}_i^2 \cdot \sigma_{L,i}^2}$$
 $$EOQ_i = \sqrt{\frac{2 \cdot D_i \cdot S}{H_i}}$$
 
-#### B. Motor ERI (exactitud en el registro de inventario)
+#### B. Motor ERI (Exactitud en el Registro de Inventario)
+* **Skill canónico:** [`.agents/skills/exactitud-inventarios-eri-e2`](../.agents/skills/exactitud-inventarios-eri-e2/SKILL.md) + [`sql/02_diagnostico_sla_proveedores_y_produccion.sql`](../sql/02_diagnostico_sla_proveedores_y_produccion.sql)
 * **Pregunta:** ¿el Kardex es confiable frente al piso?
 * **Insumos:** Kardex teórico, `conteo_fisico`, cuaderno del jefe de bodega.
 $$ERI = \left( \frac{\text{SKUs con } |Stock_{teórico} - Stock_{físico}| = 0}{\text{SKUs auditados}} \right) \times 100$$
 Este motor **no** dispara una OC; avisa al Vigilante si una decisión de compra se apoya en un saldo dudoso o con desalineación contable.
 
-#### C. Motor ABC-XYZ (segmentación / plata muerta)
+#### C. Motor ABC-XYZ (Segmentación y Plata Muerta)
+* **Skill canónico:** [`.agents/skills/analitica-abc-xyz-e2`](../.agents/skills/analitica-abc-xyz-e2/SKILL.md) + [`sql/03_vistas_analiticas_abc.sql`](../sql/03_vistas_analiticas_abc.sql)
 * **Pregunta:** ¿qué SKU es crítico y cuál inmoviliza capital?
-* **Insumos:** valor de consumo y coeficiente de variación. Clase C/Z alimenta el semáforo azul, no el $ROP$.
+* **Insumos:** valor de consumo acumulado (Pareto 80/15/5) y coeficiente de variación $CV$. Clase C/Z alimenta el bloqueo de compras de Plata Muerta, no el $ROP$.
 
-La IA no sustituye ninguno de los tres motores.
+#### D. Motor SLA de Proveedores y Explosión MRP
+* **Skill canónico:** [`.agents/skills/sla-proveedores-mrp-e2`](../.agents/skills/sla-proveedores-mrp-e2/SKILL.md) + [`sql/02_diagnostico_sla_proveedores_y_produccion.sql`](../sql/02_diagnostico_sla_proveedores_y_produccion.sql)
+* **Pregunta:** ¿qué tan puntuales son los proveedores y qué materiales exige el MPS?
+* **Insumos:** OCs cerradas, lead time real histórico, tabla `bom` y `plan_produccion`.
+
+La IA no sustituye ninguno de estos cuatro motores determinísticos.
 
 ---
 
