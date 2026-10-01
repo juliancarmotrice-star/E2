@@ -100,13 +100,14 @@ SELECT
 FROM public.vista_clasificacion_abc
 ORDER BY valor_consumo_anual_cop DESC;
 
--- B. Resumen ejecutivo por categoría ABC
+-- B. Resumen ejecutivo por categoría ABC (Totalmente dinámico)
 SELECT 
     clasificacion_abc,
     COUNT(*) AS total_skus,
-    TO_CHAR(ROUND((COUNT(*)::numeric / 420 * 100), 2), 'FM990.00') || ' %' AS pct_skus,
+    TO_CHAR(ROUND((COUNT(*)::numeric / SUM(COUNT(*)) OVER() * 100), 2), 'FM990.00') || ' %' AS pct_skus,
     '$ ' || TO_CHAR(SUM(valor_consumo_anual_cop), 'FM999,999,999,990') || ' COP' AS valor_consumo_total_cop,
     TO_CHAR(SUM(pct_participacion_individual), 'FM990.00') || ' %' AS pct_valor_total
 FROM public.vista_clasificacion_abc
 GROUP BY clasificacion_abc
 ORDER BY clasificacion_abc;
+

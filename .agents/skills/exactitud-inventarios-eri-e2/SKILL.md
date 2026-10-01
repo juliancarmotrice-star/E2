@@ -3,31 +3,32 @@ name: exactitud-inventarios-eri-e2
 description: >-
   Audita la Exactitud en el Registro de Inventario (ERI) y reconciliación
   tridimensional (Kardex teórico vs Conteo Físico Oficial vs Cuaderno del Jefe)
-  para E2 SAS. Utilícese para validar la veracidad de los saldos de stock,
-  cuantificar la desalineación contable y evitar compras basadas en saldos fantasma.
+  para cualquier catálogo de materias primas (N SKUs).
+  Utilícese para validar la veracidad de los saldos de stock, cuantificar la desalineación
+  contable y evitar compras basadas en saldos fantasma.
   Enfatiza el consumo directo de las vistas analíticas de Supabase.
 ---
 
-# 🔍 Motor de Auditoría y Exactitud de Inventario (ERI) — E2 SAS
+# 🔍 Motor General de Auditoría y Exactitud de Inventario (ERI)
 
-Este skill es la **guía canónica de razonamiento paso a paso** para que cualquier LLM o agente de IA audite la veracidad de los saldos de inventario, calcule la Exactitud en el Registro de Inventario (**ERI**) y cuantifique la desalineación contable en **E2 SAS**.
+Este skill es la **guía metodológica y algorítmica general paso a paso** para que cualquier LLM o agente de IA audite la veracidad de los saldos de inventario, calcule la Exactitud en el Registro de Inventario (**ERI**) y cuantifique la desalineación contable sobre **cualquier catálogo de $N$ materias primas** y **cualquier volumen de movimientos transaccionales**.
 
 > [!IMPORTANT]
 > **DIRECTIVA PRINCIPAL PARA EL LLM (CONSULTA DE VISTAS ANALÍTICAS):**
 > La base de datos en Supabase cuenta con **vistas analíticas precalculadas y optimizadas**:
-> * **`public.vista_resumen_eri_inventarios`**: Métricas globales y resumen por tipo de rotación (activos vs inactivos).
-> * **`public.vista_diagnostico_eri_inventarios`**: Detalle fila por fila de los 420 SKUs con saldos reconciliados, discrepancias en unidades, desalineación en COP y estado de semáforo.
+> * **`public.vista_resumen_eri_inventarios`**: Métricas globales dinámicas y resumen por tipo de rotación (activos vs inactivos).
+> * **`public.vista_diagnostico_eri_inventarios`**: Detalle fila por fila para la totalidad de los $N$ SKUs con saldos reconciliados, discrepancias en unidades, desalineación en COP y estado de semáforo.
 > 
 > **Regla de Oro:** El LLM **NUNCA** debe calcular o reconstruir el ERI manualmente desde tablas crudas si puede consultar estas vistas directamente mediante SQL en Supabase.
 
 ---
 
-## 🎯 1. Contexto y Reconciliación Tridimensional
+## 🎯 1. Principio de Reconciliación Tridimensional
 
-En **E2 SAS**, la exactitud del inventario se audita contrastando **3 fuentes de información independientes** para cada uno de los 420 SKUs:
+La auditoría de exactitud contrasta de forma continua **3 fuentes de información independientes** para cada uno de los $N$ SKUs registrados:
 
 ```
-                       RECONCILIACIÓN TRIDIMENSIONAL
+                       RECONCILIACIÓN TRIDIMENSIONAL GENERAL
                      ┌───────────────────────────────┐
                      │  1. KARDEX TEÓRICO DEL ERP    │
                      │  Saldo = Inicial + E - S + A  │
@@ -38,104 +39,100 @@ En **E2 SAS**, la exactitud del inventario se audita contrastando **3 fuentes de
         │                                                         │
         ▼                                                         ▼
  ┌───────────────────────────────┐         ┌───────────────────────────────┐
- │  2. CONTEO FÍSICO OFICIAL     │ ◄─────► │  3. CUADERNO DEL JEFE         │
- │  Auditoría física (Piso)      │         │  Control manual paralelo      │
+ │  2. CONTEO FÍSICO OFICIAL     │ ◄─────► │  3. AUDITORÍA / CONTROL PISO  │
+ │  Auditoría física (Piso)      │         │  Verificación manual paralela │
  └───────────────────────────────┘         └───────────────────────────────┘
 ```
 
-1. **Kardex Teórico del ERP:** Reconstruido dinámicamente desde el inventario inicial más todas las transacciones históricas de entradas, salidas y ajustes.
-2. **Conteo Físico Oficial:** Auditoría física general al cierre del periodo de 21 meses (`conteo_fisico`).
-3. **Cuaderno del Jefe de Planta:** Registros independientes de control físico de bodega paralela (`inventario_bodega_JEFE`).
+1. **Kardex Teórico del ERP ($K_i$):** Saldo lógico acumulado desde el inicio del registro histórico.
+2. **Conteo Físico Oficial ($F_i$):** Auditoría física en piso de almacén (`conteo_fisico`).
+3. **Control Auxiliar de Piso ($J_i$):** Registros independientes o conteos del jefe de patio (`inventario_bodega_JEFE`).
 
 ---
 
 ## 🪜 2. Algoritmo Paso a Paso: Auditoría ERI y Desalineación Contable
 
-Cualquier LLM debe comprender y seguir la siguiente secuencia de **5 pasos determinísticos**:
+Cualquier LLM debe ejecutar y validar la exactitud siguiendo estrictamente estos **5 pasos matemáticos generales**:
 
 ```
- [Paso 1] Reconstruir Saldo de Kardex Teórico por SKU
+ [Paso 1] Reconstruir Saldo de Kardex Teórico por SKU (K_i = Inicial + E - S + A)
     │
     ▼
- [Paso 2] Cruzar con Conteo Físico Oficial y Cuaderno del Jefe
+ [Paso 2] Cruzar con Conteo Físico Oficial (F_i) y Control Auxiliar (J_i)
     │
     ▼
- [Paso 3] Calcular Discrepancia Física en Unidades (Stock Físico - Stock Kardex)
+ [Paso 3] Calcular Discrepancia Física en Unidades (Δ_i = F_i - K_i)
     │
     ▼
- [Paso 4] Valorizar la Desalineación Contable Bruta en COP (|Discrepancia| * Costo Unitario)
+ [Paso 4] Valorizar la Desalineación Contable Bruta (M_i = |Δ_i| * Costo_Unitario_i)
     │
     ▼
- [Paso 5] Evaluar Exactitud ERI (Binaria Estricta vs Tolerante) y Semáforo de Riesgo
+ [Paso 5] Calcular ERI Global Binario y Evaluar Semáforo de Incertidumbre
 ```
 
 ---
 
 ### Paso 1: Reconstruir el Kardex Teórico ($K_i$)
-Para cada SKU $i \in \{1, \dots, 420\}$:
+Para cada SKU $i \in \{1, 2, \dots, N\}$:
 $$\text{Stock Kardex}_i = \text{Stock Inicial}_i + \sum \text{Entradas}_i - \sum \text{Salidas}_i + \sum \text{Ajustes}_i$$
-* **Fuente:** Tabla `inventario_inicial` cruzada con `movimientos_inventarios`.
-* **Cuidado con signos:** En `movimientos_inventarios` las salidas deben restar y las entradas sumar. Si hay cantidades absolutas, aplicar la regla contable según `tipo_movimiento`.
+* **Fuente:** Tabla `inventario_inicial` cruzada dinámicamente con `movimientos_inventarios`.
+* **Regla contable:** Las salidas restan, las entradas suman y los ajustes suman/restan según su naturaleza.
 
 ---
 
-### Paso 2: Cruzar con Auditoría Física ($F_i$) y Bodega Jefe ($J_i$)
-* $F_i$: `conteo_fisico.stock_fisico_contado` (Auditoría oficial).
-* $J_i$: `inventario_bodega_JEFE.conteo_jefe` (Conteo paralelo para 120 SKUs críticos).
+### Paso 2: Cruzar con Fuentes Físicas de Verificación ($F_i$ y $J_i$)
+* $F_i$: Conteo físico oficial (`conteo_fisico.stock_fisico_contado`).
+* $J_i$: Conteo auxiliar de bodega (`inventario_bodega_JEFE.conteo_jefe`).
 
 ---
 
 ### Paso 3: Calcular la Discrepancia en Unidades ($\Delta_i$)
 $$\Delta_i = F_i - K_i = \text{Stock Físico}_i - \text{Stock Kardex}_i$$
 * **$\Delta_i = 0$:** Registro perfectamente cuadrado (**Exacto**).
-* **$\Delta_i > 0$:** Sobrante físico (Excedente en bodega no registrado en ERP).
+* **$\Delta_i > 0$:** Sobrante físico (Excedente en bodega no registrado en el sistema contable).
 * **$\Delta_i < 0$:** Faltante físico / Merma (Pérdida física o consumo no reportado).
 
 ---
 
 ### Paso 4: Cuantificar la Desalineación Contable Bruta ($M_i$)
-La desalineación monetaria mide el error contable absoluto en pesos colombianos ($COP$):
+Mide el error patrimonial absoluto en dinero ($COP$):
 $$M_i = |\Delta_i| \times C_{u, i} = |\text{Stock Físico}_i - \text{Stock Kardex}_i| \times \text{Costo Unitario}_i$$
-* **Desalineación Contable Total del Sistema:**
-  $$M_{\text{total}} = \sum_{i=1}^{N} M_i \quad (\approx \mathbf{\$48.792.923.505 \text{ COP}})$$
+* **Desalineación Contable Total del Catálogo:**
+  $$M_{\text{total}} = \sum_{i=1}^{N} M_i$$
 
 ---
 
 ### Paso 5: Calcular el Porcentaje de Exactitud ERI
 
-#### A. Exactitud Binaria Estricta (Norma Internacional APICS / Oficial E2 SAS):
+#### A. Exactitud Binaria Estricta (Norma Estándar APICS):
 Un SKU es exacto si y solo si la discrepancia es estrictamente cero ($\Delta_i = 0$):
 $$\text{ERI Global (\%)} = \left( \frac{\sum_{i=1}^{N} \mathbb{I}(\Delta_i = 0)}{N} \right) \times 100$$
-*(Donde $\mathbb{I}$ es la función indicadora: 1 si es exacto, 0 si está descuadrado).*
+*(Donde $N = \text{COUNT(*)}$ es el número total dinámico de SKUs evaluados).*
 
 #### B. Exactitud con Tolerancia Operativa ($\pm 10\%$):
 $$\text{ERI Tolerante (\%)} = \left( \frac{\sum_{i=1}^{N} \mathbb{I}(|\Delta_i| \le 0.10 \times K_i)}{N} \right) \times 100$$
 
 ---
 
-## 📊 3. Línea Base Diagnosticada (Fase E1 — AS-IS)
+## 📌 3. Caso de Estudio de Referencia (Línea Base Histórica Inicial E1)
 
-Al consultar las vistas analíticas, el LLM debe reportar la siguiente verdad fundamental de los datos:
+A modo de **referencia histórica y contraste metodológico** para el dataset inicial de **E2 SAS** ($N=420$ SKUs auditados):
 
 | Segmento de Inventario | Total SKUs | SKUs Exactos | SKUs Descuadrados | ERI Exactitud Binaria | Desalineación Contable Bruta | Diagnóstico Crítico |
 |---|:---:|:---:|:---:|:---:|:---:|---|
-| **🔴 SKUs Activos (En Rotación)** | **119** | **0** | **119** | **`0.00 %`** | **`$ 48.760.853.889 COP`** | **100% de los materiales activos están descuadrados** |
-| **🟢 SKUs Inactivos (Plata Muerta)** | **301** | **282** | **19** | **`93.69 %`** | **`$ 32.069.616 COP`** | 19 SKUs con mermas físicas no reportadas |
-| **TOTAL GENERAL** | **420** | **282** | **138** | **`67.14 %`** | **`$ 48.792.923.505 COP`** | **$48.792M COP de incertidumbre contable** |
+| **🔴 SKUs Activos (En Rotación)** | **119** | **0** | **119** | **`0.00 %`** | **`$ 48.760.853.889 COP`** | 100% de los materiales activos presentaban descuadre físico. |
+| **🟢 SKUs Inactivos (Plata Muerta)** | **301** | **282** | **19** | **`93.69 %`** | **`$ 32.069.616 COP`** | 19 SKUs con mermas físicas no reportadas. |
+| **TOTAL BASELINE** | **420** | **282** | **138** | **`67.14 %`** | **`$ 48.792.923.505 COP`** | **Línea base de arranque auditada.** |
 
 > [!NOTE]
-> **Aclaración sobre el "75% de ERI" mencionado en juntas:**
-> Si un usuario o directivo afirma que el ERI debería ser del **75.25%**, el LLM debe explicar con solvencia técnica:
-> 1. El $75.25\%$ proviene de asumir ingenuamente que los 301 inactivos están $100\%$ cuadrados ($301 / 400 = 75.25\%$) o de aplicar una banda de tolerancia del $\pm 10\%$.
-> 2. El valor real, auditado con precisión binaria de $1$ unidad sobre los 420 SKUs, es **`67.14%`** porque se descubrieron 19 SKUs inactivos con fugas/mermas físicas reales.
+> **Aclaración sobre el "75% de ERI":**
+> El valor del $75.25\%$ proviene de aproximaciones teóricas que asumían que todos los inactivos estaban cuadrados ($301 / 400 = 75.25\%$) o de tolerancias del $\pm 10\%$. El cálculo riguroso binario sobre los 420 SKUs arrojó **`67.14%`** debido a las mermas físicas detectadas.
 
 ---
 
-## 🗄️ 4. Consultas a las Vistas Analíticas en Supabase (Uso Mandatorio)
+## 🗄️ 4. Consultas a las Vistas Analíticas en Supabase (Dinámicas)
 
-El LLM debe utilizar las siguientes consultas predefinidas:
-
-### A. Resumen Ejecutivo de Exactitud (KPIs Clave)
+### A. Resumen Ejecutivo Dinámico de Exactitud
 ```sql
 SELECT 
     tipo_rotacion,
@@ -147,7 +144,7 @@ SELECT
 FROM public.vista_resumen_eri_inventarios;
 ```
 
-### B. Top 20 SKUs con Mayor Riesgo y Desalineación Monetaria
+### B. Top SKUs con Mayor Desalineación Monetaria
 ```sql
 SELECT 
     sku,
@@ -166,7 +163,7 @@ ORDER BY desalineacion_dinero_cop DESC
 LIMIT 20;
 ```
 
-### C. Consulta Individual de un SKU Específico
+### C. Ficha de Auditoría Individual para Cualquier SKU
 ```sql
 SELECT 
     sku,
@@ -183,14 +180,14 @@ SELECT
     desalineacion_dinero_formato,
     estado_eri
 FROM public.vista_diagnostico_eri_inventarios
-WHERE sku = 'MP-0001'; -- Reemplazar por el SKU consultado
+WHERE sku = 'MP-0001'; -- Reemplazar dinámicamente por cualquier SKU
 ```
 
 ---
 
 ## 🚦 5. Semáforo y Reglas de Decisión para el Agente IA
 
-| Estado ERI | Condición en Vista | Acción Inmediata del Agente IA |
+| Estado ERI | Condición Lógica | Acción Inmediata del Agente IA |
 |---|---|---|
 | **🟢 `Cuadrado (Exacto)`** | $\Delta_i = 0$ | Operación regular. El stock del Kardex es confiable para planificar compras y MRP. |
 | **🔴 `Descuadrado - Faltante Fisico`** | $\Delta_i < 0$ | **ADVERTENCIA OBLIGATORIA:** Hay menos material físico en piso del que dice el sistema. Si se evalúa compra, usar el Conteo Físico como stock base para evitar desabastecimiento. |
