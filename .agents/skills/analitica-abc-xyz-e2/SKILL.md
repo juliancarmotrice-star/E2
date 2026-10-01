@@ -11,7 +11,13 @@ description: >-
 
 Este skill es la **guía canónica de razonamiento paso a paso** para que cualquier LLM o agente de IA comprenda, calcule, audite y aplique la segmentación multicriterio de las **420 materias primas** de **E2 SAS**.
 
----
+> [!IMPORTANT]
+> **DIRECTIVA PRINCIPAL PARA EL LLM (CONSULTA DE LA VISTA ANALÍTICA):**
+> La base de datos en Supabase cuenta con la vista analítica oficial y precalculada:
+> * **`public.vista_clasificacion_abc`**: Contiene para los 420 SKUs el valor anualizado en COP, porcentaje de participación individual, porcentaje acumulado de Pareto y la clasificación $A$, $B$ o $C$ con columnas numéricas y formateadas.
+> 
+> **Regla de Oro:** El LLM **NUNCA** debe calcular el Pareto a mano o de memoria si puede consultar directamente `public.vista_clasificacion_abc` en Supabase.
+
 
 ## 🎯 1. Contexto Operativo y Alcance del Negocio
 
