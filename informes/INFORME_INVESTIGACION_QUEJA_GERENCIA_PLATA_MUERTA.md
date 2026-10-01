@@ -218,7 +218,7 @@ Para liberar los **$3.550 millones de capital atrapado** y reducir el costo anua
 
 | Eje Problemático | Indicador Clave de Desempeño (KPI) | Línea Base Actual (AS-IS) | Meta de Optimización (TO-BE) | Impacto Económico Cuantificado |
 |---|---|:---:|:---:|---|
-| **Queja 1: Abastecimiento y Retrasos de Lámina** | **OTIF Proveedores de Lámina** | **2.80%** | **$\ge 95.0\%$** | Evita pérdidas por parada de planta de **$3.801.600.000 COP**. |
+| **Queja 1: Abastecimiento y Retrasos de Lámina** | **SLA Proveedores de Lámina** | **2.80%** | **$\ge 95.0\%$** | Evita pérdidas por parada de planta de **$3.801.600.000 COP**. |
 | | **Desfase de Lead Time ($\Delta LT$)** | **+8.66 días (+71.5%)** | **$\le 0.0$ días** | |
 | **Queja 2: Plata Muerta y Sobre-stock** | **Índice de Rotación (ITR Global)** | **0.4956 veces/año** | **$\ge 6.0$ veces/año** | Libera capital atrapado de **$3.550.022.309 COP** y ahorra **$887.505.577 COP/año** en costo $H$. |
 | | **Días de Cobertura (DSI)** | **736.5 días** | **$\le 60.0$ días** | |

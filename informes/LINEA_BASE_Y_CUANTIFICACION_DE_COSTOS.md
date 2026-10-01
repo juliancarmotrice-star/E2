@@ -46,9 +46,9 @@ quadrantChart
     quadrant-2 "Inconsistencias Operativas"
     quadrant-3 "Zona Estable"
     quadrant-4 "Drenaje Financiero Oculto"
-    "OTIF Proveedores (6.08%)": [0.85, 0.95]
+    "SLA Proveedores (6.08%)": [0.85, 0.95]
     "Paradas de Planta ($3.801M COP)": [0.92, 0.90]
-    "IRA en Activos (0.00%)": [0.65, 0.85]
+    "ERI en Activos (0.00%)": [0.65, 0.85]
     "Plata Muerta ($887.5M COP/año)": [0.78, 0.35]
     "DSI Excesivo (736.5 días)": [0.75, 0.40]
     "Gasto Emisión OC ($117.6M COP)": [0.30, 0.50]
@@ -58,12 +58,12 @@ quadrantChart
 
 | Dimensión | Indicador Clave (KPI) | Valor Medido Actual (Línea Base AS-IS) | Meta Esperada de Mejora (Fase TO-BE) | Desviación / Brecha | Impacto Financiero Actual ($ COP) |
 |---|---|:---:|:---:|:---:|:---:|
-| **Suministro** | **OTIF Global (Entregas a Tiempo)** | **`6.08%`** | $\ge 95.00\%$ | -88.92% | Insumos no disponibles para producción |
-| **Suministro** | **OTIF en Láminas de Acero** | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal insumo estrangulado |
+| **Suministro** | **SLA Global de Proveedores (A Tiempo)** | **`6.08%`** | $\ge 95.00\%$ | -88.92% | Insumos no disponibles para producción |
+| **Suministro** | **SLA en Láminas de Acero** | **`2.80%`** | $\ge 95.00\%$ | -92.20% | Principal insumo estrangulado |
 | **Suministro** | **Lead Time Real vs. ERP (Lámina)** | **`20.78d` vs `12.11d`** | $LT_{\text{real}} = LT_{\text{ERP}}$ | +8.66 días (+71.5%) | Compras emitidas con desfase temporal |
 | **Suministro** | **Mora Promedio en OC Atrasadas** | **`10.99 días`** | $0 \text{ días}$ | +10.99 días de retraso | 14.417 días de mora acumulada |
-| **Inventario** | **Exactitud de Registro (IRA Global)** | **`71.67%`** | $\ge 98.00\%$ | -26.33% | Distorsionado por la plata muerta |
-| **Inventario** | **Exactitud de Registro (IRA Activos)** | **`0.00%`** | $\ge 98.00\%$ | -98.00% (Total) | 100% de los 119 SKUs activos desalineados |
+| **Inventario** | **Exactitud de Registro (ERI Global)** | **`71.67%`** | $\ge 98.00\%$ | -26.33% | Distorsionado por la plata muerta |
+| **Inventario** | **Exactitud de Registro (ERI Activos)** | **`0.00%`** | $\ge 98.00\%$ | -98.00% (Total) | 100% de los 119 SKUs activos desalineados |
 | **Inventario** | **Desalineación Contable Bruta** | **`$48.760 M COP`** | $< \$500 \text{ M COP}$ | Descontrol contable | Brecha Kardex vs Conteo Físico |
 | **Inventario** | **Días de Cobertura (DSI Global)** | **`736.5 días` (24.5 m)** | $\le 60 \text{ días}$ (2 m) | +676.5 días de sobre-stock | Exceso masivo de capital de trabajo |
 | **Inventario** | **Índice de Rotación Anual (ITR)** | **`0.495 veces/año`** | $\ge 6.00 \text{ veces/año}$ | -91.74% de lentitud | Inmovilidad severa del inventario |
@@ -85,7 +85,7 @@ El análisis demostró que **301 de los 420 SKUs (71.67%)** del catálogo de mat
   $$\text{Pérdida 21 Meses} = \$887.505.577 \times \left(\frac{21}{12}\right) = \mathbf{\$1.553.134.760 \text{ COP}}$$
 
 ### 4.2 Riesgo y Pérdida por Paradas de Planta ($450.000 COP / hora)
-Los retrasos sistemáticos de los proveedores (OTIF global del 6.08%) acumularon **14.417 días de mora** en compras.
+Los retrasos sistemáticos de los proveedores (SLA global del 6.08%) acumularon **14.417 días de mora** en compras.
 * Focalizando exclusivamente en la **Lámina de Acero** (materia prima no sustituible):
   - Días de retraso acumulados: **1.056 días**.
   - Horas turno de producción expuestas: **8.448 horas**.
@@ -102,7 +102,7 @@ La ausencia de cálculo de Lote Económico ($EOQ$) generó una pulverización de
 
 ## 📈 5. Desglose de Línea Base por Familias de Materiales
 
-| Familia de Material | Total SKUs | SKUs con Rotación Activa | Capital Inicial Invertido | Descuadre Físico vs. Kardex ($ COP) | OTIF Proveedores | Lead Time Promedio Real |
+| Familia de Material | Total SKUs | SKUs con Rotación Activa | Capital Inicial Invertido | Descuadre Físico vs. Kardex ($ COP) | SLA Proveedores | Lead Time Promedio Real |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **Correderas** | 65 | 22 | $1.025.410.200 COP | $12.844.018.282 COP | 7.14% | 14.8 días |
 | **Adhesivos** | 64 | 21 | $892.340.150 COP | $8.521.783.521 COP | 8.20% | 16.2 días |
@@ -121,9 +121,9 @@ La ausencia de cálculo de Lote Económico ($EOQ$) generó una pulverización de
 Las métricas seleccionadas para la Línea Base responden a los siguientes principios de ingeniería industrial:
 
 1. **Alineación Causa-Efecto:**
-   - Si el problema es que *se agota la materia prima*, la métrica no es la queja, sino el **OTIF** y el **desfase de Lead Time**.
+   - Si el problema es que *se agota la materia prima*, la métrica no es la queja, sino el **SLA** y el **desfase de Lead Time**.
    - Si el problema es la *plata inmovilizada*, la métrica es el **DSI**, el **ITR** y el **costo $H=25\%$**.
-   - Si el problema es la *desconfianza en el sistema*, la métrica es el **IRA** y la **desalineación contable bruta**.
+   - Si el problema es la *desconfianza en el sistema*, la métrica es el **ERI** y la **desalineación contable bruta**.
 2. **Medibilidad y Honestidad:**
    - Todos los valores provienen del cruce matemático reproducible sobre los datasets saneados y verificados en PostgreSQL/Supabase.
 3. **Monetización Directa:**

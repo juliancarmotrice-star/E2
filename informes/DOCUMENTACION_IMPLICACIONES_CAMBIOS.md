@@ -159,7 +159,7 @@ erDiagram
    * *Sincronización en Supabase:* Las 22 órdenes fueron actualizadas en la base de datos mediante operaciones `PATCH` automatizadas.
 
 3. **Partición Metodológica: Órdenes Cerradas vs. Órdenes Abiertas (En Tránsito):**
-   * **1.397 Órdenes Cerradas (`fecha_recepcion` válida):** Base de datos oficial para el cálculo de KPIs de abastecimiento ($LT_{\text{real}}$, variabilidad del proveedor $\sigma_{LT}$, cumplimiento $OTIF$). El Lead Time real histórico oscila entre **4 y 76 días** (promedio: **19.8 días**).
+   * **1.397 Órdenes Cerradas (`fecha_recepcion` válida):** Base de datos oficial para el cálculo de KPIs de abastecimiento ($LT_{\text{real}}$, variabilidad del proveedor $\sigma_{LT}$, cumplimiento $SLA$). El Lead Time real histórico oscila entre **4 y 76 días** (promedio: **19.8 días**).
    * **74 Órdenes Abiertas (`fecha_recepcion = NaN`):** No representan un error, sino **órdenes en curso / material en tránsito**. Se aíslan del cálculo de Lead Time histórico y se computan como inventario entrante en la ecuación de balance de reposición:
      $$\text{Posición de Stock} = \text{Stock Físico} + \text{Órdenes en Tránsito (74 OC)} - \text{Demanda Comprometida}$$
 
@@ -191,12 +191,12 @@ erDiagram
 |---|---|---|---|---|---|
 | **1** | `maestro_materiales.csv` | 54 SKUs sin `lead_time_declarado_dias`; 24 variantes léxicas en categorías. | **Deducción de Lead Time desde `ordenes_compra`** (52 por SKU + 2 por proveedor); normalización de 24 variantes a 8 familias canónicas. | La deducción desde compras refleja la duración logística real de abastecimiento; las familias canónicas permiten clasificar compras. | Permite parametrizar el Punto de Reorden ($ROP$) y Stock de Seguridad con tiempos reales y elimina dispersión en reportes. |
 | **2** | `movimientos_inventario.csv` | 466 cantidades negativas; 15 fechas `2026-13-05`. | Aplicación de valor absoluto $\lvert \text{cantidad} \rvert$; corrección de fecha a `2026-03-05`. | El tipo de movimiento (`entrada`, `salida`, `ajuste`) rige el signo contable; marzo 2026 cierra el periodo 21. | Elimina distorsiones en sumatorias de consumo y reconstruye el Kardex continuo sin fechas inválidas. |
-| **3** | `ordenes_compra.csv` | 22 órdenes con año de recepción `2035`; 74 órdenes con `fecha_recepcion = NaN`. | Corrección del año `2035` al año real de compra (`2024/2025/2026`); partición de órdenes abiertas. | El año 2035 distorsionaba el Lead Time real a >3.600 días; las órdenes abiertas representan stock en tránsito. | Permite medir con exactitud el Lead Time Real histórico ($LT_{\text{real}}$ = 19.8d) y el nivel de servicio ($OTIF$). |
+| **3** | `ordenes_compra.csv` | 22 órdenes con año de recepción `2035`; 74 órdenes con `fecha_recepcion = NaN`. | Corrección del año `2035` al año real de compra (`2024/2025/2026`); partición de órdenes abiertas. | El año 2035 distorsionaba el Lead Time real a >3.600 días; las órdenes abiertas representan stock en tránsito. | Permite medir con exactitud el Lead Time Real histórico ($LT_{\text{real}}$ = 19.8d) y el nivel de servicio ($SLA$). |
 | **4** | `bom.csv` | `ID_bom` 100% nula; 13 variantes de unidades; columna `nombre_producto` redundante. | Generación de PK combinada `id_bom` (`producto_sku`); unificación de unidades a minúsculas canónicas; eliminación de `nombre_producto`. | Cumplimiento de Tercera Forma Normal (3FN) e integridad referencial con `maestro_productos`. | Permite la explosión determinística de requerimientos de materiales (MRP) sin duplicación de descripciones ni errores de unidad. |
 | **5** | `plan_produccion.csv` | Redundancia de `nombre_producto` en 378 registros. | Eliminación de columna redundante y enlace relacional con `maestro_productos`. | Normalización 3FN; separación de la entidad dimensional de la tabla de hechos mensuales. | Optimiza el almacenamiento y asegura que un cambio de nombre de producto se propague automáticamente. |
 | **6** | `conteo_fisico.csv` | 94 SKUs con stock físico contado registrado con signo negativo (hasta -18.018 unidades). | Conversión de negativos a positivos mediante valor absoluto $\lvert \text{stock\_fisico\_contado} \rvert$ y verificación de duplicados (0 duplicados). | Un stock físico no puede ser negativo; la captura con signo menos obedece a un error de digitación en la toma física. | Corrige las magnitudes físicas a valores reales positivos para auditoría de inventario, cálculo de descuadre y reconciliación con Kardex. |
 | **7** | `inventario_inicial.csv` | 0 defectos. Estructura íntegra al 2024-07-01 (420 SKUs). | Conservación íntegra como **"Tabla Madre"** y ancla base del Kardex. | Pista docente clave: ancla de máxima confiabilidad para reconstruir la trazabilidad de los 21 meses. | Permite auditar si las diferencias entre sistema y físico provinieron del saldo inicial o de la operación posterior. |
-| **8** | `Inventario_bodega_JEFE.csv` | 32 existencias con signo negativo; 23 notas vacías; vocabulario informal (`faltante??`, `sobra`). | Conversión de negativos a positivos mediante valor absoluto $\lvert \text{conteo\_jefe} \rvert$; imputación de notas nulas con `'Sin observación'`; normalización de categorías y verificación de duplicados (0 duplicados). | No reemplaza el Kardex oficial, pero diagnostica la "libreta paralela" de piso; los signos negativos obedecen a error de digitación manual. | Permite medir cuantitativamente la brecha entre el ERP y el piso (Exactitud de Registro IRA = 28.33%) y categorizar alertas operativas. |
+| **8** | `Inventario_bodega_JEFE.csv` | 32 existencias con signo negativo; 23 notas vacías; vocabulario informal (`faltante??`, `sobra`). | Conversión de negativos a positivos mediante valor absoluto $\lvert \text{conteo\_jefe} \rvert$; imputación de notas nulas con `'Sin observación'`; normalización de categorías y verificación de duplicados (0 duplicados). | No reemplaza el Kardex oficial, pero diagnostica la "libreta paralela" de piso; los signos negativos obedecen a error de digitación manual. | Permite medir cuantitativamente la brecha entre el ERP y el piso (Exactitud de Registro ERI = 28.33%) y categorizar alertas operativas. |
 | **9** | `maestro_productos.csv` | Entidad no existente previamente. | Creación formal de la tabla maestra con los 18 productos terminados únicos de E2 SAS. | Estandarización de entidades maestras para desacoplar descripciones textuales de las tablas transaccionales. | Garantiza integridad referencial y normalización completa del modelo de datos de la empresa. |
 
 ---
@@ -210,14 +210,14 @@ graph TD
     subgraph Quejas de Gerencia
         Q1["1. Quiebre de lámina y retraso de proveedor"]
         Q2["2. Plata muerta en bodega (Sobre-stock)"]
-        Q3["3. Nadie se fía del sistema (IRA bajo)"]
+        Q3["3. Nadie se fía del sistema (ERI bajo)"]
         Q4["4. Picos de demanda en archivadores"]
     end
 
     subgraph Evidencia Cuantitativa Post-Limpieza
         E1["97.2% de órdenes de lámina retrasadas (LT real 21d vs 11d teórico)"]
         E2["301 SKUs sin rotación (Costo H = 25% anual sobre inventario inmovilizado)"]
-        E3["IRA = 28.33% por consumo en muelle antes de recepción formal"]
+        E3["ERI = 28.33% por consumo en muelle antes de recepción formal"]
         E4["CV > 0.53 en archivadores sin stock de seguridad dinámico"]
     end
 
@@ -260,7 +260,7 @@ A continuación se lista el propósito de cada artefacto desarrollado en el espa
 
 1. **[`clean_pipeline.py`](clean_pipeline.py):** Pipeline reproducible en Python que aplica todas las reglas de transformación y genera los CSV limpios en `data_clean/`.
 2. **[`data_clean/`](data_clean/):** Directorio con los 9 archivos CSV limpios y estandarizados en 3FN.
-3. **[`consultas_analiticas_kpis.sql`](consultas_analiticas_kpis.sql):** Paquete completo de consultas SQL analíticas para ejecutar en Supabase (KPIs, Kardex teórico, validación de quejas 1 a 4, cálculo de IRA y órdenes en tránsito).
+3. **[`consultas_analiticas_kpis.sql`](consultas_analiticas_kpis.sql):** Paquete completo de consultas SQL analíticas para ejecutar en Supabase (KPIs, Kardex teórico, validación de quejas 1 a 4, cálculo de ERI y órdenes en tránsito).
 4. **[`supabase_crear_maestro_productos.sql`](supabase_crear_maestro_productos.sql):** Script DDL ejecutado para crear `maestro_productos`, remover `nombre_producto` de `bom` y `plan_produccion` y vincular Foreign Keys.
 5. **[`supabase_schema_foreign_keys.sql`](supabase_schema_foreign_keys.sql):** Esquema DDL maestro integral con la definición canónica de tablas, restricciones, índices y llaves foráneas.
 6. **[`upload_to_supabase.py`](upload_to_supabase.py):** Script de carga masiva en lotes (*batch upload*) hacia la API REST de Supabase.

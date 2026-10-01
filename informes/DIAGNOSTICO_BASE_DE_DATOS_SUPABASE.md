@@ -133,8 +133,8 @@ flowchart TD
         MOV["movimientos_inventarios<br>(16.195 transacciones)"] -->|Entradas / Salidas / Ajustes| BALANCE
     end
 
-    subgraph Circuito_2["2. Reconciliación Tridimensional y Exactitud de Inventarios (IRA)"]
-        BALANCE -->|Stock Teórico ERP| RECON["Matriz de Reconciliación Tridimensional<br>Exactitud de Registros (IRA)"]
+    subgraph Circuito_2["2. Reconciliación Tridimensional y Exactitud de Inventarios (ERI)"]
+        BALANCE -->|Stock Teórico ERP| RECON["Matriz de Reconciliación Tridimensional<br>Exactitud de Registros (ERI)"]
         CF["conteo_fisico<br>(Auditoría 2026-03-31)"] -->|Stock Físico Oficial| RECON
         JEFE["inventario_bodega_JEFE<br>(Libreta Auxiliar 120 SKUs)"] -->|Muestreo de Piso (r = 0.9954)| RECON
     end
@@ -147,7 +147,7 @@ flowchart TD
     end
 
     subgraph Circuito_4["4. Gestión de Abastecimiento y Parámetros Logísticos"]
-        OC["ordenes_compra<br>(1.471 Órdenes)"] -->|Cálculo Lead Time Real y OTIF| LOGISTICA["Parámetros de Reposición<br>LT Real, ROP y Stock de Seguridad (SS)"]
+        OC["ordenes_compra<br>(1.471 Órdenes)"] -->|Cálculo Lead Time Real y SLA| LOGISTICA["Parámetros de Reposición<br>LT Real, ROP y Stock de Seguridad (SS)"]
         MM["maestro_materiales<br>(Catálogo MP)"] -->|Costos y Familias| LOGISTICA
     end
 
@@ -173,7 +173,7 @@ $$\text{Requerimiento Total}_j = \sum_{p \in \text{PT}} \left( \text{Cantidad Re
 ### 3.4 Circuito 4: Evaluación de Proveedores y Lead Times Logísticos
 A partir de las órdenes cerradas (`fecha_recepcion` válida):
 $$\text{Lead Time Real} = \text{fecha\_recepcion} - \text{fecha\_pedido}$$
-$$\text{OTIF (On-Time In-Full)} = \frac{\sum \mathbb{I}_{\{\text{fecha\_recepcion} \le \text{fecha\_promesa} \land \text{cantidad\_recibida} = \text{cantidad\_pedida}\}}}{\text{Total Órdenes Cerradas}}$$
+$$\text{SLA (On-Time In-Full)} = \frac{\sum \mathbb{I}_{\{\text{fecha\_recepcion} \le \text{fecha\_promesa} \land \text{cantidad\_recibida} = \text{cantidad\_pedida}\}}}{\text{Total Órdenes Cerradas}}$$
 
 ---
 
@@ -243,7 +243,7 @@ $$\text{OTIF (On-Time In-Full)} = \frac{\sum \mathbb{I}_{\{\text{fecha\_recepcio
 * **Total Filas:** 1.471 | **Columnas:** 8 | **PK:** `orden_compra` | **FK:** `sku`
 * **Defectos Corregidos:**
   * **22 órdenes con año de recepción `2035`** corregidas a su año real de compra (`2024/2025/2026`).
-  * **Partición metodológica:** 1.417 órdenes cerradas (con `fecha_recepcion` para medir Lead Time y OTIF) y 54 órdenes abiertas (en tránsito para calcular posición neta de inventario).
+  * **Partición metodológica:** 1.417 órdenes cerradas (con `fecha_recepcion` para medir Lead Time y SLA) y 54 órdenes abiertas (en tránsito para calcular posición neta de inventario).
 
 ---
 
@@ -263,7 +263,7 @@ A partir de la base de datos saneada e integrada, se sustentan formalmente las 4
 graph TD
     Q1["1. Queja: Desabastecimiento de Lámina"] -->|Comprobada| E1["Lead Time Real: 20.8 días vs 11.1 declarados (+87.4% retraso). 97.2% de órdenes fuera de tiempo."]
     Q2["2. Queja: Plata Muerta / Sobre-stock"] -->|Comprobada| E2["29 SKUs concentran el 80% del valor consumido (Clase A). 301 SKUs sin una sola salida en 21 meses."]
-    Q3["3. Queja: Desconfianza / Nadie se fía del ERP"] -->|Comprobada| E3["IRA = 87.38%. Causa: consumo en muelle antes de legalización formal en el ERP."]
+    Q3["3. Queja: Desconfianza / Nadie se fía del ERP"] -->|Comprobada| E3["ERI = 87.38%. Causa: consumo en muelle antes de legalización formal en el ERP."]
     Q4["4. Queja: Picos Imprevistos en Archivadores"] -->|Comprobada| E4["CV Demanda > 0.53 en Archivadores y Escritorios. Ausencia de Stock de Seguridad dinámico."]
 ```
 
@@ -271,7 +271,7 @@ graph TD
 
 ## 💻 6. Guía Rápida de Consultas SQL Útiles (Supabase)
 
-### A. Consultar el Balance Reconciliado Tridimensional (IRA):
+### A. Consultar el Balance Reconciliado Tridimensional (ERI):
 ```sql
 SELECT 
     m.sku,

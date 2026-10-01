@@ -240,10 +240,10 @@ sequenceDiagram
 
 | Queja de la Gerencia | Cuello de Botella Detectado | Cómo lo Resuelve esta Arquitectura |
 |---|---|---|
-| **Queja 1: Desabastecimiento de Lámina** | Lead Time real de 38.6 días vs 15 teóricos (+157% de retraso) y bajo SLA. | El **Motor Determinístico** calcula el $ROP$ con el $\bar{L}$ real y $\sigma_L$, y el **Vigilante** alerta con anticipación antes de entrar en zona de quiebre. |
-| **Queja 2: Plata Muerta en Bodega** | $145.4M COP inmovilizados en SKUs Clase C generando sobrecostos de \$36.3M anuales. | La **Matriz ABC-XYZ** identifica los SKUs Z y C; el **Vigilante** congela compras automáticas y propone planes de desacumulación. |
-| **Queja 3: Inexactitud de Inventario (ERI 0% activos)** | Discrepancia entre Kardex, auditoría física y cuaderno del jefe de bodega. | El **Lector** reconcilia las 3 fuentes; el **Vigilante** advierte si una decisión de compra se basa en un saldo con alta incertidumbre física. |
-| **Queja 4: Variabilidad en Archivadores / BOM** | Variabilidad de demanda ($CV = 48.7\%$) sin stock de seguridad dinámico. | El **Cálculo de SS** absorbe la variabilidad de la demanda y el **Vigilante** explota la lista BOM automáticamente al recibir el plan mensual. |
+| **Queja 1: Desabastecimiento de Lámina** | Lead Time real de **20.78 días vs 12.11 días** ERP (+71.5% desfase), SLA de entrega de apenas **2.80%** y **8.448 horas de riesgo de parada** ($3.801.6M COP). | El **Motor Determinístico** calcula el $ROP$ con el $\bar{L}$ real ($20.8\text{d}$) y $\sigma_L$, y el **Vigilante** alerta con anticipación antes de entrar en zona de quiebre. |
+| **Queja 2: Plata Muerta en Bodega** | **301 de 420 SKUs (71.7%)** sin movimiento en 21 meses con **$3.550.022.309 COP inmovilizados** ($887.505.577 COP anuales en posesión a $H=25\%$). | La **Matriz ABC-XYZ** identifica los SKUs Z y C; el **Vigilante** congela compras automáticas y propone planes de desacumulación. |
+| **Queja 3: Inexactitud de Inventario (ERI 0% activos)** | **ERI del 0.00% en 119 SKUs activos** (100% descuadrados) y desalineación contable bruta de **$48.760 M COP** entre Kardex, auditoría física y cuaderno del jefe. | El **Motor ERI** reconcilia las 3 fuentes; el **Vigilante** advierte si una decisión de compra se apoya en un saldo con alta incertidumbre física. |
+| **Queja 4: Variabilidad en Archivadores / BOM** | Variabilidad de demanda ($CV = 48.7\%$) en archivadores sin stock de seguridad dinámico ni explosión automatizada de BOM. | El **Cálculo de SS** absorbe la variabilidad de la demanda y el **Vigilante** explota la lista BOM automáticamente al recibir el plan mensual. |
 
 ---
 **E2 SAS · Dirección de Operaciones & Consultoría Analítica**  
