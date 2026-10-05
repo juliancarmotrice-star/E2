@@ -184,4 +184,108 @@ ORDER BY pp.periodo ASC, requerimiento_bruto_und DESC;
 1. **Utilizar siempre el Lead Time Real:** Para el cálculo de fechas de reorden y sugerencias de compra, el LLM **DEBE** usar el $\bar{L}_{\text{real}}$ observado y no los tiempos teóricos declarados en el ERP.
 2. **Sincronización con Reposición Continua:** Al sugerir una orden de reabastecimiento basada en MRP, verificar el semáforo y los parámetros de `public.vista_calculo_eoq_rop` para no duplicar órdenes si ya existe una OC en tránsito.
 
+---
+
+## 🗄️ 7. Archivos DDL y Consultas Analíticas en Supabase
+
+| Componente | Archivo Fuente | Ubicación | Propósito |
+|------------|----------------|-----------|-----------|
+| Script Analítico SLA y Producción | `sql/02_diagnostico_sla_proveedores_y_produccion.sql` | Repositorio `PA-E2/sql/` | Consultas analíticas y vistas de diagnóstico para SLA de proveedores y cumplimiento del plan. |
+| Llave Foránea y Maestro BOM | `sql/supabase_bom_pk.sql` / `sql/supabase_schema_foreign_keys.sql` | Repositorio `PA-E2/sql/` | Restricciones de integridad referencial entre BOM, Materiales y Productos. |
+
+---
+
+## 🔗 8. Prerequisitos y Dependencias
+
+* **Prerequisito obligatorio:** El skill [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md) debe haber cargado y normalizado:
+  * `public.ordenes_compra`
+  * `public.bom`
+  * `public.plan_produccion`
+  * `public.maestro_materiales`
+  * `public.maestro_productos`
+* **Interacción con otros skills:**
+  * [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md): Utiliza el $\bar{L}_{\text{real}}$ y su dispersión para alimentar la ecuación de ROP y Stock de Seguridad.
+  * [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md): Cruza la clasificación ABC para evaluar el impacto de demoras en SKUs estratégicos.
+
+---
+
+## 🔎 9. Queries de Verificación de Calidad
+
+Ejecutar estas consultas para garantizar la confiabilidad del cálculo de SLA y de la explosión MRP:
+
+### A. Consistencia Temporal de Órdenes de Compra (Cero Fechas Anómalas)
+```sql
+SELECT COUNT(*) AS oc_con_fechas_inconsistentes
+FROM public.ordenes_compra
+WHERE fecha_recepcion IS NOT NULL 
+  AND fecha_recepcion < fecha_pedido;
+-- Resultado esperado: 0 (la recepción no puede ocurrir antes del pedido)
+```
+
+### B. KPI Global de Nivel de Servicio de Entrega de Proveedores (OTD Global)
+```sql
+SELECT 
+    COUNT(*) AS total_ordenes_recibidas,
+    COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END) AS ordenes_a_tiempo,
+    COUNT(CASE WHEN fecha_recepcion > fecha_promesa THEN 1 END) AS ordenes_tardias,
+    ROUND((COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END)::numeric / COUNT(*) * 100), 2) || ' %' AS sla_otd_global,
+    ROUND(AVG(fecha_recepcion - fecha_pedido)::numeric, 1) || ' días' AS lead_time_promedio_general
+FROM public.ordenes_compra
+WHERE fecha_recepcion IS NOT NULL;
+```
+
+### C. Proveedores Críticos con Mayor Incumplimiento (SLA < 80%)
+```sql
+SELECT 
+    proveedor,
+    COUNT(*) AS total_entregas,
+    COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END) AS entregas_a_tiempo,
+    ROUND((COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END)::numeric / COUNT(*) * 100), 1) || ' %' AS sla_cumplimiento,
+    ROUND(AVG(fecha_recepcion - fecha_pedido)::numeric, 1) AS lt_real_promedio,
+    ROUND(AVG(fecha_recepcion - fecha_promesa)::numeric, 1) AS retraso_promedio_dias
+FROM public.ordenes_compra
+WHERE fecha_recepcion IS NOT NULL
+GROUP BY proveedor
+HAVING (COUNT(CASE WHEN fecha_recepcion <= fecha_promesa THEN 1 END)::numeric / COUNT(*) * 100) < 80
+ORDER BY sla_cumplimiento ASC;
+```
+
+### D. Integridad del BOM (Cero Materiales Huérfanos sin Maestro)
+```sql
+SELECT COUNT(*) AS materiales_huerfanos_en_bom
+FROM public.bom b
+LEFT JOIN public.maestro_materiales m ON b.sku_material = m.sku
+WHERE m.sku IS NULL;
+-- Resultado esperado: 0
+```
+
+### E. Integridad del Plan de Producción (Cero Productos Huérfanos sin BOM)
+```sql
+SELECT COUNT(DISTINCT pp.producto) AS productos_plan_sin_receta_bom
+FROM public.plan_produccion pp
+LEFT JOIN public.bom b ON pp.producto = b.producto
+WHERE b.producto IS NULL;
+-- Resultado esperado: 0
+```
+
+---
+
+## 🔄 10. Integración con Otros Skills del Sistema
+
+| Skill | Dirección | Intercambio de Información |
+|-------|:---------:|----------------------------|
+| [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md) | Outbound | Provee $\bar{L}_{\text{real}}$ y $\sigma_L$ calculados desde el historial de OCs para el dimensionamiento del ROP y Stock de Seguridad. |
+| [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md) | Inbound | Permite cruzar qué proveedores suministran insumos Clase A y focalizar planes de acción de compras. |
+| [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md) | Inbound | Garantiza la integridad referencial y el formato de fechas ISO-8601 requerido para los cálculos de morosidad. |
+
+---
+
+## 🚫 11. Fronteras del Skill (Qué NO hace este Skill)
+
+* **NO calcular parámetros del modelo Wilson (EOQ, SS, ROP continuo):** Es responsabilidad del skill [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md).
+* **NO clasificar demanda ABC-XYZ ni aislar Plata Muerta:** Es responsabilidad del skill [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md).
+* **NO auditar la Exactitud en Registro de Inventarios (ERI):** Es responsabilidad del skill [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md).
+* **NO modificar directamente la programación de producción del MPS en el ERP.**
+
+
 

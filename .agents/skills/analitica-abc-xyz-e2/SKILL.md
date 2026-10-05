@@ -335,4 +335,101 @@ ORDER BY (i.stock_inicial * m.costo_unitario) DESC;
       Emitir Política Operativa
 ```
 
+---
 
+## 🗄️ 9. Archivo DDL de la Vista en Supabase
+
+| Vista | Archivo DDL Fuente | Ubicación |
+|-------|-------------------|-----------|
+| `public.vista_clasificacion_abc` | `sql/03_vistas_analiticas_abc.sql` | Repositorio `PA-E2/sql/` |
+
+> [!NOTE]
+> La vista se crea con `CREATE OR REPLACE VIEW` y es completamente dinámica. Cada vez que se insertan nuevos movimientos o se actualiza el maestro de materiales, la vista recalcula automáticamente sin intervención manual.
+
+---
+
+## 🔗 10. Prerequisitos y Dependencias
+
+* **Prerequisito obligatorio:** El skill [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md) debe haberse ejecutado exitosamente con las tablas `maestro_materiales` y `movimientos_inventarios` cargadas en Supabase.
+* **Tablas consumidas:** `public.maestro_materiales`, `public.movimientos_inventarios`, `public.inventario_inicial`.
+* **Skills que dependen de esta:**
+  * [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md): Consume la demanda anualizada ($D_i$) y el costo unitario para calcular $EOQ$.
+  * [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md): Usa la clasificación ABC para priorizar auditorías de conteo cíclico en SKUs Clase A.
+
+---
+
+## 🔎 11. Queries de Verificación de Calidad
+
+Ejecutar estas consultas para confirmar que la clasificación ABC es correcta y consistente:
+
+### A. Verificar que la Suma de Participación = 100%
+```sql
+SELECT ROUND(SUM(pct_participacion_individual)::numeric, 2) AS suma_total_pct
+FROM public.vista_clasificacion_abc;
+-- Resultado esperado: ≈ 100.00
+```
+
+### B. Verificar Cortes de Pareto (Borde Inclusivo)
+```sql
+SELECT clasificacion_abc,
+       COUNT(*) AS total_skus,
+       MIN(pct_acumulado) AS pct_acum_min,
+       MAX(pct_acumulado) AS pct_acum_max
+FROM public.vista_clasificacion_abc
+GROUP BY clasificacion_abc
+ORDER BY clasificacion_abc;
+-- Esperado: A max ≈ 80%, B max ≈ 95%, C max = 100%
+```
+
+### C. Verificar Total de SKUs = N del Catálogo
+```sql
+SELECT 
+    (SELECT COUNT(*) FROM public.vista_clasificacion_abc) AS skus_en_vista,
+    (SELECT COUNT(*) FROM public.maestro_materiales WHERE sku NOT LIKE 'MP-9%') AS skus_en_maestro;
+-- Resultado esperado: Ambas cifras iguales
+```
+
+### D. Verificar Plata Muerta Correctamente Clasificada
+```sql
+SELECT COUNT(*) AS plata_muerta_no_clase_c
+FROM public.vista_clasificacion_abc
+WHERE valor_consumo_anual_cop = 0 AND clasificacion_abc != 'C';
+-- Resultado esperado: 0 (toda Plata Muerta debe ser Clase C)
+```
+
+### E. Verificar Ordenamiento Descendente del Ranking
+```sql
+SELECT CASE 
+    WHEN COUNT(*) = 0 THEN 'OK - Ranking ordenado correctamente'
+    ELSE 'ERROR - ' || COUNT(*) || ' SKUs desordenados'
+END AS check_orden
+FROM (
+    SELECT valor_consumo_anual_cop,
+           LAG(valor_consumo_anual_cop) OVER (ORDER BY valor_consumo_anual_cop DESC) AS anterior
+    FROM public.vista_clasificacion_abc
+) sub
+WHERE valor_consumo_anual_cop > anterior;
+-- Resultado esperado: OK
+```
+
+---
+
+## 🔄 12. Integración con Otros Skills del Sistema
+
+| Skill Destino | Dato que Recibe de ABC-XYZ | Uso Operativo |
+|---------------|---------------------------|---------------|
+| [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md) | $D_i$ (Demanda anual), $C_{u,i}$ (Costo) | Cálculo de $EOQ = \sqrt{2DS/HC_u}$ |
+| [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md) | Clasificación ABC | Priorización de compras: Clase A primero |
+| [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md) | Clasificación ABC | Frecuencia de conteo cíclico: A=diario, B=quincenal, C=trimestral |
+| [`sla-proveedores-mrp-e2`](../sla-proveedores-mrp-e2/SKILL.md) | Identificación de Plata Muerta | Bloquear órdenes de compra para SKUs con $D=0$ |
+
+---
+
+## 🚫 13. Fronteras del Skill (Qué NO hace este Skill)
+
+* **NO calcular ROP, SS, EOQ:** Es responsabilidad del skill [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md).
+* **NO calcular ERI / Desalineación Contable:** Es responsabilidad del skill [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md).
+* **NO auditar SLA de proveedores ni explotar BOM:** Es responsabilidad del skill [`sla-proveedores-mrp-e2`](../sla-proveedores-mrp-e2/SKILL.md).
+* **NO limpiar ni transformar datos crudos:** Es responsabilidad del skill [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md).
+
+Este skill entrega la **segmentación estratégica ABC-XYZ completa** y el **aislamiento financiero de Plata Muerta** para que los motores de reposición y auditoría prioricen recursos de forma inteligente.

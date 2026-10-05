@@ -205,4 +205,103 @@ WHERE sku = 'MP-0001'; -- Reemplazar dinámicamente por cualquier SKU
 3. **Advertencia de Incertidumbre ERI:** Si el SKU a comprar tiene discrepancia física en `public.vista_diagnostico_eri_inventarios`, agregar siempre la nota:
    > ⚠️ *Nota de Validación ERI: Validar conteo físico en bodega antes de autorizar la orden de compra.*
 
+---
+
+## 🗄️ 6. Archivo DDL de la Vista en Supabase
+
+| Vista | Archivo DDL Fuente | Ubicación | Propósito |
+|-------|-------------------|-----------|-----------|
+| `public.vista_calculo_eoq_rop` | `sql/04_vistas_calculo_eoq_rop.sql` | Repositorio `PA-E2/sql/` | Cálculo determinístico de Demanda Diaria, Lead Time Real, SS (Z=95%), ROP, EOQ, Inversión y Semáforo de Reposición. |
+
+> [!NOTE]
+> La vista consolida automáticamente los parámetros del modelo de Wilson ($S = \$50.000$ COP/pedido, $H = 20\%$ anual del costo unitario, $Z = 1.645$ para 95% de nivel de servicio). Al ingresar nuevos movimientos o recepciones de órdenes, los saldos y semáforos se recalculan sin fricción.
+
+---
+
+## 🔗 7. Prerequisitos y Dependencias
+
+* **Prerequisito obligatorio:** El skill [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md) debe haber cargado:
+  * `public.maestro_materiales`
+  * `public.movimientos_inventarios`
+  * `public.inventario_inicial`
+  * `public.ordenes_compra`
+* **Dependencia analítica previa:**
+  * [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md): Demanda anualizada y segmentación de rotación.
+  * [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md): Verificación de saldos en piso antes de gatillar compras.
+  * [`sla-proveedores-mrp-e2`](../sla-proveedores-mrp-e2/SKILL.md): Lead time real histórico ($\bar{L}_{\text{real}}$ y $\sigma_L$).
+
+---
+
+## 🔎 8. Queries de Verificación de Calidad
+
+Ejecutar estas consultas para auditar la validez matemática y lógica de los parámetros calculados:
+
+### A. Verificar Semáforos Lógicos (Ningún Stock $\le$ ROP en Verde)
+```sql
+SELECT COUNT(*) AS inconsistencias_semaforo
+FROM public.vista_calculo_eoq_rop
+WHERE (stock_actual_disponible_und <= rop_punto_reorden_und AND semaforo_inventario = '🟢 VERDE (Stock Óptimo)')
+   OR (stock_actual_disponible_und > rop_punto_reorden_und AND semaforo_inventario = '🔴 ROJO (Reorden Inmediato)');
+-- Resultado esperado: 0 (las reglas de semáforo deben cumplirse estrictamente)
+```
+
+### B. Validar Aislamiento de Plata Muerta (Cero Compras Sugeridas)
+```sql
+SELECT COUNT(*) AS plata_muerta_con_compras
+FROM public.vista_calculo_eoq_rop
+WHERE demanda_anual_und = 0 
+  AND (eoq_lote_economico_und > 0 OR accion_sugerida LIKE '%COMPRAR%');
+-- Resultado esperado: 0
+```
+
+### C. Cuantificar Presupuesto Requerido para Compras Críticas (Semáforo Rojo)
+```sql
+SELECT 
+    COUNT(*) AS total_skus_a_comprar,
+    ROUND(SUM(inversion_eoq_cop)::numeric, 2) AS inversion_total_presupuestada_cop,
+    TO_CHAR(SUM(inversion_eoq_cop), '$999,999,999,999') AS inversion_formateada
+FROM public.vista_calculo_eoq_rop
+WHERE semaforo_inventario LIKE '🔴%';
+```
+
+### D. Distribución del Catálogo por Estado de Semáforo
+```sql
+SELECT 
+    semaforo_inventario,
+    COUNT(*) AS total_skus,
+    ROUND((COUNT(*)::numeric / (SELECT COUNT(*) FROM public.vista_calculo_eoq_rop) * 100), 1) || ' %' AS pct_catalogo
+FROM public.vista_calculo_eoq_rop
+GROUP BY semaforo_inventario
+ORDER BY total_skus DESC;
+```
+
+### E. Integridad de Parámetros Clave (Cero Nulos en EOQ/ROP para SKUs Activos)
+```sql
+SELECT COUNT(*) AS parametros_nulos
+FROM public.vista_calculo_eoq_rop
+WHERE demanda_anual_und > 0 
+  AND (eoq_lote_economico_und IS NULL OR rop_punto_reorden_und IS NULL OR stock_seguridad_und IS NULL);
+-- Resultado esperado: 0
+```
+
+---
+
+## 🔄 9. Integración con Otros Skills del Sistema
+
+| Skill | Dirección | Flujo de Información |
+|-------|:---------:|----------------------|
+| [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md) | Inbound | Provee la clasificación ABC para jerarquizar atención ejecutiva en SKUs A. |
+| [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md) | Inbound | Provee alertas de faltante/sobrante para ajustar el stock base disponible antes de calcular la orden. |
+| [`sla-proveedores-mrp-e2`](../sla-proveedores-mrp-e2/SKILL.md) | Outbound/Inbound | EOQ/ROP define el tamaño de lote sugerido ($Q$) y punto de reorden continuo, complementando la explosión MRP por periodos. |
+
+---
+
+## 🚫 10. Fronteras del Skill (Qué NO hace este Skill)
+
+* **NO emitir órdenes de compra automáticamente al ERP:** Este skill entrega la recomendación determinística, tamaño de lote e inversión; la autorización recae en compras.
+* **NO calcular variaciones ERI:** Es responsabilidad del skill [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md).
+* **NO realizar limpieza ni corrección de datos crudos:** Es responsabilidad del skill [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md).
+* **NO planificar requerimientos de materiales basados en órdenes de producción finitas:** La explosión MRP dependiente corresponde a [`sla-proveedores-mrp-e2`](../sla-proveedores-mrp-e2/SKILL.md).
+
+
 

@@ -133,7 +133,118 @@ Una vez cargadas las tablas limpias, se habilitan automáticamente las **4 vista
 
 ---
 
-## 🚫 5. Fronteras del Skill (Qué NO hace este Skill)
+## 🛠️ 5. Scripts del Pipeline y Comandos de Ejecución
+
+| Paso | Script | Comando de Ejecución | Propósito |
+|:----:|--------|---------------------|-----------|
+| 1 | `python/clean_pipeline.py` | `python python/clean_pipeline.py` | Ejecuta todas las reglas de transformación y genera `datos_limpios/*_clean.csv` |
+| 2 | `python/upload_to_supabase.py` | `python python/upload_to_supabase.py` | Inserta por lotes los CSVs limpios en las tablas de Supabase |
+| 3 | `sql/supabase_schema_foreign_keys.sql` | Ejecutar DDL en Supabase SQL Editor | Crea las restricciones de integridad referencial (FKs y NOT NULLs) |
+| 4 | `sql/supabase_crear_maestro_productos.sql` | Ejecutar DDL en Supabase SQL Editor | Crea la tabla `maestro_productos` (catálogo de PTs) |
+| 5 | `sql/supabase_bom_pk.sql` | Ejecutar DDL en Supabase SQL Editor | Establece la llave primaria compuesta en la tabla `bom` |
+| 6 | `sql/03_vistas_analiticas_abc.sql` | Ejecutar DDL en Supabase SQL Editor | Crea la vista `public.vista_clasificacion_abc` |
+| 7 | `sql/04_vistas_calculo_eoq_rop.sql` | Ejecutar DDL en Supabase SQL Editor | Crea las vistas `vista_calculo_eoq_rop`, `vista_diagnostico_eri_inventarios` y `vista_resumen_eri_inventarios` |
+
+> [!NOTE]
+> **Requisito previo:** Configurar credenciales en `.env` a partir de `.env.example` antes de ejecutar `upload_to_supabase.py`.
+
+---
+
+## 📦 6. Tablas y Archivos Generados (Mapeo CSV → Supabase)
+
+| # | Archivo Generado en `datos_limpios/` | Tabla Destino en Supabase | Registros (Baseline N=420) | Clave Primaria |
+|:-:|--------------------------------------|--------------------------|:--------------------------:|:--------------:|
+| 1 | `maestro_materiales_clean.csv` | `public.maestro_materiales` | 420 SKUs | `sku` |
+| 2 | `maestro_productos_clean.csv` | `public.maestro_productos` | 18 PTs | `producto` |
+| 3 | `bom_clean.csv` | `public.bom` | 131 filas | `id_bom` (compuesta) |
+| 4 | `movimientos_inventario_clean.csv` | `public.movimientos_inventarios` | ~16.195 registros | `documento` + `sku` + `fecha` |
+| 5 | `ordenes_compra_clean.csv` | `public.ordenes_compra` | ~1.471 OCs | `orden_compra` |
+| 6 | `inventario_inicial_clean.csv` | `public.inventario_inicial` | 420 filas | `sku` |
+| 7 | `conteo_fisico_clean.csv` | `public.conteo_fisico` | 420 filas | `sku` |
+| 8 | `inventario_bodega_JEFE_clean.csv` | `public.inventario_bodega_jefe` | Variable | `sku` |
+| 9 | `plan_produccion_clean.csv` | `public.plan_produccion` | ~378 filas | `producto` + `periodo` |
+
+---
+
+## 🔎 7. Queries de Verificación Post-Ingesta en Supabase
+
+Ejecutar estas consultas **después de cada carga** para confirmar que la ingesta fue exitosa y completa:
+
+### A. Verificar Conteo de Registros por Tabla
+```sql
+SELECT 'maestro_materiales' AS tabla, COUNT(*) AS registros FROM public.maestro_materiales
+UNION ALL SELECT 'maestro_productos', COUNT(*) FROM public.maestro_productos
+UNION ALL SELECT 'bom', COUNT(*) FROM public.bom
+UNION ALL SELECT 'movimientos_inventarios', COUNT(*) FROM public.movimientos_inventarios
+UNION ALL SELECT 'ordenes_compra', COUNT(*) FROM public.ordenes_compra
+UNION ALL SELECT 'inventario_inicial', COUNT(*) FROM public.inventario_inicial
+UNION ALL SELECT 'conteo_fisico', COUNT(*) FROM public.conteo_fisico
+UNION ALL SELECT 'plan_produccion', COUNT(*) FROM public.plan_produccion;
+```
+
+### B. Verificar Cero Claves Huérfanas (Integridad Referencial)
+```sql
+-- SKUs huérfanos en movimientos
+SELECT 'mov_huerfanos' AS check_name, COUNT(*) AS problemas
+FROM public.movimientos_inventarios mi
+WHERE mi.sku NOT IN (SELECT sku FROM public.maestro_materiales)
+UNION ALL
+-- SKUs huérfanos en OCs
+SELECT 'oc_huerfanos', COUNT(*)
+FROM public.ordenes_compra oc
+WHERE oc.sku NOT IN (SELECT sku FROM public.maestro_materiales)
+UNION ALL
+-- Productos huérfanos en BOM
+SELECT 'bom_producto_huerfanos', COUNT(*)
+FROM public.bom b
+WHERE b.producto NOT IN (SELECT producto FROM public.maestro_productos)
+UNION ALL
+-- SKUs huérfanos en BOM
+SELECT 'bom_sku_huerfanos', COUNT(*)
+FROM public.bom b
+WHERE b.sku_material NOT IN (SELECT sku FROM public.maestro_materiales);
+-- Resultado esperado: 0 problemas en TODAS las filas
+```
+
+### C. Verificar Cero Nulos en Campos Críticos
+```sql
+SELECT 
+    COUNT(*) FILTER (WHERE costo_unitario IS NULL) AS nulos_costo,
+    COUNT(*) FILTER (WHERE lead_time_declarado_dias IS NULL) AS nulos_lead_time,
+    COUNT(*) FILTER (WHERE categoria IS NULL) AS nulos_categoria,
+    COUNT(*) FILTER (WHERE unidad IS NULL) AS nulos_unidad
+FROM public.maestro_materiales;
+-- Resultado esperado: 0 en TODAS las columnas
+```
+
+### D. Verificar Vistas Analíticas Operativas
+```sql
+SELECT 'vista_clasificacion_abc' AS vista, COUNT(*) AS registros 
+FROM public.vista_clasificacion_abc
+UNION ALL 
+SELECT 'vista_calculo_eoq_rop', COUNT(*) 
+FROM public.vista_calculo_eoq_rop
+UNION ALL 
+SELECT 'vista_diagnostico_eri_inventarios', COUNT(*) 
+FROM public.vista_diagnostico_eri_inventarios
+UNION ALL 
+SELECT 'vista_resumen_eri_inventarios', COUNT(*) 
+FROM public.vista_resumen_eri_inventarios;
+-- Resultado esperado: Todas las vistas devuelven registros > 0
+```
+
+---
+
+## 🔗 8. Prerequisitos y Dependencias
+
+* **Prerequisitos de entrada:** Archivos CSV crudos en `datos_iniciales/` sin modificar.
+* **Dependencias Python:** `pandas`, `python-dotenv`, `supabase` (ver `requirements.txt`).
+* **Dependencias de infraestructura:** Proyecto Supabase activo con URL y Service Role Key configurados en `.env`.
+* **Skills que dependen de esta:** TODAS las demás skills (`analitica-abc-xyz-e2`, `exactitud-inventarios-eri-e2`, `reposicion-eoq-rop-e2`, `sla-proveedores-mrp-e2`) requieren que esta skill se haya ejecutado exitosamente.
+
+---
+
+## 🚫 9. Fronteras del Skill (Qué NO hace este Skill)
 
 * **NO calcular ROP, SS, EOQ:** Es responsabilidad del skill [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md).
 * **NO calcular ERI / Desalineación Contable:** Es responsabilidad del skill [`exactitud-inventarios-eri-e2`](../exactitud-inventarios-eri-e2/SKILL.md).

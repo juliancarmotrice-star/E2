@@ -198,3 +198,108 @@ WHERE sku = 'MP-0001'; -- Reemplazar dinámicamente por cualquier SKU
    > ⚠️ *Advertencia ERI: El SKU presenta discrepancia entre Kardex ($K$) y Piso ($F$). Se requiere validar físicamente el lote en bodega antes de radicar la orden.*
 2. **Cero Compras Basadas en Negativos Fantasma:** Si el Kardex muestra saldo negativo por consumos sin ingreso previo, tomar el **Conteo Físico Oficial** como saldo disponible real.
 
+---
+
+## 🗄️ 6. Archivos DDL de las Vistas en Supabase
+
+| Vista | Archivo DDL Fuente | Ubicación | Propósito |
+|-------|-------------------|-----------|-----------|
+| `public.vista_diagnostico_eri_inventarios` | `sql/02_diagnostico_sla_proveedores_y_produccion.sql` | Repositorio `PA-E2/sql/` | Detalle por SKU de Kardex vs Conteo Físico vs Cuaderno, variaciones y desalineación COP. |
+| `public.vista_resumen_eri_inventarios` | `sql/02_diagnostico_sla_proveedores_y_produccion.sql` | Repositorio `PA-E2/sql/` | KPI global de Exactitud en Registro (% ERI), total cuadrados, descuadrados y desalineación total. |
+
+> [!NOTE]
+> Ambas vistas son de cálculo dinámico en tiempo real (`CREATE OR REPLACE VIEW`). Reflejan instantáneamente cualquier ajuste contable o nuevo conteo físico cargado en la base de datos.
+
+---
+
+## 🔗 7. Prerequisitos y Dependencias
+
+* **Prerequisito obligatorio:** El skill [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md) debe haberse ejecutado cargando en Supabase:
+  * `public.maestro_materiales`
+  * `public.inventario_inicial`
+  * `public.movimientos_inventarios`
+  * `public.conteo_fisico`
+  * `public.cuaderno_jefe_bodega`
+* **Skills que interactúan con esta:**
+  * [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md): Entrega la criticidad ABC para enfocar las auditorías cíclicas en ítems Clase A.
+  * [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md): Recibe el flag de discrepancia física y el saldo físico verificado para calcular el semáforo y prevenir compras sobre stock fantasma.
+
+---
+
+## 🔎 8. Queries de Verificación de Calidad
+
+Ejecutar estas consultas para validar que los diagnósticos de ERI y las reconciliaciones tridimensionales son confiables y matemáticamente consistentes:
+
+### A. Verificar Consistencia del ERI Global
+```sql
+SELECT 
+    total_skus_evaluados,
+    skus_exactos_cuadrados,
+    skus_descuadrados,
+    eri_porcentaje,
+    desalineacion_absoluta_cop
+FROM public.vista_resumen_eri_inventarios;
+-- Validación: total_skus_evaluados = skus_exactos_cuadrados + skus_descuadrados
+-- eri_porcentaje = (skus_exactos_cuadrados / total_skus_evaluados) * 100
+```
+
+### B. Validar Identidad Matemática de la Discrepancia ($\Delta = F - K$)
+```sql
+SELECT COUNT(*) AS discrepancias_con_calculo_inconsistente
+FROM public.vista_diagnostico_eri_inventarios
+WHERE delta_unidades != (conteo_fisico_oficial - kardex_teorico_calculado);
+-- Resultado esperado: 0
+```
+
+### C. Top 10 SKUs con Mayor Desalineación Financiera
+```sql
+SELECT 
+    sku,
+    descripcion,
+    kardex_teorico_calculado,
+    conteo_fisico_oficial,
+    delta_unidades,
+    costo_unitario,
+    desalineacion_absoluta_cop,
+    estado_exactitud
+FROM public.vista_diagnostico_eri_inventarios
+ORDER BY desalineacion_absoluta_cop DESC
+LIMIT 10;
+```
+
+### D. Reconciliación Tridimensional (Detectar Fugas Informales del Cuaderno)
+```sql
+SELECT 
+    sku,
+    descripcion,
+    kardex_teorico_calculado AS kardex_k,
+    conteo_fisico_oficial AS fisico_f,
+    cuaderno_jefe_bodega AS cuaderno_c,
+    (cuaderno_jefe_bodega - conteo_fisico_oficial) AS diferencia_cuaderno_vs_fisico,
+    (kardex_teorico_calculado - cuaderno_jefe_bodega) AS transacciones_no_sistematizadas
+FROM public.vista_diagnostico_eri_inventarios
+WHERE cuaderno_jefe_bodega IS NOT NULL 
+  AND cuaderno_jefe_bodega != kardex_teorico_calculado
+ORDER BY ABS(kardex_teorico_calculado - cuaderno_jefe_bodega) DESC;
+```
+
+---
+
+## 🔄 9. Integración con Otros Skills del Sistema
+
+| Skill | Dato Intercambiado | Impacto Operativo |
+|-------|-------------------|-------------------|
+| [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md) | Flag `Descuadrado` y Saldo Físico Real | Evita comprar de más en sobrantes o desabastecer en faltantes; obliga a emitir nota de advertencia. |
+| [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md) | Clasificación Pareto ABC | Permite priorizar la agenda de conteo cíclico: 100% de SKUs Clase A auditados cada 15 días. |
+| [`limpieza-datos-e2`](../limpieza-datos-e2/SKILL.md) | Kardex recalculado y Conteo Limpio | Insumo obligatorio para la vista analítica de ERI. |
+
+---
+
+## 🚫 10. Fronteras del Skill (Qué NO hace este Skill)
+
+* **NO calcular parámetros de reposición (EOQ, ROP, SS):** Es responsabilidad del skill [`reposicion-eoq-rop-e2`](../reposicion-eoq-rop-e2/SKILL.md).
+* **NO clasificar demanda ABC-XYZ:** Es responsabilidad del skill [`analitica-abc-xyz-e2`](../analitica-abc-xyz-e2/SKILL.md).
+* **NO auditar puntualidad de entrega de proveedores ni explosión MRP:** Es responsabilidad del skill [`sla-proveedores-mrp-e2`](../sla-proveedores-mrp-e2/SKILL.md).
+* **NO generar asientos de ajuste contable automáticamente:** Este skill audita, cuantifica y diagnostica; los ajustes físicos deben ser autorizados por auditoría y jefatura de planta.
+
+
