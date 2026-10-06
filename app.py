@@ -1,19 +1,18 @@
 """
 Tablero de Control y Supervisión de Operaciones - E2 SAS (Producción 4.0)
 Archivo: app.py
-Tecnología: Streamlit (Ejecución Local)
+Tecnología: Streamlit (Ejecución Local) + Altair Charts + Módulo de Explicabilidad IA
 
-Arquitectura Transaccional:
-- INTERACCIÓN: Muestra propuestas calculadas en memoria y recopila decisiones humanas.
-- AL APROBAR:
-    1. Inserta la Orden de Compra oficial en Supabase (public.ordenes_compra).
-    2. Registra la propuesta aprobada en Supabase (public.propuestas_compra) con su código de OC.
-- AL RECHAZAR:
-    Registra la propuesta rechazada en Supabase con su justificación para auditoría (sin generar OC).
+Arquitectura:
+1. MÓDULOS DEL NÚCLEO: Ejecutan las fórmulas determinísticas (ERI, ABC, SLA, MRP, EOQ/ROP).
+2. ASISTENTE IA (nucleo.explicador_ia): Redacta justificaciones ejecutivas y dictámenes de riesgo.
+3. ORQUESTADOR TRANSACCIONAL: Emite OCs en `ordenes_compra` y audita en `propuestas_compra`.
+4. VISUALIZACIÓN INTERACTIVA: Curva de Pareto 80/15/5, dispersión ERI y cumplimiento de proveedores.
 """
 
 import streamlit as st
 import pandas as pd
+import altair as alt
 from datetime import datetime
 
 import orquestador
@@ -22,6 +21,7 @@ import nucleo.clasificacion_abc as abc
 import nucleo.sla_proveedores as sla
 import nucleo.explosion_mrp as mrp
 import nucleo.reposicion_eoq_rop as reposicion
+import nucleo.explicador_ia as explicador
 
 # Configuración de página
 st.set_page_config(
@@ -45,13 +45,12 @@ st.markdown("""
         color: #64748B;
         margin-bottom: 1.5rem;
     }
-    .badge-rojo {
-        background-color: #FEE2E2;
-        color: #991B1B;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-weight: 600;
-        font-size: 0.85rem;
+    .memo-card {
+        background: #F8FAFC;
+        border-left: 5px solid #2563EB;
+        border-radius: 6px;
+        padding: 1.1rem;
+        margin-bottom: 1.2rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -145,7 +144,7 @@ with c3:
 with c4:
     propuestas_pendientes = st.session_state.get("propuestas_activas", [])
     st.metric(
-        label="🛒 Propuestas Pendientes por Decidir",
+        label="🛒 Propuestas Pendientes",
         value=f"{len(propuestas_pendientes)} SKUs",
         delta=st.session_state.get("inversion_total_formato", "N/A"),
         delta_color="off"
@@ -166,11 +165,11 @@ tab_propuestas, tab_historial, tab_eri, tab_abc, tab_sla, tab_mrp = st.tabs([
 ])
 
 # ==============================================================================
-# TAB 1: TABLERO DE DECISIONES TRANSACCIONAL (HUMAN-IN-THE-LOOP)
+# TAB 1: TABLERO DE DECISIONES CON ASISTENTE IA DE JUSTIFICACIÓN
 # ==============================================================================
 with tab_propuestas:
-    st.subheader("Sugerencias de Compra Calculadas en Memoria")
-    st.caption("Revise los motivos y criterios de parada. Al aprobar, se inserta transaccionalmente la OC en `ordenes_compra` y se registra en `propuestas_compra`.")
+    st.subheader("Sugerencias de Compra y Supervisión Humana")
+    st.caption("Revise los motivos, consulte el dictamen del Asistente IA y decida si autoriza la Orden de Compra oficial en Supabase.")
 
     propuestas_mem = st.session_state.get("propuestas_activas", [])
 
@@ -213,65 +212,75 @@ with tab_propuestas:
                 "inversion_cop": "$ {:,.0f}"
             }),
             use_container_width=True,
-            height=320
+            height=280
         )
 
         st.divider()
-        st.subheader("✍️ Ejecución Transaccional (Aprobar / Rechazar)")
-        
+        st.subheader("✍️ Supervisión y Decisión Asistida por IA")
+
         col_acc1, col_acc2 = st.columns([2, 1])
         with col_acc1:
-            st.markdown("#### Decisión sobre SKU Específico")
             sku_seleccionado = st.selectbox(
-                "Seleccionar Ítem para Decidir:",
+                "Seleccionar Ítem para Evaluación y Decisión:",
                 options=df_filtrado["sku"].tolist() if not df_filtrado.empty else [],
-                format_func=lambda s: f"[{s}] {df_filtrado[df_filtrado['sku']==s]['descripcion'].values[0]} | Inversión: $ {df_filtrado[df_filtrado['sku']==s]['inversion_cop'].values[0]:,.0f} COP | Parada: {df_filtrado[df_filtrado['sku']==s]['criterio_parada'].values[0]}"
+                format_func=lambda s: f"[{s}] {df_filtrado[df_filtrado['sku']==s]['descripcion'].values[0]} | Inversión: $ {df_filtrado[df_filtrado['sku']==s]['inversion_cop'].values[0]:,.0f} COP"
             )
+
+            # Módulo de Explicabilidad IA para el SKU seleccionado
+            prop_data = next((p for p in propuestas_mem if p["sku"] == sku_seleccionado), None) if sku_seleccionado else None
+            
+            if prop_data:
+                # Generar explicación ejecutiva
+                memo = explicador.generar_explicacion_ejecutiva(prop_data)
+                
+                st.markdown(f"### {memo['dictamen']}")
+                with st.container(border=True):
+                    st.markdown("**Memorando Ejecutivo de Justificación:**")
+                    st.write(memo["memo_ejecutivo"])
+                    st.markdown("**Puntos Clave de Control:**")
+                    for p in memo["puntos_clave"]:
+                        st.markdown(f"• {p}")
+                    st.info(f"**Directriz sugerida:** {memo['accion_recomendada']}")
+
             comentario_decision = st.text_input(
-                "Observaciones / Justificación de la decisión:",
+                "Observaciones / Justificación de la decisión humana:",
                 placeholder="Ej: Conteo físico verificado en bodega. Se autoriza emisión de OC."
             )
             
             b1, b2 = st.columns(2)
             with b1:
                 if st.button("✅ Aprobar y Generar Orden de Compra", type="primary", use_container_width=True, disabled=df_filtrado.empty):
-                    if sku_seleccionado:
-                        # Buscar la propuesta completa
-                        prop_data = next((p for p in propuestas_mem if p["sku"] == sku_seleccionado), None)
-                        if prop_data:
-                            with st.spinner("Generando OC en `ordenes_compra` y registrando en `propuestas_compra`..."):
-                                res_tx = orquestador.aprobar_propuesta(
-                                    propuesta=prop_data,
-                                    decidido_por=usuario_activo,
-                                    comentarios=comentario_decision
-                                )
-                                # Remover de pendientes
-                                st.session_state["propuestas_activas"] = [
-                                    p for p in propuestas_mem if p["sku"] != sku_seleccionado
-                                ]
-                                st.success(f"🎉 ¡Transacción Exitosa! Se creó la Orden **{res_tx['orden_compra_generada']}** para **{res_tx['sku']}** (Proveedor: {res_tx['proveedor']}, Inversión: $ {res_tx['inversion_cop']:,.0f} COP)")
-                                st.rerun()
+                    if prop_data:
+                        with st.spinner("Generando OC en `ordenes_compra` y registrando en `propuestas_compra`..."):
+                            res_tx = orquestador.aprobar_propuesta(
+                                propuesta=prop_data,
+                                decidido_por=usuario_activo,
+                                comentarios=comentario_decision
+                            )
+                            st.session_state["propuestas_activas"] = [
+                                p for p in propuestas_mem if p["sku"] != sku_seleccionado
+                            ]
+                            st.success(f"🎉 ¡Transacción Exitosa! Se creó la Orden **{res_tx['orden_compra_generada']}** para **{res_tx['sku']}** (Proveedor: {res_tx['proveedor']}, Inversión: $ {res_tx['inversion_cop']:,.0f} COP)")
+                            st.rerun()
 
             with b2:
                 if st.button("❌ Rechazar Sugerencia", use_container_width=True, disabled=df_filtrado.empty):
-                    if sku_seleccionado:
-                        prop_data = next((p for p in propuestas_mem if p["sku"] == sku_seleccionado), None)
-                        if prop_data:
-                            with st.spinner("Registrando rechazo en `propuestas_compra`..."):
-                                res_rx = orquestador.rechazar_propuesta(
-                                    propuesta=prop_data,
-                                    decidido_por=usuario_activo,
-                                    motivo=comentario_decision or "Rechazada por el planeador"
-                                )
-                                st.session_state["propuestas_activas"] = [
-                                    p for p in propuestas_mem if p["sku"] != sku_seleccionado
-                                ]
-                                st.warning(f"Propuesta para **{res_rx['sku']}** RECHAZADA y registrada en auditoría.")
-                                st.rerun()
+                    if prop_data:
+                        with st.spinner("Registrando rechazo en `propuestas_compra`..."):
+                            res_rx = orquestador.rechazar_propuesta(
+                                propuesta=prop_data,
+                                decidido_por=usuario_activo,
+                                motivo=comentario_decision or "Rechazada por el planeador"
+                            )
+                            st.session_state["propuestas_activas"] = [
+                                p for p in propuestas_mem if p["sku"] != sku_seleccionado
+                            ]
+                            st.warning(f"Propuesta para **{res_rx['sku']}** RECHAZADA y registrada en auditoría.")
+                            st.rerun()
 
         with col_acc2:
             st.markdown("#### Aprobación en Lote")
-            st.info("Solo aplica a propuestas en estado **APROBACION_ESTANDAR** (sin descuadres ERI ni alertas).")
+            st.info("Aplica exclusivamente a propuestas en estado **APROBACION_ESTANDAR** (sin descuadres ERI ni alertas de mora).")
             estandar_count = len([p for p in propuestas_mem if p.get("es_estandar")])
             st.write(f"Órdenes estándar disponibles: **{estandar_count}**")
 
@@ -293,7 +302,6 @@ with tab_historial:
     st.caption("Lectura en tiempo real de las tablas `public.propuestas_compra` y `public.ordenes_compra`.")
 
     col_h1, col_h2 = st.columns(2)
-    
     with col_h1:
         st.markdown("#### 📋 Registro de Propuestas Decididas (`propuestas_compra`)")
         try:
@@ -313,7 +321,7 @@ with tab_historial:
                     height=350
                 )
             else:
-                st.info("Aún no se han tomado decisiones en Supabase. Aprueba o rechaza una propuesta en la primera pestaña.")
+                st.info("Aún no se han tomado decisiones en Supabase.")
         except Exception as e:
             st.error(f"Error consultando propuestas_compra: {e}")
 
@@ -338,13 +346,44 @@ with tab_historial:
             st.error(f"Error consultando ordenes_compra: {e}")
 
 # ==============================================================================
-# TAB 3: AUDITORÍA ERI
+# TAB 3: AUDITORÍA ERI CON GRÁFICO DE DISPERSIÓN KARDEX VS FÍSICO
 # ==============================================================================
 with tab_eri:
     st.subheader("Auditoría de Exactitud en el Registro de Inventario (ERI)")
     st.caption("Reconciliación tridimensional: Kardex Teórico vs Conteo Físico Oficial vs Cuaderno del Jefe")
     st.markdown(f"**Desalineación Contable Bruta Total:** `{eri_tg.get('desalineacion_contable_bruta')}`")
+
+    # Gráfico de Dispersión Interactivo ERI
+    eri_all = eri.obtener_diagnostico_eri(limite=420)
+    df_eri_chart = pd.DataFrame(eri_all)
     
+    if not df_eri_chart.empty:
+        st.markdown("#### 📊 Dispersión de Exactitud: Kardex Teórico vs Conteo Físico Oficial")
+        max_val = max(df_eri_chart["stock_teorico_kardex"].max(), df_eri_chart["stock_fisico_oficial"].max())
+        
+        # Puntos de dispersión
+        puntos_eri = alt.Chart(df_eri_chart).mark_circle(size=70).encode(
+            x=alt.X("stock_teorico_kardex:Q", title="Stock Teórico Kardex (und)"),
+            y=alt.Y("stock_fisico_oficial:Q", title="Stock Físico Oficial (und)"),
+            color=alt.Color("estado_eri:N", title="Estado Auditoría", scale=alt.Scale(range=["#EF4444", "#10B981"])),
+            tooltip=[
+                alt.Tooltip("sku:N", title="SKU"),
+                alt.Tooltip("descripcion:N", title="Descripción"),
+                alt.Tooltip("stock_teorico_kardex:Q", format=",.0f", title="Kardex"),
+                alt.Tooltip("stock_fisico_oficial:Q", format=",.0f", title="Físico"),
+                alt.Tooltip("discrepancia_unidades:Q", format=",.0f", title="Discrepancia"),
+                alt.Tooltip("desalineacion_dinero_cop:Q", format="$,.0f", title="Desalineación COP")
+            ]
+        ).interactive()
+
+        # Línea de referencia diagonal (y = x)
+        df_linea = pd.DataFrame({"x": [0, max_val], "y": [0, max_val]})
+        linea_ideal = alt.Chart(df_linea).mark_line(color="#64748B", strokeDash=[5, 5]).encode(x="x", y="y")
+
+        st.altair_chart((puntos_eri + linea_ideal).properties(height=380), use_container_width=True)
+        st.caption("Puntos sobre la diagonal punteada representan exactitud perfecta. Los puntos desviados representan faltantes o sobrantes físicos no registrados.")
+
+    st.divider()
     top_descuadres = eri.obtener_top_desalineados(15)
     df_eri_top = pd.DataFrame(top_descuadres)
     st.markdown("#### Top 15 SKUs con Mayor Desalineación Patrimonial")
@@ -365,10 +404,40 @@ with tab_eri:
     )
 
 # ==============================================================================
-# TAB 4: MATRIZ ABC & PLATA MUERTA
+# TAB 4: MATRIZ ABC & CURVA DE PARETO INTERACTIVA
 # ==============================================================================
 with tab_abc:
-    st.subheader("Clasificación Estratégica ABC y Análisis de Rotación")
+    st.subheader("Clasificación Estratégica ABC y Curva de Pareto")
+    
+    # Curva de Pareto interactiva (Lorenz Curve)
+    skus_abc = abc.obtener_clasificacion_abc()
+    df_abc_chart = pd.DataFrame(skus_abc)
+    df_abc_chart["ranking"] = range(1, len(df_abc_chart) + 1)
+
+    if not df_abc_chart.empty:
+        st.markdown("#### 📈 Curva de Concentración de Pareto (80/15/5)")
+        curva_pareto = alt.Chart(df_abc_chart).mark_line(size=3).encode(
+            x=alt.X("ranking:Q", title="Ranking de SKUs (Ordenados por Consumo)"),
+            y=alt.Y("pct_acumulado_valor:Q", title="% Acumulado del Valor de Consumo", scale=alt.Scale(domain=[0, 105])),
+            color=alt.Color("clasificacion_abc:N", title="Clase ABC", scale=alt.Scale(domain=["A", "B", "C"], range=["#DC2626", "#F59E0B", "#3B82F6"])),
+            tooltip=[
+                alt.Tooltip("ranking:Q", title="Posición"),
+                alt.Tooltip("sku:N", title="SKU"),
+                alt.Tooltip("descripcion:N", title="Descripción"),
+                alt.Tooltip("clasificacion_abc:N", title="Clase"),
+                alt.Tooltip("pct_acumulado_valor:Q", format=".2f", title="% Acumulado"),
+                alt.Tooltip("valor_consumo_anual_cop:Q", format="$,.0f", title="Valor Anual COP")
+            ]
+        ).interactive()
+
+        # Líneas de corte 80% y 95%
+        corte_80 = alt.Chart(pd.DataFrame({"y": [80]})).mark_rule(color="#DC2626", strokeDash=[4, 4]).encode(y="y")
+        corte_95 = alt.Chart(pd.DataFrame({"y": [95]})).mark_rule(color="#F59E0B", strokeDash=[4, 4]).encode(y="y")
+
+        st.altair_chart((curva_pareto + corte_80 + corte_95).properties(height=380), use_container_width=True)
+        st.caption("Línea roja discontinua: Límite Clase A (80% valor). Línea amarilla discontinua: Límite Clase B (95% valor).")
+
+    st.divider()
     abc_c1, abc_c2, abc_c3 = st.columns(3)
     with abc_c1:
         st.markdown(f"**Clase A:** {kpi_abc['clases']['A']['total_skus']} SKUs ({kpi_abc['clases']['A']['pct_skus']}%)")
@@ -389,13 +458,43 @@ with tab_abc:
         st.dataframe(df_pm[["sku", "descripcion", "categoria", "costo_unitario", "clasificacion_abc"]].style.format({"costo_unitario": "$ {:,.0f}"}), use_container_width=True)
 
 # ==============================================================================
-# TAB 5: SLA DE PROVEEDORES
+# TAB 5: SLA DE PROVEEDORES CON GRÁFICO COMPARATIVO DE LEAD TIME
 # ==============================================================================
 with tab_sla:
     st.subheader("Auditoría de Nivel de Servicio de Entrega de Proveedores (OTD)")
     st.caption("Evaluación de cumplimiento de fecha promesa y desfase de Lead Time Real vs Declarado en ERP")
+
     cats_sla = sla.obtener_metricas_sla_por_categoria()
     df_cats_sla = pd.DataFrame(cats_sla)
+
+    if not df_cats_sla.empty:
+        st.markdown("#### ⏱️ Comparativo de Tiempos de Entrega: Lead Time ERP vs Lead Time Real")
+        
+        # Reformatear para gráfico agrupado
+        df_melt = pd.melt(
+            df_cats_sla,
+            id_vars=["categoria"],
+            value_vars=["lead_time_erp_dias", "lead_time_real_dias"],
+            var_name="Tipo Lead Time",
+            value_name="Días"
+        )
+        df_melt["Tipo Lead Time"] = df_melt["Tipo Lead Time"].map({
+            "lead_time_erp_dias": "ERP (Declarado)",
+            "lead_time_real_dias": "Real (Promedio Histórico)"
+        })
+
+        chart_lt = alt.Chart(df_melt).mark_bar().encode(
+            x=alt.X("categoria:N", title="Categoría de Insumo"),
+            y=alt.Y("Días:Q", title="Días de Entrega"),
+            color=alt.Color("Tipo Lead Time:N", scale=alt.Scale(range=["#3B82F6", "#EF4444"])),
+            xOffset="Tipo Lead Time:N",
+            tooltip=[alt.Tooltip("categoria:N"), alt.Tooltip("Tipo Lead Time:N"), alt.Tooltip("Días:Q", format=".1f")]
+        ).properties(height=350)
+
+        st.altair_chart(chart_lt, use_container_width=True)
+        st.caption("Barras rojas superando a las azules evidencian el desfase sistemático entre la promesa y la realidad operativa.")
+
+    st.divider()
     st.dataframe(
         df_cats_sla[[
             "categoria", "total_oc_cerradas", "a_tiempo", "retrasadas", 
