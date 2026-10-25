@@ -160,7 +160,6 @@ def post_justificar(body: JustificacionRequest):
 # SERVIDORES DE INTERFAZ STITCH (FRONTEND)
 # ==========================================
 import os
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend", "stitch_industrial_supply_chain_dashboard")
@@ -197,12 +196,6 @@ def vista_aprobacion():
 @app.get("/eri", response_class=HTMLResponse)
 def vista_eri():
     return HTMLResponse(content=_cargar_html("eri_discrepancy_audit_reconciliation"))
-
-if os.path.exists(frontend_path):
-    try:
-        app.mount("/app", StaticFiles(directory=frontend_path, html=True), name="stitch_app")
-    except Exception:
-        pass
 
 
 if __name__ == "__main__":
