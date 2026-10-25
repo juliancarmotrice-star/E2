@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed-variant": "#004e5c", "on-error-container": "#ffdad6", "surface-container-lowest": "#060e20", "tertiary-container": "#e29100", "surface-dim": "#0b1326", "primary-fixed-dim": "#4edea3", "surface-variant": "#2d3449", "secondary-container": "#03b5d3", "surface-tint": "#4edea3", "primary-container": "#10b981", "surface-container": "#171f33", "on-tertiary-fixed-variant": "#653e00", "secondary-fixed": "#acedff", "on-secondary-fixed": "#001f26", "inverse-primary": "#006c49", "on-tertiary-container": "#523200", "tertiary-fixed-dim": "#ffb95f", "tertiary-fixed": "#ffddb8", "on-tertiary": "#472a00", "on-surface": "#dae2fd", "on-surface-variant": "#bbcabf", "inverse-on-surface": "#283044", "primary-fixed": "#6ffbbe", "surface-bright": "#31394d", "surface-container-low": "#131b2e", "secondary": "#4cd7f6", "inverse-surface": "#dae2fd", "surface-container-high": "#222a3d", "on-error": "#690005", "on-background": "#dae2fd", "error-container": "#93000a", "error": "#ffb4ab", "background": "#0b1326", "tertiary": "#ffb95f", "on-secondary-container": "#00424e", "surface": "#0b1326", "on-primary-fixed": "#002113", "outline-variant": "#3c4a42", "secondary-fixed-dim": "#4cd7f6", "on-primary-fixed-variant": "#005236", "on-tertiary-fixed": "#2a1700", "on-secondary": "#003640", "primary": "#4edea3", "on-primary-container": "#00422b", "outline": "#86948a", "on-primary": "#003824", "surface-container-highest": "#2d3449" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-md": "0.75rem", "margin-desktop": "1.5rem", "gutter-desktop": "1rem", "margin": "0.75rem", "gutter": "0.75rem", "space-xl": "2rem", "space-sm": "0.5rem", "space-lg": "1.25rem", "space-xs": "0.25rem" }, "fontFamily": { "body-md": ["Inter"], "body-sm": ["Inter"], "body-lg": ["Inter"], "headline-xl": ["Inter"], "label-sm": ["JetBrains Mono"], "headline-md": ["Inter"], "code-lg": ["JetBrains Mono"], "headline-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "code-sm": ["JetBrains Mono"], "headline-sm": ["Inter"], "headline-xl-mobile": ["Inter"], "code-md": ["JetBrains Mono"], "label-md": ["Inter"] }, "fontSize": { "body-md": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "code-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-lg-mobile": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "code-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "code-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }], "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl pt-safe"><div class="h-16 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-code-md text-code-md text-primary font-bold tracking-wider">E2 SAS</span><span class="font-headline-sm text-headline-sm text-on-surface truncate">Cycle Count Audit</span></div><span class="font-code-sm text-code-sm text-on-surface-variant flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>BOGOTA // TURNO A</span></div></div><div class="flex items-center gap-space-sm"><div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary-container/10 text-primary font-code-sm text-code-sm"><span class="material-symbols-outlined text-[13px]">verified</span><span>ERI 99.4%</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-20 bg-surface min-h-screen"><div class="flex flex-col w-full space-y-space-md px-margin pb-space-xl">
+<!-- Executive Discrepancy KPI Banner -->
+<section class="flex flex-col gap-space-sm p-space-md rounded-xl bg-surface-container-low shadow-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-space-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+          Exactitud de Registro (ERI Global)
+        </span>
+<div class="flex items-baseline gap-space-sm mt-0.5">
+<span class="font-headline-xl-mobile text-headline-xl-mobile text-tertiary font-bold tracking-tight">91.4%</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">META: <span class="text-on-surface font-semibold">98.0%</span></span>
+<span class="px-1.5 py-0.5 rounded bg-error/10 text-error font-code-sm text-code-sm font-semibold">-6.6% GAP</span>
+</div>
+</div>
+<div class="flex flex-col items-end text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Descuadre Neto Total</span>
+<span class="font-code-lg text-code-lg text-error font-bold mt-0.5 tracking-tight">-$48,250,000 COP</span>
+<span class="font-label-md text-label-md text-on-surface-variant">14 SKUs en discrepancia</span>
+</div>
+</div>
+<!-- 3-Way Source Status Telemetry Bar -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-xs pt-space-xs">
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded bg-surface-container text-on-surface">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-[15px] text-secondary">database</span>
+<span class="font-label-md text-label-md truncate">Kardex ERP SAP</span>
+</div>
+<span class="font-code-sm text-code-sm text-primary font-medium shrink-0">Sync 10m</span>
+</div>
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded bg-surface-container text-on-surface">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-[15px] text-primary">barcode_scanner</span>
+<span class="font-label-md text-label-md truncate">Conteo Físico RFID</span>
+</div>
+<span class="font-code-sm text-code-sm text-primary font-medium shrink-0">08:30 AM</span>
+</div>
+<div class="flex items-center justify-between px-2.5 py-1.5 rounded bg-surface-container text-on-surface">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-[15px] text-tertiary">edit_note</span>
+<span class="font-label-md text-label-md truncate">Bitácora Campo OCR</span>
+</div>
+<span class="font-code-sm text-code-sm text-tertiary font-medium shrink-0">09:15 AM</span>
+</div>
+</div>
+</section>
+<!-- Multi-Filter & Search Bar -->
+<section class="flex flex-col gap-space-xs">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span>
+<input class="w-full pl-9 pr-8 py-2 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant focus:outline-none focus:bg-surface-container-high transition-colors" id="sku-search-input" placeholder="Buscar SKU (SK-409, Rodamiento, Válvula)..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant">qr_code_scanner</span>
+</div>
+<!-- Filter Chips Horizontally Scrollable -->
+<div class="flex items-center gap-space-xs overflow-x-auto py-1 no-scrollbar">
+<button class="filter-chip active shrink-0 px-2.5 py-1 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1 shadow-sm">
+<span>Todos (28)</span>
+</button>
+<button class="filter-chip shrink-0 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:text-on-surface flex items-center gap-1 transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span>Crítico &gt;10% (8)</span>
+</button>
+<button class="filter-chip shrink-0 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:text-on-surface flex items-center gap-1 transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Menor &lt;5% (6)</span>
+</button>
+<button class="filter-chip shrink-0 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:text-on-surface flex items-center gap-1 transition-colors">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Match Perfecto (14)</span>
+</button>
+<div class="w-[1px] h-4 bg-surface-variant shrink-0 mx-0.5"></div>
+<button class="shrink-0 px-2.5 py-1 rounded bg-surface-container text-on-surface font-label-md text-label-md flex items-center gap-1 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+<span>Bodega 3-R2</span>
+</button>
+</div>
+<!-- Actions Quick Strip -->
+<div class="flex items-center justify-between gap-space-sm pt-0.5">
+<span class="font-code-sm text-code-sm text-on-surface-variant">
+        CONCILIACIÓN TRI-PARTITA: <span class="text-on-surface font-semibold">6 ITEMS REVISADOS</span>
+</span>
+<div class="flex items-center gap-space-xs shrink-0">
+<button class="px-2 py-1 rounded bg-surface-container-high text-on-surface hover:text-primary font-label-md text-label-md flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px]">file_download</span>
+<span>Ledger .CSV</span>
+</button>
+<button class="px-2 py-1 rounded bg-surface-container-high text-on-surface hover:text-secondary font-label-md text-label-md flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px]">restart_alt</span>
+<span>Re-conteo</span>
+</button>
+</div>
+</div>
+</section>
+<!-- High-Density Interactive Multi-Source Reconciliation Table / Card Grid -->
+<section class="flex flex-col rounded-xl bg-surface-container-low overflow-hidden shadow-md">
+<div class="px-space-md py-space-sm bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">compare_arrows</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Matriz de Desviación Tri-Partita</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant">TOUCH / SWIPE HORIZONTAL</span>
+</div>
+<!-- Monospace Dense Table Container -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse min-w-[720px]">
+<thead>
+<tr class="bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm uppercase">
+<th class="py-2 px-3 tracking-wider">SKU &amp; Tag</th>
+<th class="py-2 px-3 tracking-wider">Descripción</th>
+<th class="py-2 px-2 tracking-wider text-center">UdM</th>
+<th class="py-2 px-2.5 tracking-wider text-right text-secondary">ERP Kardex</th>
+<th class="py-2 px-2.5 tracking-wider text-right text-primary">Físico Scan</th>
+<th class="py-2 px-2.5 tracking-wider text-right text-tertiary">Bitácora OCR</th>
+<th class="py-2 px-3 tracking-wider text-right">Descuadre Neto</th>
+<th class="py-2 px-3 tracking-wider text-right">Valuación COP</th>
+<th class="py-2 px-3 tracking-wider text-center">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container text-body-sm font-body-sm">
+<!-- Row 1: SKU-84920 (Critical Discrepancy, selected) -->
+<tr class="bg-surface-container/60 hover:bg-surface-container-high transition-colors cursor-pointer group" onclick="openDrawer('SKU-84920')">
+<td class="py-2.5 px-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-error group-hover:scale-110 transition-transform">priority_high</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">SKU-84920</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium truncate max-w-[170px]">Rodamiento Esférico SKF 22218 EK</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">LOC: Silo-A // Rack 04</span>
+</div>
+</td>
+<td class="py-2.5 px-2 text-center font-code-sm text-code-sm text-on-surface-variant">UND</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-secondary">45</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-primary font-semibold">33</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-tertiary font-semibold">33</td>
+<td class="py-2.5 px-3 text-right">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-error font-bold">-12 UND</span>
+<span class="font-code-sm text-code-sm text-error/80">-26.6%</span>
+</div>
+</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-error font-semibold">
+              -$15,600,000
+            </td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-code-sm text-code-sm font-semibold tracking-wide">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>
+                CRÍTICO
+              </span>
+</td>
+</tr>
+<!-- Row 2: SKU-30119 (OK) -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer" onclick="openDrawer('SKU-30119')">
+<td class="py-2.5 px-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-primary">check_circle</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">SKU-30119</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium truncate max-w-[170px]">Válvula Compuerta 3" ANSI 150</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">LOC: Bodega 3-R2 // B-12</span>
+</div>
+</td>
+<td class="py-2.5 px-2 text-center font-code-sm text-code-sm text-on-surface-variant">UND</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-secondary">18</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-primary font-semibold">18</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-tertiary">18</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-primary font-semibold">
+              0 UND <span class="font-code-sm text-code-sm text-primary/70">(0%)</span>
+</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-on-surface-variant">
+              $0 COP
+            </td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/10 text-primary font-code-sm text-code-sm font-semibold">
+<span class="material-symbols-outlined text-[12px]">done</span>
+                OK
+              </span>
+</td>
+</tr>
+<!-- Row 3: SKU-11402 (High Discrepancy) -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer" onclick="openDrawer('SKU-11402')">
+<td class="py-2.5 px-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-tertiary">warning</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">SKU-11402</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium truncate max-w-[170px]">Cable Monopolar Cu 4/0 AWG</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">LOC: Silo-A // Carretel 2</span>
+</div>
+</td>
+<td class="py-2.5 px-2 text-center font-code-sm text-code-sm text-on-surface-variant">MTS</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-secondary">520</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-primary font-semibold">480</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-tertiary font-semibold">505</td>
+<td class="py-2.5 px-3 text-right">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-error font-bold">-40 MTS</span>
+<span class="font-code-sm text-code-sm text-error/80">-7.7%</span>
+</div>
+</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-error font-semibold">
+              -$9,840,000
+            </td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container/60 text-error font-code-sm text-code-sm font-semibold">
+                ALTO
+              </span>
+</td>
+</tr>
+<!-- Row 4: SKU-77291 (Minor Discrepancy Surplus) -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer" onclick="openDrawer('SKU-77291')">
+<td class="py-2.5 px-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-tertiary">info</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">SKU-77291</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium truncate max-w-[170px]">Empaquetadura Espirometálica 4"</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">LOC: Bodega 3-R2 // Gaveta 09</span>
+</div>
+</td>
+<td class="py-2.5 px-2 text-center font-code-sm text-code-sm text-on-surface-variant">UND</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-secondary">140</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-primary font-semibold">152</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-tertiary font-semibold">140</td>
+<td class="py-2.5 px-3 text-right">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-secondary font-bold">+12 UND</span>
+<span class="font-code-sm text-code-sm text-secondary/80">+8.5%</span>
+</div>
+</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-secondary font-semibold">
+              +$4,120,000
+            </td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-code-sm text-code-sm font-semibold">
+                SOBRANTE
+              </span>
+</td>
+</tr>
+<!-- Row 5: SKU-90412 (OK) -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer" onclick="openDrawer('SKU-90412')">
+<td class="py-2.5 px-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-primary">check_circle</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">SKU-90412</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium truncate max-w-[170px]">Brida Deslizable ASTM A105 4"</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">LOC: Patio Tubería // Estiba 14</span>
+</div>
+</td>
+<td class="py-2.5 px-2 text-center font-code-sm text-code-sm text-on-surface-variant">UND</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-secondary">64</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-primary font-semibold">64</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-tertiary">64</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-primary font-semibold">
+              0 UND <span class="font-code-sm text-code-sm text-primary/70">(0%)</span>
+</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-on-surface-variant">
+              $0 COP
+            </td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/10 text-primary font-code-sm text-code-sm font-semibold">
+<span class="material-symbols-outlined text-[12px]">done</span>
+                OK
+              </span>
+</td>
+</tr>
+<!-- Row 6: SKU-62280 (Critical Discrepancy) -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer" onclick="openDrawer('SKU-62280')">
+<td class="py-2.5 px-3">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-error">priority_high</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">SKU-62280</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium truncate max-w-[170px]">Aceite Mobil DTE 10 Excel 46</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">LOC: Silo-A // Almacén Químicos</span>
+</div>
+</td>
+<td class="py-2.5 px-2 text-center font-code-sm text-code-sm text-on-surface-variant">GLN</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-secondary">28</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-primary font-semibold">22</td>
+<td class="py-2.5 px-2.5 text-right font-code-md text-code-md text-tertiary font-semibold">24</td>
+<td class="py-2.5 px-3 text-right">
+<div class="flex flex-col items-end">
+<span class="font-code-md text-code-md text-error font-bold">-6 GLN</span>
+<span class="font-code-sm text-code-sm text-error/80">-21.4%</span>
+</div>
+</td>
+<td class="py-2.5 px-3 text-right font-code-md text-code-md text-error font-semibold">
+              -$4,680,000
+            </td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-code-sm text-code-sm font-semibold">
+                CRÍTICO
+              </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Interactive Root-Cause Inspection Drawer / Panel (Demonstrated for SKU-84920) -->
+<section class="flex flex-col rounded-xl bg-surface-container-high p-space-md shadow-xl transition-all duration-300" id="audit-drawer">
+<!-- Header of Inspection Drawer -->
+<div class="flex items-start justify-between gap-space-sm pb-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="px-1.5 py-0.5 rounded bg-error/15 text-error font-code-sm text-code-sm font-bold">DESVIACIÓN DETECTADA</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">ORDEN #AUD-9912</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-0.5 flex items-center gap-1.5">
+<span>Análisis Causa-Raíz:</span>
+<span class="text-primary font-code-md text-code-md">SKU-84920</span>
+</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Rodamiento Esférico SKF 22218 EK (Silo-A // Rack 04)</span>
+</div>
+<button class="p-1.5 rounded-full bg-surface-container text-on-surface hover:text-error transition-colors" onclick="toggleDrawer()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- 3-Way Source Comparison Breakdown Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-xs mt-space-xs">
+<div class="p-space-xs rounded-lg bg-surface-container-lowest flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-semibold">1. Kardex SAP</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">database</span>
+</div>
+<div class="my-1.5">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold">45</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">UND</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Último Despacho: OT-7719 (24-Oct)</span>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container-lowest flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary uppercase font-semibold">2. Conteo Físico</span>
+<span class="material-symbols-outlined text-[14px] text-primary">qr_code_scanner</span>
+</div>
+<div class="my-1.5 flex items-baseline gap-1">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-error font-bold">33</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">UND</span>
+<span class="font-code-sm text-code-sm text-error ml-auto font-semibold">-12 Delta</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Auditor: C. Rodriguez (Scan #04)</span>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container-lowest flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary uppercase font-semibold">3. Bitácora OCR</span>
+<span class="material-symbols-outlined text-[14px] text-tertiary">menu_book</span>
+</div>
+<div class="my-1.5 flex items-baseline gap-1">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-tertiary font-bold">33</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">UND</span>
+<span class="font-code-sm text-code-sm text-primary ml-auto font-semibold">Match Físico</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Supervisor: M. Herrera (Turno A)</span>
+</div>
+</div>
+<!-- Supervisor Floor Note Callout -->
+<div class="mt-space-sm p-space-xs rounded-lg bg-tertiary-container/15 flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary shrink-0 mt-0.5">sticky_note_2</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-tertiary font-bold uppercase tracking-wider">Anotación de Turno (OCR Verificado):</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-0.5">
+          "12 rodamientos SKF 22218 entregados de urgencia para cambio crítico en Polín Motriz Línea 2. Solicitud verbal de Ing. Gómez sin reserva previa en SAP."
+        </p>
+</div>
+</div>
+<!-- Root Cause Timeline Stepper -->
+<div class="flex flex-col mt-space-sm space-y-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Traza Cronológica &amp; Evidencia</span>
+<div class="relative pl-5 space-y-2.5 before:content-[''] before:absolute before:left-1.5 before:top-1 before:bottom-1 before:w-[2px] before:bg-surface-variant">
+<!-- Event 1 -->
+<div class="relative flex flex-col">
+<div class="absolute -left-5 top-0.5 w-3 h-3 rounded-full bg-secondary ring-4 ring-surface-container-high"></div>
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-on-surface font-semibold">24-Oct 14:30 // Vale Físico de Emergencia</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Firmado</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Vale manual #7719 despachado sin consumo digital en módulo MM.</span>
+</div>
+<!-- Event 2 -->
+<div class="relative flex flex-col">
+<div class="absolute -left-5 top-0.5 w-3 h-3 rounded-full bg-error ring-4 ring-surface-container-high"></div>
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-error font-semibold">25-Oct 08:15 // Auditoría de Ciclo ERI</span>
+<span class="font-code-sm text-code-sm text-error">Delta -12</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Lector Zebra TC26 detecta 33 unidades en gaveta vs 45 teóricas.</span>
+</div>
+<!-- Event 3 -->
+<div class="relative flex flex-col">
+<div class="absolute -left-5 top-0.5 w-3 h-3 rounded-full bg-primary ring-4 ring-surface-container-high"></div>
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm text-primary font-semibold">25-Oct 09:10 // Validación Tri-Partita Resuelta</span>
+<span class="font-code-sm text-code-sm text-primary">Causa Aislada</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cruce de bitácora confirma destino a Línea 2. Discrepancia es administrativa.</span>
+</div>
+</div>
+</div>
+<!-- Financial Impact Preview -->
+<div class="mt-space-sm p-space-xs rounded bg-surface-container flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">trending_up</span>
+<span class="font-label-md text-label-md text-on-surface">Impacto tras Conciliación:</span>
+</div>
+<span class="font-code-sm text-code-sm text-primary font-bold">ERI Recupera a 95.8% (+4.4%)</span>
+</div>
+<!-- Action Protocols -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-xs mt-space-sm pt-space-xs">
+<button class="w-full py-2.5 px-3 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-[0.98]" id="btn-apply-adjustment" onclick="applyKardexAdjustment()">
+<span class="material-symbols-outlined text-[18px]">sync_saved_locally</span>
+<span>Ajustar Kardex (Imputar OT-7719)</span>
+</button>
+<button class="w-full py-2.5 px-3 rounded-lg bg-surface-container text-on-surface hover:text-error hover:bg-surface-variant font-label-md text-label-md font-medium flex items-center justify-center gap-1.5 transition-colors" id="btn-quarantine" onclick="quarantineBin()">
+<span class="material-symbols-outlined text-[16px]">lock_clock</span>
+<span>Cuarentena Silo-A &amp; Re-conteo</span>
+</button>
+</div>
+</section>
+</div>
+<script>
+  function openDrawer(sku) {
+    const drawer = document.getElementById('audit-drawer');
+    if (!drawer) return;
+    drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    drawer.classList.add('ring-2', 'ring-primary');
+    setTimeout(() => {
+      drawer.classList.remove('ring-2', 'ring-primary');
+    }, 1200);
+  }
+
+  function toggleDrawer() {
+    const drawer = document.getElementById('audit-drawer');
+    if (drawer) {
+      drawer.classList.toggle('hidden');
+    }
+  }
+
+  function applyKardexAdjustment() {
+    const btn = document.getElementById('btn-apply-adjustment');
+    if (!btn) return;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span><span>Sincronizando SAP MM...</span>';
+    btn.classList.add('opacity-80', 'pointer-events-none');
+
+    setTimeout(() => {
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">verified</span><span>Ajuste Imputado Exitosamente</span>';
+      btn.classList.remove('bg-primary');
+      btn.classList.add('bg-primary-container', 'text-on-primary-container');
+    }, 1200);
+  }
+
+  function quarantineBin() {
+    const btn = document.getElementById('btn-quarantine');
+    if (!btn) return;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">done</span><span>Bloqueo Activo en Silo-A</span>';
+    btn.classList.add('text-tertiary');
+  }
+
+  // Client-side quick filter logic
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.filter-chip').forEach(c => {
+        c.classList.remove('bg-primary', 'text-on-primary', 'active');
+        c.classList.add('bg-surface-container', 'text-on-surface-variant');
+      });
+      this.classList.add('bg-primary', 'text-on-primary', 'active');
+      this.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    });
+  });
+
+  // SKU Instant Filter
+  const searchInput = document.getElementById('sku-search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      const rows = document.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+  }
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(6,14,32,0.85)]" data-active-classes="text-primary font-semibold"><div class="flex justify-between items-center h-16 px-gutter"><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] text-on-surface-variant transition-colors hover:text-on-surface" data-path="control-dashboard" href="../e2_sas_control_dashboard/code.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-sm text-label-sm mt-0.5 tracking-tight uppercase">Dashboard</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] transition-colors text-primary font-semibold" data-path="cycle-count-audit" href="../eri_discrepancy_audit_reconciliation/code.html"><span class="material-symbols-outlined text-[20px]">fact_check</span><span class="font-label-sm text-label-sm mt-0.5 tracking-tight uppercase">ERI Audit</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] text-on-surface-variant transition-colors hover:text-on-surface" data-path="kardex-ledger" href="../analytics_abc_xyz_vendor_sla/code.html"><span class="material-symbols-outlined text-[20px]">query_stats</span><span class="font-label-sm text-label-sm mt-0.5 tracking-tight uppercase">Pareto/SLA</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] text-on-surface-variant transition-colors hover:text-on-surface" data-path="procurement-replenishment" href="../consola_de_aprobaci_n_de_reabastecimiento/code.html"><span class="material-symbols-outlined text-[20px]">shopping_cart_checkout</span><span class="font-label-sm text-label-sm mt-0.5 tracking-tight uppercase">Compras</span></a></div></nav></body></html>

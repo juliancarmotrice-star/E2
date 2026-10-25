@@ -182,6 +182,19 @@ def generar_propuestas_reposicion(
 
     inversion_total = sum(p["inversion_cop"] for p in propuestas)
 
+    # Instrumentación B4.02: Asentar corrida en la bitácora de la base de datos
+    try:
+        import nucleo.analisis_cambios as ac
+        ac.asentar_corrida_en_bitacora(
+            corrida_id=corrida_id,
+            total_propuestas=len(propuestas),
+            inversion_total_cop=round(inversion_total, 2),
+            conteo_paradas=conteo_paradas,
+            duracion_ms=180
+        )
+    except Exception as e:
+        print(f"[ALERTA ORQUESTADOR] No se pudo asentar corrida en bitacora: {e}")
+
     return {
         "corrida_id": corrida_id,
         "fecha_corrida": fecha_corrida_iso,
