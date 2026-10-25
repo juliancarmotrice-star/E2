@@ -161,15 +161,48 @@ def post_justificar(body: JustificacionRequest):
 # ==========================================
 import os
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse
 
 frontend_path = os.path.join(os.path.dirname(__file__), "frontend", "stitch_industrial_supply_chain_dashboard")
-if os.path.exists(frontend_path):
-    app.mount("/app", StaticFiles(directory=frontend_path, html=True), name="stitch_app")
 
-    @app.get("/")
-    def index():
-        return RedirectResponse(url="/app/e2_sas_control_dashboard/code.html")
+def _cargar_html(subcarpeta: str) -> str:
+    ruta = os.path.join(frontend_path, subcarpeta, "code.html")
+    if os.path.exists(ruta):
+        with open(ruta, "r", encoding="utf-8") as f:
+            return f.read()
+    return f"""<!DOCTYPE html><html><body style="font-family:sans-serif;padding:2rem;background:#0b1326;color:#dae2fd;">
+<h2>⚡ E2 SAS · Producción 4.0 API</h2>
+<p>Servicio operativo en la nube.</p>
+<p><a style="color:#4edea3;" href="/docs">Explorar Documentación Interactiva (Swagger UI)</a></p>
+<p><a style="color:#4edea3;" href="/api/health">Estado de Salud (/api/health)</a></p>
+</body></html>"""
+
+@app.get("/", response_class=HTMLResponse)
+def index():
+    """Dashboard principal de control industrial y telemetría."""
+    return HTMLResponse(content=_cargar_html("e2_sas_control_dashboard"))
+
+@app.get("/control", response_class=HTMLResponse)
+def vista_control():
+    return HTMLResponse(content=_cargar_html("e2_sas_control_dashboard"))
+
+@app.get("/analytics", response_class=HTMLResponse)
+def vista_analytics():
+    return HTMLResponse(content=_cargar_html("analytics_abc_xyz_vendor_sla"))
+
+@app.get("/aprobacion", response_class=HTMLResponse)
+def vista_aprobacion():
+    return HTMLResponse(content=_cargar_html("consola_de_aprobaci_n_de_reabastecimiento"))
+
+@app.get("/eri", response_class=HTMLResponse)
+def vista_eri():
+    return HTMLResponse(content=_cargar_html("eri_discrepancy_audit_reconciliation"))
+
+if os.path.exists(frontend_path):
+    try:
+        app.mount("/app", StaticFiles(directory=frontend_path, html=True), name="stitch_app")
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

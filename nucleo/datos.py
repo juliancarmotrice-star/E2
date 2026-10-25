@@ -26,7 +26,12 @@ def obtener_configuracion() -> Dict[str, str]:
 
     config = {
         "SUPABASE_URL": os.environ.get("SUPABASE_URL", ""),
-        "SUPABASE_KEY": os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_ANON_KEY", "")
+        "SUPABASE_KEY": (
+            os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+            or os.environ.get("SUPABASE_ANON_KEY")
+            or os.environ.get("SUPABASE_KEY")
+            or os.environ.get("SUPABASE_PUBLISHABLE_KEY", "")
+        )
     }
 
     if os.path.exists(ruta_env):
@@ -39,7 +44,7 @@ def obtener_configuracion() -> Dict[str, str]:
                     v = v.strip().strip('"').strip("'")
                     if k == "SUPABASE_URL" and not config["SUPABASE_URL"]:
                         config["SUPABASE_URL"] = v
-                    elif k in ("SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_ANON_KEY") and not config["SUPABASE_KEY"]:
+                    elif k in ("SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_ANON_KEY", "SUPABASE_KEY", "SUPABASE_PUBLISHABLE_KEY") and not config["SUPABASE_KEY"]:
                         config["SUPABASE_KEY"] = v
 
     if not config["SUPABASE_URL"] or not config["SUPABASE_KEY"]:
