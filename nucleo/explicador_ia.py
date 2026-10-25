@@ -130,6 +130,10 @@ def generar_explicacion_ejecutiva(propuesta: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+# Alias de compatibilidad para endpoints de API
+explicar_decision_compra = generar_explicacion_ejecutiva
+
+
 if __name__ == "__main__":
     import sys
     if hasattr(sys.stdout, "reconfigure"):
