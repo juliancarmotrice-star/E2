@@ -1,28 +1,32 @@
 # 🏗️ Arquitectura de Skills del Proyecto E2 SAS
 > **Sistema de Optimización y Reposición Inteligente de Inventarios**  
-> Organización completa de las 5 skills operativas: cuándo se usa cada una, procedimiento, vistas SQL y verificación de calidad.
+> Organización completa de las 6 skills operativas: cuándo se usa cada una, procedimiento, vistas SQL y verificación de calidad.
 
 ---
 
 ## 📐 Mapa General: Orden de Ejecución y Dependencias
 
-Las skills siguen un **flujo secuencial obligatorio** donde la salida de una alimenta la entrada de la siguiente. No se puede saltar etapas.
+Las skills siguen un **flujo secuencial obligatorio** donde la gobernanza de datos y la auditoría de cambios sustentan la analítica y reposición:
 
 ```mermaid
 flowchart TD
-    S1["🧹 SKILL 1\nlimpieza-datos-e2\n(Fundación)"]
+    S0["📊 SKILL 0\nanalisis-cambios-limpieza-e2\n(Auditoría B4.02, Ingesta 5 Pasos & Telemetría)"]
+    S1["🧹 SKILL 1\nlimpieza-datos-e2\n(Fundación & Saneamiento)"]
     S2["🧠 SKILL 2\nanalitica-abc-xyz-e2\n(Segmentación)"]
     S3["🔍 SKILL 3\nexactitud-inventarios-eri-e2\n(Auditoría)"]
     S4["⚙️ SKILL 4\nreposicion-eoq-rop-e2\n(Reposición)"]
     S5["🚢 SKILL 5\nsla-proveedores-mrp-e2\n(Suministro)"]
 
+    S0 <-->|"Audita transformaciones,\nIdempotencia & 5 Pasos"| S1
     S1 -->|"Tablas 3FN limpias\nen Supabase"| S2
     S1 -->|"Tablas 3FN limpias\nen Supabase"| S3
     S2 -->|"D anual & Costo\nvista_clasificacion_abc"| S4
     S3 -->|"Alerta ERI descuadrado\nvista_diagnostico_eri"| S4
     S4 -->|"EOQ, ROP, SS\nvista_calculo_eoq_rop"| S5
     S1 -->|"ordenes_compra\n& BOM limpios"| S5
+    S4 -.->|"Telemetría corridas\nbitacora_corridas"| S0
 
+    style S0 fill:#1a1a2e,stroke:#00adb5,color:#fff
     style S1 fill:#1a1a2e,stroke:#e94560,color:#fff
     style S2 fill:#1a1a2e,stroke:#0f3460,color:#fff
     style S3 fill:#1a1a2e,stroke:#f39c12,color:#fff
@@ -34,8 +38,9 @@ flowchart TD
 
 ## 🔑 Tabla Resumen Rápido
 
-| # | Skill | Indicador de Uso (¿Cuándo?) | Vista SQL en Supabase | Verificación |
-|:-:|-------|----------------------------|----------------------|-------------|
+| # | Skill | Indicador de Uso (¿Cuándo?) | Vista / Tabla SQL en Supabase | Verificación |
+|:-:|-------|----------------------------|-------------------------------|-------------|
+| 0 | [`analisis-cambios-limpieza-e2`](file:///c:/Users/Julian/Documents/NOVENO%20SEMESTRE/ÉNFASIS-2/PA-E2/.agents/skills/analisis-cambios-limpieza-e2/SKILL.md) | Auditar transformaciones pre/post limpieza, ejecutar ingesta en 5 pasos (B4.02), validar idempotencia/acumulación y medir telemetría | `public.bitacora_cargas` + `public.bitacora_corridas` | 763 errores auditados, doble carga no duplica ($\Delta=0$), reporte de aceptadas/rechazadas |
 | 1 | [`limpieza-datos-e2`](file:///c:/Users/Julian/Documents/NOVENO%20SEMESTRE/ÉNFASIS-2/PA-E2/.agents/skills/limpieza-datos-e2/SKILL.md) | Llegan archivos CSV nuevos del ERP o se modifica el catálogo | *(No tiene vista propia — alimenta las 4 vistas restantes)* | Checklist de integridad referencial: 0 huérfanos, 0 nulos, 0 fechas inválidas |
 | 2 | [`analitica-abc-xyz-e2`](file:///c:/Users/Julian/Documents/NOVENO%20SEMESTRE/ÉNFASIS-2/PA-E2/.agents/skills/analitica-abc-xyz-e2/SKILL.md) | Se necesita clasificar SKUs, detectar plata muerta o definir políticas de compra diferenciadas | `public.vista_clasificacion_abc` | Clase A ≤ 80% acumulado, A+B+C = 100%, Plata Muerta con D=0 bloqueada |
 | 3 | [`exactitud-inventarios-eri-e2`](file:///c:/Users/Julian/Documents/NOVENO%20SEMESTRE/ÉNFASIS-2/PA-E2/.agents/skills/exactitud-inventarios-eri-e2/SKILL.md) | Se requiere auditar si el Kardex del ERP coincide con lo que hay físicamente en bodega | `public.vista_diagnostico_eri_inventarios` + `public.vista_resumen_eri_inventarios` | ERI% calculado correctamente, Δ=0 → Exacto, semáforo coherente con discrepancia |

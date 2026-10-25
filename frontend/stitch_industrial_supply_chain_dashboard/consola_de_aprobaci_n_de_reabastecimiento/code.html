@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-bright": "#31394d", "surface": "#0b1326", "surface-container": "#171f33", "tertiary-fixed": "#ffddb8", "on-surface-variant": "#bbcabf", "on-secondary": "#003640", "secondary-container": "#03b5d3", "on-background": "#dae2fd", "on-tertiary": "#472a00", "background": "#0b1326", "secondary": "#4cd7f6", "error-container": "#93000a", "on-primary-container": "#00422b", "surface-variant": "#2d3449", "surface-container-lowest": "#060e20", "outline": "#86948a", "on-primary": "#003824", "on-primary-fixed-variant": "#005236", "on-primary-fixed": "#002113", "primary": "#4edea3", "surface-container-low": "#131b2e", "surface-tint": "#4edea3", "on-secondary-fixed": "#001f26", "surface-container-highest": "#2d3449", "tertiary-container": "#e29100", "on-error": "#690005", "tertiary-fixed-dim": "#ffb95f", "tertiary": "#ffb95f", "primary-fixed": "#6ffbbe", "on-surface": "#dae2fd", "surface-dim": "#0b1326", "inverse-on-surface": "#283044", "secondary-fixed": "#acedff", "primary-container": "#10b981", "secondary-fixed-dim": "#4cd7f6", "on-error-container": "#ffdad6", "error": "#ffb4ab", "inverse-primary": "#006c49", "primary-fixed-dim": "#4edea3", "on-secondary-fixed-variant": "#004e5c", "on-secondary-container": "#00424e", "surface-container-high": "#222a3d", "on-tertiary-container": "#523200", "inverse-surface": "#dae2fd", "outline-variant": "#3c4a42", "on-tertiary-fixed-variant": "#653e00", "on-tertiary-fixed": "#2a1700" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: { "space-xl": "2rem", "margin-desktop": "1.5rem", "margin": "0.75rem", "gutter": "0.75rem", "space-sm": "0.5rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-lg": "1.25rem", "gutter-desktop": "1rem" }, fontFamily: { "body-lg": ["Inter"], "label-sm": ["JetBrains Mono"], "headline-lg-mobile": ["Inter"], "body-md": ["Inter"], "headline-lg": ["Inter"], "headline-sm": ["Inter"], "body-sm": ["Inter"], "headline-xl-mobile": ["Inter"], "code-sm": ["JetBrains Mono"], "code-lg": ["JetBrains Mono"], "label-md": ["Inter"], "headline-xl": ["Inter"], "code-md": ["JetBrains Mono"], "headline-md": ["Inter"] }, fontSize: { "body-lg": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.06em", "fontWeight": "600" }], "headline-lg-mobile": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-sm": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "code-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }], "code-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "500" }], "label-md": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "code-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } }</script><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;background-color:#0b1326;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary selection:text-on-primary"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-low/85 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.5)]"><div class="h-20 px-margin flex flex-col justify-between py-space-xs"><div class="flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-sm min-w-0"><img alt="E2 SAS Industrial Logo" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1XmTcoqYbi9IbBcbcn_qZwetFpKT6Z61w3Qj7JXDfAIpslefYViP9J2vnc00oWGhL9ycchzj7MlcAZ3ccwnWIgGA3pQtvO7mKDWwAAG6fLrtUqwlhWACE3_COj60KV785udFuIAjBZeX67vUcl_r0zmEhOneEZ6p2ergvNhn_wlTEI0zgdHtODl_Le2A7OsUrKYTGAR-3qC6nypfUfWWj34OX7wimubUoA26WBM3eGdWfOdY8sTQIjvFna_"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-label-sm text-label-sm uppercase text-primary tracking-widest">E2 SAS</span><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(78,222,163,0.6)]"></span></div><span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight truncate">Overview</span></div></div><div class="flex items-center gap-space-sm shrink-0"><button class="min-h-[44px] px-space-sm py-space-xs rounded-lg bg-surface-container-high/60 backdrop-blur-md flex items-center gap-space-xs text-on-surface active:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[16px] text-secondary">warehouse</span><span class="font-code-sm text-code-sm uppercase font-semibold text-secondary truncate max-w-[84px]">Bogota Hub 01</span><span class="material-symbols-outlined text-[14px] text-on-surface-variant">unfold_more</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(78,222,163,0.3)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><div class="flex items-center justify-between gap-space-xs overflow-x-auto no-scrollbar"><div class="flex items-center gap-space-xs shrink-0"><span class="material-symbols-outlined text-secondary text-[14px]">radar</span><span class="font-code-sm text-code-sm text-on-surface-variant tracking-wider">24 OCT 2024 • LIVE SYNC</span></div><div class="flex items-center gap-space-xs shrink-0"><div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-primary/10"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span><span class="font-code-sm text-code-sm text-primary uppercase font-bold">PLC: ONLINE</span></div><div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-secondary/10"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span class="font-code-sm text-code-sm text-secondary uppercase font-bold">MES 99.8%</span></div></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-20 pb-20 bg-surface px-margin"><div class="flex flex-col w-full pb-10 space-y-space-md">
+<!-- System Status Banner -->
+<section class="bg-surface-container-low rounded-xl p-space-md shadow-lg space-y-space-sm relative overflow-hidden">
+<div class="absolute -right-6 -top-6 w-28 h-28 bg-secondary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between text-on-surface-variant font-code-sm text-code-sm uppercase tracking-wider">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-primary font-bold">CICLO ACTIVO: AUTO-EOQ V4.2</span>
+</div>
+<div class="bg-surface-container px-space-xs py-0.5 rounded text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">schedule</span>
+<span>Corte: 10:45 AM</span>
+</div>
+</div>
+<div>
+<div class="font-label-md text-label-md uppercase text-on-surface-variant font-semibold">Inversión Total Propuesta</div>
+<div class="flex items-baseline justify-between mt-0.5">
+<div class="font-headline-xl-mobile text-headline-xl-mobile font-code-lg text-primary tracking-tight">
+          $ 384.620.000 <span class="text-body-sm font-body-sm text-on-surface-variant font-normal">COP</span>
+</div>
+<div class="bg-surface-container-highest px-space-xs py-0.5 rounded text-on-surface font-code-sm text-code-sm font-semibold">
+          18 ÓRDENES
+        </div>
+</div>
+</div>
+<!-- Budget Allocation Bar -->
+<div class="space-y-1 pt-1">
+<div class="flex justify-between font-code-sm text-code-sm text-on-surface-variant">
+<span>Presupuesto Disponible: $ 650.000.000 COP</span>
+<span class="text-secondary font-bold">59.2% Asignado</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 59.2%"></div>
+</div>
+</div>
+<!-- Stop Criteria Filter Pills -->
+<div class="flex gap-space-xs overflow-x-auto no-scrollbar pt-space-xs pb-0.5">
+<button class="px-space-sm py-1 rounded-full bg-primary text-on-primary font-code-sm text-code-sm uppercase font-bold shrink-0 flex items-center gap-1 shadow-sm">
+<span>Todos</span>
+<span class="bg-on-primary/20 px-1 rounded-full">18</span>
+</button>
+<button class="px-space-sm py-1 rounded-full bg-surface-container-high text-tertiary font-code-sm text-code-sm uppercase font-semibold shrink-0 flex items-center gap-1 active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[13px]">warning</span>
+<span>Chequeo Físico</span>
+<span class="bg-tertiary/20 px-1 rounded-full">4</span>
+</button>
+<button class="px-space-sm py-1 rounded-full bg-surface-container-high text-secondary font-code-sm text-code-sm uppercase font-semibold shrink-0 flex items-center gap-1 active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[13px]">shield_person</span>
+<span>Autorización Gerencial</span>
+<span class="bg-secondary/20 px-1 rounded-full">3</span>
+</button>
+<button class="px-space-sm py-1 rounded-full bg-surface-container-high text-error font-code-sm text-code-sm uppercase font-semibold shrink-0 flex items-center gap-1 active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[13px]">running_with_errors</span>
+<span>Prov. Riesgo</span>
+<span class="bg-error/20 px-1 rounded-full">2</span>
+</button>
+<button class="px-space-sm py-1 rounded-full bg-surface-container-high text-primary font-code-sm text-code-sm uppercase font-semibold shrink-0 flex items-center gap-1 active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[13px]">verified</span>
+<span>Estándar</span>
+<span class="bg-primary/20 px-1 rounded-full">9</span>
+</button>
+</div>
+</section>
+<!-- Quick Action Strip -->
+<section class="flex items-center gap-space-sm">
+<button class="flex-1 min-h-[44px] px-space-md py-space-xs rounded-lg bg-surface-container-high text-primary font-code-sm text-code-sm uppercase font-bold flex items-center justify-center gap-1.5 active:bg-surface-bright shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+<span>Aprobar Estándar (9 OC)</span>
+</button>
+<button class="min-h-[44px] px-space-md py-space-xs rounded-lg bg-surface-container-low text-on-surface-variant font-code-sm text-code-sm uppercase font-medium flex items-center justify-center gap-1.5 active:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>.XLSX</span>
+</button>
+</section>
+<!-- CARDS STREAM -->
+<div class="space-y-space-md">
+<!-- Card 1: High Risk / Physical Discrepancy -->
+<article class="bg-surface-container-low rounded-xl p-space-md shadow-md space-y-space-md relative overflow-hidden">
+<!-- Glow Semaphore Line -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-error"></div>
+<!-- Card Header -->
+<div class="space-y-space-xs">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="font-code-md text-code-md font-bold text-on-surface">SKU-IND-9021</span>
+<span class="bg-error-container/40 text-error font-code-sm text-code-sm font-semibold px-1.5 py-0.2 rounded uppercase">Clase A</span>
+</div>
+<span class="text-error font-code-sm text-code-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span>
+            STOP CRÍTICO
+          </span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Válvula Compuerta Actuador 4'' ANSI 600</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">factory</span>
+<span class="truncate">FlowControl Andina S.A.S. (Lead Time: 18d)</span>
+</div>
+</div>
+<!-- Stop Criteria Tag -->
+<div class="bg-error-container/20 p-space-xs rounded-lg flex items-start gap-space-xs text-error">
+<span class="material-symbols-outlined text-[16px] shrink-0 mt-0.5">report_problem</span>
+<div class="font-body-sm text-body-sm">
+<span class="font-bold uppercase font-code-sm text-code-sm block text-error">Chequeo Físico Requerido</span>
+          Discrepancia ERI detectada en conteo previo (-28 uds vs Kardex).
+        </div>
+</div>
+<!-- Telemetry Matrix -->
+<div class="grid grid-cols-2 gap-space-xs bg-surface-container p-space-xs rounded-lg">
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Sugerencia EOQ</span>
+<span class="font-code-lg text-code-lg font-bold text-primary">85 uds</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Punto Reorden (ROP)</span>
+<div class="flex items-baseline gap-1">
+<span class="font-code-lg text-code-lg font-bold text-on-surface">120 uds</span>
+<span class="font-code-sm text-code-sm text-error font-semibold">(Stock: 32)</span>
+</div>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Consumo Diario</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">4.8 uds/día</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Total Orden (COP)</span>
+<span class="font-code-md text-code-md font-bold text-secondary">$ 98.600.000</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant block">$1.160.000/ud</span>
+</div>
+</div>
+<!-- AI Gemini Audit Diagnostic Box -->
+<div class="bg-surface-container-high rounded-lg p-space-sm space-y-space-xs shadow-inner">
+<div class="flex items-center justify-between text-secondary">
+<div class="flex items-center gap-space-xs font-code-sm text-code-sm font-bold tracking-wide">
+<span class="material-symbols-outlined text-[16px] text-secondary animate-pulse">auto_awesome</span>
+<span>GEMINI AUDIT ENGINE</span>
+</div>
+<span class="bg-secondary/10 text-secondary font-code-sm text-code-sm px-1.5 py-0.5 rounded font-semibold">96.4% CONFIANZA</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+<strong class="text-tertiary">Dictamen: PAUSAR APROBACIÓN HASTA CONCILIAR KARDEX.</strong> Conteo físico de ayer reportó 112 uds vs 140 en sistema. Emitir OC por 85 uds sobre-estimará inventario si 28 unidades aparecen en Bahía 3. Riesgo de inmovilización: ALTO ($32.4M COP excedente).
+        </p>
+</div>
+<!-- Action Buttons Bar -->
+<div class="space-y-space-xs pt-space-xs">
+<div class="flex items-center gap-space-xs">
+<button class="flex-1 min-h-[44px] rounded-lg bg-primary text-on-primary font-code-sm text-code-sm uppercase font-bold flex items-center justify-center gap-1 active:bg-primary-container transition-colors shadow">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>Forzar &amp; Emitir</span>
+</button>
+<button class="flex-1 min-h-[44px] rounded-lg bg-error-container/40 text-error font-code-sm text-code-sm uppercase font-bold flex items-center justify-center gap-1 active:bg-error-container transition-colors">
+<span class="material-symbols-outlined text-[16px]">block</span>
+<span>Rechazar con Causa</span>
+</button>
+</div>
+<button class="w-full min-h-[36px] flex items-center justify-center gap-1 text-secondary font-code-sm text-code-sm uppercase font-bold active:text-on-surface transition-colors py-1">
+<span class="material-symbols-outlined text-[15px]">location_searching</span>
+<span>Despachar Auditoría Terreno (Bahía 3)</span>
+</button>
+</div>
+</article>
+<!-- Card 2: Managerial Authorization -->
+<article class="bg-surface-container-low rounded-xl p-space-md shadow-md space-y-space-md relative overflow-hidden">
+<!-- Glow Semaphore Line -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-secondary"></div>
+<!-- Card Header -->
+<div class="space-y-space-xs">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="font-code-md text-code-md font-bold text-on-surface">SKU-MEC-3310</span>
+<span class="bg-secondary-container/30 text-secondary font-code-sm text-code-sm font-semibold px-1.5 py-0.2 rounded uppercase">Clase A</span>
+</div>
+<span class="text-secondary font-code-sm text-code-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">key</span>
+            AUTORIZACIÓN DIR
+          </span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Motorreductor Helicoidal SEW 15HP 1800RPM</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">factory</span>
+<span class="truncate">SEW-Eurodrive Colombia Ltda. (Lead Time: 45d)</span>
+</div>
+</div>
+<!-- Stop Criteria Tag -->
+<div class="bg-secondary-container/20 p-space-xs rounded-lg flex items-start gap-space-xs text-secondary">
+<span class="material-symbols-outlined text-[16px] shrink-0 mt-0.5">account_balance_wallet</span>
+<div class="font-body-sm text-body-sm">
+<span class="font-bold uppercase font-code-sm text-code-sm block text-secondary">Umbral Financiero Excedido</span>
+          El monto total supera el límite autónomo de compra ($50.000.000 COP).
+        </div>
+</div>
+<!-- Telemetry Matrix -->
+<div class="grid grid-cols-2 gap-space-xs bg-surface-container p-space-xs rounded-lg">
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Sugerencia EOQ</span>
+<span class="font-code-lg text-code-lg font-bold text-primary">4 uds</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Punto Reorden (ROP)</span>
+<div class="flex items-baseline gap-1">
+<span class="font-code-lg text-code-lg font-bold text-on-surface">3 uds</span>
+<span class="font-code-sm text-code-sm text-tertiary font-semibold">(Stock: 1 ud)</span>
+</div>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Consumo Mensual</span>
+<span class="font-code-md text-code-md text-on-surface font-semibold">0.8 uds/mes</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Total Orden (COP)</span>
+<span class="font-code-md text-code-md font-bold text-secondary">$ 142.800.000</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant block">$35.700.000/ud</span>
+</div>
+</div>
+<!-- AI Gemini Audit Diagnostic Box -->
+<div class="bg-surface-container-high rounded-lg p-space-sm space-y-space-xs shadow-inner">
+<div class="flex items-center justify-between text-secondary">
+<div class="flex items-center gap-space-xs font-code-sm text-code-sm font-bold tracking-wide">
+<span class="material-symbols-outlined text-[16px] text-secondary animate-pulse">auto_awesome</span>
+<span>GEMINI AUDIT ENGINE</span>
+</div>
+<span class="bg-primary/10 text-primary font-code-sm text-code-sm px-1.5 py-0.5 rounded font-semibold">ALTA CRITICIDAD</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+<strong class="text-primary">Dictamen: APROBAR CON EXCEPCIÓN GERENCIAL.</strong> Lead time del fabricante extendido de 30 a 45 días por flete marítimo. Si no se emite OC hoy, existe 91% de probabilidad de quiebre en Línea de Extrusión 1 para Semana 48.
+        </p>
+</div>
+<!-- Action Buttons Bar -->
+<div class="flex items-center gap-space-xs pt-space-xs">
+<button class="flex-1 min-h-[44px] rounded-lg bg-primary text-on-primary font-code-sm text-code-sm uppercase font-bold flex items-center justify-center gap-1 active:bg-primary-container transition-colors shadow">
+<span class="material-symbols-outlined text-[16px]">fingerprint</span>
+<span>Aprobar con Firma</span>
+</button>
+<button class="flex-1 min-h-[44px] rounded-lg bg-surface-container-highest text-error font-code-sm text-code-sm uppercase font-bold flex items-center justify-center gap-1 active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>Rechazar</span>
+</button>
+</div>
+</article>
+<!-- Card 3: Standard Low-Risk Approval -->
+<article class="bg-surface-container-low rounded-xl p-space-md shadow-md space-y-space-md relative overflow-hidden">
+<!-- Glow Semaphore Line -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
+<!-- Card Header -->
+<div class="space-y-space-xs">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="font-code-md text-code-md font-bold text-on-surface">SKU-ROD-84920</span>
+<span class="bg-surface-container-highest text-on-surface-variant font-code-sm text-code-sm font-semibold px-1.5 py-0.2 rounded uppercase">Clase B</span>
+</div>
+<span class="text-primary font-code-sm text-code-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+            AUTO-CLEARED
+          </span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold leading-tight">Rodamiento Esférico SKF 22218 EK</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">factory</span>
+<span class="truncate">SKF Distribución Industrial S.A.S. (Lead Time: 4d)</span>
+</div>
+</div>
+<!-- Stop Criteria Tag: Cleared -->
+<div class="bg-primary/10 p-space-xs rounded-lg flex items-start gap-space-xs text-primary">
+<span class="material-symbols-outlined text-[16px] shrink-0 mt-0.5">verified_user</span>
+<div class="font-body-sm text-body-sm">
+<span class="font-bold uppercase font-code-sm text-code-sm block text-primary">Aprobación Estándar Verificada</span>
+          Parámetros dentro de banda estocástica normal. Sin fricción de inventario.
+        </div>
+</div>
+<!-- Telemetry Matrix -->
+<div class="grid grid-cols-2 gap-space-xs bg-surface-container p-space-xs rounded-lg">
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Sugerencia EOQ</span>
+<span class="font-code-lg text-code-lg font-bold text-primary">30 uds</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Punto Reorden (ROP)</span>
+<div class="flex items-baseline gap-1">
+<span class="font-code-lg text-code-lg font-bold text-on-surface">25 uds</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant font-semibold">(Stock: 21)</span>
+</div>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Clasificación Variabilidad</span>
+<span class="font-code-md text-code-md text-primary font-semibold">XYZ: X (Predecible)</span>
+</div>
+<div class="p-space-xs bg-surface-container-low rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block">Total Orden (COP)</span>
+<span class="font-code-md text-code-md font-bold text-secondary">$ 18.450.000</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant block">$615.000/ud</span>
+</div>
+</div>
+<!-- AI Gemini Audit Diagnostic Box -->
+<div class="bg-surface-container-high rounded-lg p-space-sm space-y-space-xs shadow-inner">
+<div class="flex items-center justify-between text-secondary">
+<div class="flex items-center gap-space-xs font-code-sm text-code-sm font-bold tracking-wide">
+<span class="material-symbols-outlined text-[16px] text-secondary">auto_awesome</span>
+<span>GEMINI AUDIT ENGINE</span>
+</div>
+<span class="bg-primary/10 text-primary font-code-sm text-code-sm px-1.5 py-0.5 rounded font-semibold">RECO: PROCEDER</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+<strong class="text-primary">Dictamen: APROBACIÓN INMEDIATA.</strong> Varianza de consumo normal. ERI 100% verificado en última auditoría cíclica. Descuento por volumen del 4.5% aplicado en orden por lote óptimo.
+        </p>
+</div>
+<!-- Action Buttons Bar -->
+<div class="flex items-center gap-space-xs pt-space-xs">
+<button class="flex-1 min-h-[44px] rounded-lg bg-primary text-on-primary font-code-sm text-code-sm uppercase font-bold flex items-center justify-center gap-1 active:bg-primary-container transition-colors shadow">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Aprobar OC</span>
+</button>
+<button class="flex-1 min-h-[44px] rounded-lg bg-surface-container-highest text-on-surface-variant font-code-sm text-code-sm uppercase font-bold flex items-center justify-center gap-1 active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[16px]">close</span>
+<span>Rechazar</span>
+</button>
+</div>
+</article>
+</div>
+<!-- Industrial Telemetry Footer / Sync indicator -->
+<footer class="pt-space-sm flex flex-col items-center justify-center text-center space-y-space-xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-code-sm text-code-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>MOTOR DE OPTIMIZACIÓN EOQ-BOG-01 ACTIVO</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant/70">
+      Mostrando 3 de 18 propuestas pendientes • E2 SAS Supply Chain AI
+    </p>
+</footer>
+</div>
+<script>
+  // Simple micro-interaction for quick filter buttons and approval actions
+  document.querySelectorAll('article button').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const isApprove = button.textContent.includes('Aprobar') || button.textContent.includes('Emitir');
+      const isReject = button.textContent.includes('Rechazar');
+      const card = button.closest('article');
+      
+      if (isApprove) {
+        button.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>Emitiendo OC...</span>';
+        setTimeout(() => {
+          card.style.transition = 'all 0.4s ease';
+          card.style.opacity = '0.4';
+          card.style.transform = 'scale(0.98)';
+          button.innerHTML = '<span class="material-symbols-outlined text-[16px]">done</span><span>OC Despachada</span>';
+          button.classList.remove('bg-primary');
+          button.classList.add('bg-surface-variant', 'text-on-surface');
+        }, 600);
+      } else if (isReject) {
+        const reason = prompt('Ingrese causal de rechazo para auditoría SAP / MES:');
+        if (reason) {
+          card.style.transition = 'all 0.3s ease';
+          card.style.opacity = '0.3';
+          button.innerText = 'Rechazada';
+        }
+      }
+    });
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-low/90 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.6)]" data-active-classes="text-primary font-bold bg-surface-container-high/40"><div class="flex justify-around items-center h-20 px-space-xs"><a class="flex flex-col items-center justify-center gap-space-xs min-h-[44px] min-w-[56px] flex-1 py-1 rounded-lg text-on-surface-variant transition-colors" data-path="overview" href="../e2_sas_control_dashboard/code.html"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-sm text-label-sm tracking-tight uppercase">Overview</span></a><a class="flex flex-col items-center justify-center gap-space-xs min-h-[44px] min-w-[56px] flex-1 py-1 rounded-lg text-on-surface-variant transition-colors" data-path="pareto-abc" href="../analytics_abc_xyz_vendor_sla/code.html"><span class="material-symbols-outlined text-[20px]">query_stats</span><span class="font-label-sm text-label-sm tracking-tight uppercase">Pareto/ABC</span></a><a class="flex flex-col items-center justify-center gap-space-xs min-h-[44px] min-w-[56px] flex-1 py-1 rounded-lg text-on-surface-variant transition-colors" data-path="discrepancies" href="../eri_discrepancy_audit_reconciliation/code.html"><span class="material-symbols-outlined text-[20px]">rule</span><span class="font-label-sm text-label-sm tracking-tight uppercase">Discrepancy</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-space-xs min-h-[44px] min-w-[56px] flex-1 py-1 rounded-lg text-primary font-bold bg-surface-container-high/40 transition-colors relative" data-path="alerts" href="../consola_de_aprobaci_n_de_reabastecimiento/code.html"><span class="material-symbols-outlined text-[20px]">shopping_cart_checkout</span><span class="absolute top-1.5 right-4 w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-label-sm text-label-sm tracking-tight uppercase">Compras</span></a></div></nav></body></html>
