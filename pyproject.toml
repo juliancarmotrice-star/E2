@@ -1,2 +1,19 @@
+[project]
+name = "e2-produccion-4"
+version = "1.0.0"
+description = "E2 SAS - Sistema de Produccion 4.0 API y Dashboard Industrial"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "pydantic>=2.0.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "supabase>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "aiofiles>=23.2.1"
+]
+
 [tool.vercel]
 entrypoint = "api:app"
