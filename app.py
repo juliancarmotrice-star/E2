@@ -7,6 +7,7 @@ Tecnología: Streamlit (Interfaz Ejecutiva Minimalista) + Persistencia en Supaba
 import os
 import streamlit as st
 import pandas as pd
+import altair as alt
 from datetime import datetime
 
 import orquestador
@@ -23,148 +24,270 @@ st.set_page_config(
     page_title="E2 SAS · Control de Abastecimiento",
     page_icon="⚡",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# Estilos CSS Minimalistas y Profesionales
+# Estilos CSS Profesionales e Inspirados en SaaS de Producción 4.0 (Royal Blue & Light Canvas)
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
     
     html, body, [class*="css"] {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         color: #0F172A;
     }
     
-    /* Fondo limpio y márgenes compactos */
-    .block-container {
-        padding-top: 1.5rem !important;
-        padding-bottom: 2rem !important;
-        max-width: 1380px !important;
+    /* Fondo limpio estilo lienzo SaaS */
+    .stApp {
+        background-color: #F8FAFC;
     }
     
-    /* Encabezado minimalista */
+    .block-container {
+        padding-top: 1.2rem !important;
+        padding-bottom: 2.5rem !important;
+        max-width: 1400px !important;
+    }
+    
+    /* Barra Lateral Estilo Modern Cobalt Blue */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1E3A8A 0%, #1E40AF 60%, #1D4ED8 100%) !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stSidebar"] * {
+        color: #F8FAFC !important;
+    }
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+        color: #E2E8F0 !important;
+    }
+    [data-testid="stSidebar"] .stSelectbox label, 
+    [data-testid="stSidebar"] .stNumberInput label {
+        color: #FFFFFF !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Encabezado Principal */
     .brand-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-bottom: 0.8rem;
-        margin-bottom: 1rem;
-        border-bottom: 1px solid #E2E8F0;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 1rem 1.4rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
     }
     .brand-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
         color: #0F172A;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .brand-title span.accent {
+        color: #2563EB;
     }
     .brand-subtitle {
         font-size: 0.85rem;
         color: #64748B;
-        font-weight: 400;
+        font-weight: 500;
+        margin-top: 2px;
     }
     .brand-badge {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.6rem;
-        background: #F1F5F9;
-        color: #334155;
-        border: 1px solid #CBD5E1;
-        border-radius: 6px;
+        font-size: 0.78rem;
+        padding: 0.35rem 0.75rem;
+        background: #EFF6FF;
+        color: #1D4ED8;
+        border: 1px solid #BFDBFE;
+        border-radius: 20px;
         font-weight: 600;
-        letter-spacing: 0.02em;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .brand-badge-green {
+        font-size: 0.78rem;
+        padding: 0.35rem 0.75rem;
+        background: #ECFDF5;
+        color: #059669;
+        border: 1px solid #A7F3D0;
+        border-radius: 20px;
+        font-weight: 600;
     }
     
-    /* Métricas minimalistas */
-    [data-testid="stMetric"] {
+    /* Tarjetas KPI Modernas */
+    .kpi-card {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 0.8rem 1rem;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        border-radius: 14px;
+        padding: 1.1rem 1.25rem;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
-    [data-testid="stMetricLabel"] {
-        font-size: 0.75rem !important;
-        font-weight: 600 !important;
-        color: #64748B !important;
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+    .kpi-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.8rem;
+    }
+    .kpi-icon-box {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    .kpi-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.2rem 0.55rem;
+        border-radius: 12px;
+        letter-spacing: 0.02em;
+    }
+    .kpi-val {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #0F172A;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+        margin-bottom: 0.3rem;
+    }
+    .kpi-lbl {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748B;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    [data-testid="stMetricValue"] {
-        font-size: 1.45rem !important;
-        font-weight: 700 !important;
-        color: #0F172A !important;
-        letter-spacing: -0.02em;
+        letter-spacing: 0.04em;
     }
     
-    /* Pestañas limpias y delgadas */
+    /* Pestañas Segmentadas Tipo SaaS */
     .stTabs [data-baseweb="tab-list"] {
         gap: 6px;
-        background-color: transparent;
-        border-bottom: 1px solid #E2E8F0;
+        background: #EDF2F7;
+        padding: 5px;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
         margin-bottom: 1.2rem;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 38px;
-        padding: 0 16px;
+        height: 40px;
+        padding: 0 20px;
         background-color: transparent;
-        border-radius: 6px 6px 0 0;
+        border-radius: 8px !important;
         color: #64748B;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.88rem;
-        border: none;
+        border: none !important;
+        transition: all 0.2s ease;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #0F172A;
+        background-color: rgba(255, 255, 255, 0.6);
     }
     .stTabs [aria-selected="true"] {
-        background-color: #F8FAFC !important;
-        color: #0F172A !important;
-        font-weight: 600 !important;
-        border-bottom: 2px solid #0F172A !important;
+        background: #2563EB !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28) !important;
     }
     
-    /* Memorando IA minimalista */
+    /* Memorando IA con Borde Accent Royal Blue */
     .memo-card {
-        background: #F8FAFC;
+        background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 1rem 1.2rem;
-        margin-bottom: 0.8rem;
+        border-left: 4px solid #2563EB;
+        border-radius: 12px;
+        padding: 1.1rem 1.3rem;
+        margin-bottom: 0.9rem;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
     }
     .memo-title {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #0F172A;
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: #1E3A8A;
         margin-bottom: 0.4rem;
         text-transform: uppercase;
         letter-spacing: 0.03em;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
     .memo-body {
         font-size: 0.9rem;
         color: #334155;
-        line-height: 1.5;
+        line-height: 1.55;
+    }
+    .memo-action {
+        margin-top: 0.6rem;
+        padding: 0.5rem 0.8rem;
+        background: #EFF6FF;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #1D4ED8;
+        font-weight: 600;
+        border: 1px solid #BFDBFE;
     }
     
     /* Botones de acción */
     button[kind="primary"] {
-        background-color: #0F172A !important;
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
         color: #FFFFFF !important;
-        border-radius: 6px !important;
+        border-radius: 8px !important;
         border: none !important;
         font-weight: 600 !important;
-        font-size: 0.85rem !important;
+        font-size: 0.88rem !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22) !important;
+        transition: all 0.2s ease !important;
+    }
+    button[kind="primary"]:hover {
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35) !important;
+        transform: translateY(-1px);
     }
     button[kind="secondary"] {
         background-color: #FFFFFF !important;
-        color: #0F172A !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 6px !important;
-        font-weight: 500 !important;
-        font-size: 0.85rem !important;
+        color: #1E293B !important;
+        border: 1.5px solid #E2E8F0 !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        transition: all 0.2s ease !important;
+    }
+    button[kind="secondary"]:hover {
+        background-color: #F8FAFC !important;
+        border-color: #CBD5E1 !important;
     }
     
-    /* Tablas compactas */
+    /* Tablas y Contenedores */
     [data-testid="stDataFrame"] {
+        background: #FFFFFF;
         border: 1px solid #E2E8F0;
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+    }
+    
+    /* Tarjetas de Diagnóstico */
+    .metric-box-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 1.1rem;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -204,57 +327,156 @@ except Exception as e:
     st.stop()
 
 # ------------------------------------------------------------------------------
-# ENCABEZADO MINIMALISTA
+# ------------------------------------------------------------------------------
+# BARRA LATERAL ESTILO COBALT BLUE SAAS
+# ------------------------------------------------------------------------------
+with st.sidebar:
+    st.markdown("""
+    <div style="padding: 0.6rem 0 1rem 0;">
+        <div style="font-size: 1.35rem; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.5rem;">⚡</span>
+            <span>E2 SAS</span>
+        </div>
+        <div style="font-size: 0.8rem; color: #BFDBFE; font-weight: 500; margin-top: 3px;">
+            Producción 4.0 & Cadena de Suministro
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown(f"""
+    <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 12px; padding: 0.85rem; margin-bottom: 1.2rem;">
+        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #93C5FD; font-weight: 700;">Sesión Activa</div>
+        <div style="font-size: 0.95rem; font-weight: 700; color: #FFFFFF; margin-top: 2px;">{st.session_state['usuario_activo']}</div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; box-shadow: 0 0 8px #4ADE80;"></span>
+            <span style="font-size: 0.75rem; color: #BBF7D0; font-weight: 600;">Supabase PostgreSQL Live</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<div style='font-size:0.75rem; color:#BFDBFE; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;'>Gobernanza de Compras</div>", unsafe_allow_html=True)
+    nuevo_umbral = st.number_input(
+        "Umbral Autorización Gerencial ($ COP):",
+        min_value=1_000_000.0,
+        max_value=100_000_000.0,
+        value=float(st.session_state["umbral_monto"]),
+        step=5_000_000.0,
+        format="%f"
+    )
+    if nuevo_umbral != st.session_state["umbral_monto"]:
+        st.session_state["umbral_monto"] = nuevo_umbral
+        res_reload = orquestador.generar_propuestas_reposicion(umbral_alto_valor_cop=nuevo_umbral)
+        st.session_state["propuestas_activas"] = res_reload["propuestas"]
+        st.session_state["conteo_paradas"] = res_reload["conteo_paradas"]
+        st.session_state["inversion_total_formato"] = res_reload["inversion_total_formato"]
+        st.rerun()
+
+    st.markdown("---")
+    if st.button("↻ Sincronizar Supabase", use_container_width=True):
+        st.cache_data.clear()
+        res_sync = orquestador.generar_propuestas_reposicion(umbral_alto_valor_cop=st.session_state["umbral_monto"])
+        st.session_state["propuestas_activas"] = res_sync["propuestas"]
+        st.session_state["conteo_paradas"] = res_sync["conteo_paradas"]
+        st.session_state["inversion_total_formato"] = res_sync["inversion_total_formato"]
+        st.rerun()
+
+    st.markdown("""
+    <div style="margin-top: 1.5rem; font-size: 0.76rem; color: #DBEAFE; line-height: 1.6;">
+        <div>• <strong>Protocolo B4_02:</strong> Ingesta 5 pasos</div>
+        <div>• <strong>Integridad:</strong> 3FN normalizada</div>
+        <div>• <strong>Anti-Alucinación:</strong> Núcleo determinístico</div>
+        <div>• <strong>Modelo:</strong> EOQ / ROP / ERI / SLA / MRP</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ------------------------------------------------------------------------------
+# ENCABEZADO PRINCIPAL (SAAS HEADER)
 # ------------------------------------------------------------------------------
 propuestas_pendientes = st.session_state.get("propuestas_activas", [])
 
 st.markdown(f"""
 <div class="brand-header">
     <div>
-        <div class="brand-title">E2 SAS · Control de Abastecimiento & Producción 4.0</div>
-        <div class="brand-subtitle">Motor determinístico de reposición con supervisión humana y gobernanza de ingesta (B4_02)</div>
+        <div class="brand-title">
+            <span class="accent">E2 SAS</span> · Control de Abastecimiento & Operaciones
+        </div>
+        <div class="brand-subtitle">
+            Sistema determinístico de reposición con supervisión humana y salvaguardas anti-alucinación
+        </div>
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
-        <span class="brand-badge">Operador: {st.session_state['usuario_activo']}</span>
-        <span class="brand-badge">Base: Supabase (PostgreSQL)</span>
+        <span class="brand-badge-green">● Sistema Operativo</span>
+        <span class="brand-badge">B4_02 Activo</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
-# 4 MÉTRICAS EJECUTIVAS ESENCIALES (SIN RUIDO)
+# 4 TARJETAS KPI GENERAL REPORT (DISEÑO ROYAL BLUE & PASTEL ACCENTS)
 # ------------------------------------------------------------------------------
 m1, m2, m3, m4 = st.columns(4)
 
 with m1:
-    st.metric(
-        label="Exactitud Inventario (ERI)",
-        value=eri_tg.get("eri_porcentaje_exactitud", "74.3%"),
-        delta=f"{eri_tg.get('skus_exactos', 312)}/{eri_tg.get('total_skus', 420)} SKUs exactos"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-top">
+            <div class="kpi-icon-box" style="background:#EFF6FF; color:#2563EB;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            </div>
+            <span class="kpi-badge" style="background:#DCFCE7; color:#15803D;">{eri_tg.get('eri_porcentaje_exactitud', '74.3%')} ERI</span>
+        </div>
+        <div class="kpi-val">{eri_tg.get('skus_exactos', 312)}<span style="font-size:1.1rem; color:#64748B; font-weight:600;">/{eri_tg.get('total_skus', 420)}</span></div>
+        <div class="kpi-lbl">Exactitud de Inventario</div>
+        <div style="font-size:0.75rem; color:#64748B; margin-top:3px;">SKUs sin descuadre patrimonial</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with m2:
-    st.metric(
-        label="Inversión Sugerida Reorden",
-        value=st.session_state.get("inversion_total_formato", "$ 0 COP"),
-        delta=f"{len(propuestas_pendientes)} ítems bajo ROP",
-        delta_color="off"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-top">
+            <div class="kpi-icon-box" style="background:#FEF2F2; color:#DC2626;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            </div>
+            <span class="kpi-badge" style="background:#FEE2E2; color:#B91C1C;">{len(propuestas_pendientes)} Bajo ROP</span>
+        </div>
+        <div class="kpi-val">{st.session_state.get('inversion_total_formato', '$ 0 COP')}</div>
+        <div class="kpi-lbl">Inversión Sugerida Reorden</div>
+        <div style="font-size:0.75rem; color:#64748B; margin-top:3px;">Reposición óptima EOQ/ROP</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with m3:
-    st.metric(
-        label="Cumplimiento Proveedores (SLA)",
-        value=kpi_sla.get("sla_global_formato", "11.7%"),
-        delta=f"Mora prom: {kpi_sla.get('mora_promedio_cuando_tarde_dias', 0)} días",
-        delta_color="inverse"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-top">
+            <div class="kpi-icon-box" style="background:#FFFBEB; color:#D97706;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span class="kpi-badge" style="background:#FEF3C7; color:#B45309;">Mora: {kpi_sla.get('mora_promedio_cuando_tarde_dias', 0)}d</span>
+        </div>
+        <div class="kpi-val">{kpi_sla.get('sla_global_formato', '11.7%')}</div>
+        <div class="kpi-lbl">Cumplimiento Proveedores (SLA)</div>
+        <div style="font-size:0.75rem; color:#64748B; margin-top:3px;">Entregas a tiempo OTD históricas</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with m4:
-    st.metric(
-        label="Concentración Estratégica (Clase A)",
-        value=f"{kpi_abc['clases']['A']['pct_valor']}%",
-        delta=f"{kpi_abc['clases']['A']['total_skus']} SKUs clave (Pareto)"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-top">
+            <div class="kpi-icon-box" style="background:#FAF5FF; color:#7C3AED;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg>
+            </div>
+            <span class="kpi-badge" style="background:#EDE9FE; color:#6D28D9;">80% Pareto</span>
+        </div>
+        <div class="kpi-val">{kpi_abc['clases']['A']['pct_valor']}%</div>
+        <div class="kpi-lbl">Concentración Clase A</div>
+        <div style="font-size:0.75rem; color:#64748B; margin-top:3px;">{kpi_abc['clases']['A']['total_skus']} SKUs concentran el valor</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<div style='height: 14px;'></div>", unsafe_allow_html=True)
 
 # ------------------------------------------------------------------------------
 # ESTRUCTURA DE 3 PESTAÑAS PRINCIPALES
@@ -573,16 +795,58 @@ with tab_diagnostico:
             )
 
     elif diag_sel == "Clasificación ABC & Plata Muerta":
-        a1, a2, a3 = st.columns(3)
-        with a1:
-            st.markdown(f"**Clase A (80% Valor):** {kpi_abc['clases']['A']['total_skus']} SKUs ({kpi_abc['clases']['A']['pct_skus']}%)<br><small style='color:#64748B;'>${kpi_abc['clases']['A']['valor_consumo_cop']:,.0f} COP</small>", unsafe_allow_html=True)
-        with a2:
-            st.markdown(f"**Clase B (15% Valor):** {kpi_abc['clases']['B']['total_skus']} SKUs ({kpi_abc['clases']['B']['pct_skus']}%)<br><small style='color:#64748B;'>${kpi_abc['clases']['B']['valor_consumo_cop']:,.0f} COP</small>", unsafe_allow_html=True)
-        with a3:
-            st.markdown(f"**Clase C (5% Valor):** {kpi_abc['clases']['C']['total_skus']} SKUs ({kpi_abc['clases']['C']['pct_skus']}%)<br><small style='color:#64748B;'>${kpi_abc['clases']['C']['valor_consumo_cop']:,.0f} COP</small>", unsafe_allow_html=True)
+        col_c1, col_c2 = st.columns([1.2, 1.8])
+        with col_c1:
+            st.markdown(f"""
+            <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:12px; padding:1.1rem; box-shadow:0 2px 8px rgba(15,23,42,0.03);">
+                <div style="font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.6rem;">Matriz Pareto Anualizada</div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#EFF6FF; border-radius:8px; border:1px solid #BFDBFE;">
+                        <div>
+                            <span style="font-weight:700; color:#1D4ED8; font-size:0.85rem;">Clase A (80% Valor)</span>
+                            <div style="font-size:0.75rem; color:#64748B;">{kpi_abc['clases']['A']['total_skus']} SKUs clave</div>
+                        </div>
+                        <span style="font-weight:800; color:#1E3A8A; font-size:1.05rem;">{kpi_abc['clases']['A']['pct_valor']}%</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#FFF7ED; border-radius:8px; border:1px solid #FED7AA;">
+                        <div>
+                            <span style="font-weight:700; color:#C2410C; font-size:0.85rem;">Clase B (15% Valor)</span>
+                            <div style="font-size:0.75rem; color:#64748B;">{kpi_abc['clases']['B']['total_skus']} SKUs control</div>
+                        </div>
+                        <span style="font-weight:800; color:#9A3412; font-size:1.05rem;">{kpi_abc['clases']['B']['pct_valor']}%</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#FEFCE8; border-radius:8px; border:1px solid #FEF08A;">
+                        <div>
+                            <span style="font-weight:700; color:#A16207; font-size:0.85rem;">Clase C (5% Valor)</span>
+                            <div style="font-size:0.75rem; color:#64748B;">{kpi_abc['clases']['C']['total_skus']} SKUs baja rotación</div>
+                        </div>
+                        <span style="font-weight:800; color:#854D0E; font-size:1.05rem;">{kpi_abc['clases']['C']['pct_valor']}%</span>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_c2:
+            df_donut = pd.DataFrame([
+                {"Clase": "Clase A (80% Valor)", "Porcentaje": float(kpi_abc['clases']['A']['pct_valor'])},
+                {"Clase": "Clase B (15% Valor)", "Porcentaje": float(kpi_abc['clases']['B']['pct_valor'])},
+                {"Clase": "Clase C (5% Valor)", "Porcentaje": float(kpi_abc['clases']['C']['pct_valor'])}
+            ])
+            chart_donut = alt.Chart(df_donut).mark_arc(innerRadius=60, stroke="#FFFFFF", strokeWidth=2).encode(
+                theta=alt.Theta("Porcentaje:Q"),
+                color=alt.Color(
+                    "Clase:N",
+                    scale=alt.Scale(
+                        domain=["Clase A (80% Valor)", "Clase B (15% Valor)", "Clase C (5% Valor)"],
+                        range=["#2563EB", "#F97316", "#FBBF24"]
+                    ),
+                    legend=alt.Legend(title="Distribución Pareto", orient="right")
+                ),
+                tooltip=["Clase", "Porcentaje"]
+            ).properties(height=210, title="Distribución Visual del Consumo Total")
+            st.altair_chart(chart_donut, use_container_width=True)
 
         st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size:0.85rem; font-weight:600; color:#B91C1C;'>SKUs Inmovilizados de Plata Muerta (Cero Salidas en Historial)</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.88rem; font-weight:700; color:#B91C1C;'>SKUs Inmovilizados de Plata Muerta (Cero Salidas en Historial)</div>", unsafe_allow_html=True)
         pm = abc.obtener_plata_muerta()
         if pm:
             st.dataframe(
@@ -598,7 +862,20 @@ with tab_diagnostico:
     elif diag_sel == "Nivel de Servicio Proveedores (SLA)":
         cats_sla = sla.obtener_metricas_sla_por_categoria()
         df_sla = pd.DataFrame(cats_sla)
-        st.markdown("<div style='font-size:0.85rem; font-weight:600; color:#0F172A; margin-bottom:0.4rem;'>Cumplimiento OTD y Desfase de Lead Time por Familia de Proveedores</div>", unsafe_allow_html=True)
+
+        chart_sla = alt.Chart(df_sla).mark_bar(cornerRadiusTopRight=6, cornerRadiusBottomRight=6, size=20).encode(
+            x=alt.X("sla_cumplimiento_pct:Q", title="SLA Cumplimiento a Tiempo (%)", scale=alt.Scale(domain=[0, 100])),
+            y=alt.Y("categoria:N", sort="-x", title=None),
+            color=alt.condition(
+                alt.datum.sla_cumplimiento_pct >= 95,
+                alt.value("#10B981"),
+                alt.value("#2563EB")
+            ),
+            tooltip=["categoria", "total_oc_cerradas", "a_tiempo", "retrasadas", "sla_cumplimiento_formato", "mora_promedio_dias"]
+        ).properties(height=160, title="Nivel de Servicio OTD por Familia de Proveedores (Verde = Meta 95%)")
+        st.altair_chart(chart_sla, use_container_width=True)
+
+        st.markdown("<div style='font-size:0.85rem; font-weight:700; color:#0F172A; margin: 0.6rem 0 0.3rem 0;'>Auditoría Detallada de Desfase de Lead Time por Proveedor</div>", unsafe_allow_html=True)
         st.dataframe(
             df_sla[[
                 "categoria", "total_oc_cerradas", "a_tiempo", "retrasadas",
@@ -606,7 +883,7 @@ with tab_diagnostico:
                 "lead_time_real_dias", "desfase_dias"
             ]],
             use_container_width=True,
-            height=300
+            height=260
         )
 
     elif diag_sel == "Explosión de Materiales (MRP)":
