@@ -764,7 +764,7 @@ with tab_decisiones:
                 st.markdown(f"""
                 <div class="memo-card">
                     <div class="memo-title">📋 {memo['dictamen']}</div>
-                    <div class="memo-body">{memo['memo_ejecutivo']}</div>
+                    <div class="memo-body">{memo.get('memo_html', memo['memo_ejecutivo'])}</div>
                     <div class="memo-action">
                         ➜ <strong>Directriz:</strong> {memo['accion_recomendada']}
                     </div>

@@ -152,13 +152,21 @@ def generar_propuestas_reposicion(
         else:
             criterio_principal = " | ".join(criterios_parada)
 
-        motivo = (
-            f"Bajo ROP ({item.get('rop_punto_reorden_und')} und). "
-            f"Stock actual: {item.get('stock_actual_kardex_und')} und. "
-            f"Semáforo: {item.get('estado_semaforo')}"
-        )
+        # Contexto operacional del modelo determinístico EOQ / ROP
+        stock_actual = float(item.get("stock_actual_kardex_und") or item.get("stock_actual_kardex") or 0.0)
+        rop_val = float(item.get("rop_punto_reorden_und") or item.get("punto_reorden_rop") or 0.0)
+        eoq_val = float(item.get("eoq_lote_economico_und") or item.get("eoq_lote_economico") or 0.0)
+        ss_val = float(item.get("stock_seguridad_und") or item.get("stock_seguridad_ss") or 0.0)
+        posicion = float(item.get("posicion_inventario") or stock_actual)
+        semaforo_crudo = str(item.get("estado_semaforo") or item.get("semaforo_inventario") or "Alerta")
+        semaforo_limpio = semaforo_crudo.replace("🔴 ", "").replace("🟡 ", "").replace("🟢 ", "").replace("🔵 ", "").strip()
+        discrepancia_und = float(info_eri.get("discrepancia_unidades") or 0.0)
+
+        # Motivo ejecutivo ordenado y técnico
         if descuadre_eri:
-            motivo += f" [ALERTA ERI: Descuadre de {info_eri.get('discrepancia_formato')}]"
+            motivo = f"Bajo ROP ({stock_actual:,.0f} vs {rop_val:,.0f} und) · {semaforo_limpio} · Descuadre ERI: {info_eri.get('discrepancia_formato', f'{discrepancia_und:+,.0f} und')}"
+        else:
+            motivo = f"Bajo ROP ({stock_actual:,.0f} vs {rop_val:,.0f} und) · {semaforo_limpio} · Kardex verificado"
 
         propuesta = {
             "propuesta_temp_id": idx,
@@ -175,8 +183,16 @@ def generar_propuestas_reposicion(
             "criterio_parada": criterio_principal,
             "es_estandar": criterio_principal == "APROBACION_ESTANDAR",
             "descuadre_eri": descuadre_eri,
+            "discrepancia_unidades": discrepancia_und,
             "desalineacion_cop": desalineacion_cop,
-            "sla_categoria_pct": sla_cat_pct
+            "sla_categoria_pct": sla_cat_pct,
+            "stock_actual_kardex": stock_actual,
+            "rop_punto_reorden": rop_val,
+            "eoq_lote_economico": eoq_val,
+            "stock_seguridad": ss_val,
+            "posicion_inventario": posicion,
+            "estado_semaforo": semaforo_limpio,
+            "umbral_monto": umbral_alto_valor_cop
         }
         propuestas.append(propuesta)
 
