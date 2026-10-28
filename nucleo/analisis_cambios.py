@@ -518,7 +518,7 @@ def ejecutar_ingesta_5_pasos(
     # -------------------------------------------------------------------------
     # PASO 3: NORMALIZAR (Reglas determinísticas de saneamiento y 3FN)
     # -------------------------------------------------------------------------
-    df_procesado, metadatos_limpieza = aplicar_modulo_limpieza(tabla_destino, df_entrante)
+    df_procesado, metadatos_limpieza = aplicar_modulo_limpieza(tabla_destino, df_entrante, nombre_archivo=nombre_archivo)
 
     pk_cols = meta_destino.get('clave_primaria', [])
 

@@ -6,6 +6,7 @@ Aplica las reglas determinísticas de saneamiento para cualquier lote o archivo 
 
 import os
 import re
+import calendar
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, Tuple, List, Optional
@@ -98,9 +99,38 @@ def corregir_fechas_recepcion_2035(df: pd.DataFrame) -> Tuple[pd.DataFrame, int]
     return df, conteo
 
 
+def extraer_fecha_corte_de_nombre_archivo(nombre_archivo: str) -> Optional[str]:
+    """
+    Detecta si el nombre del archivo de auditoría física especifica un periodo o fecha de corte.
+    Ejemplos:
+    - 'conteo_fisico_2026-08.csv' -> '2026-08-31'
+    - 'conteo_fisico_2026_08.csv' -> '2026-08-31'
+    - 'conteo_fisico_2026-08-15.csv' -> '2026-08-15'
+    """
+    if not nombre_archivo:
+        return None
+    # 1. Buscar fecha completa YYYY-MM-DD
+    m_full = re.search(r'(\d{4})[-_](\d{2})[-_](\d{2})', str(nombre_archivo))
+    if m_full:
+        y, m, d = int(m_full.group(1)), int(m_full.group(2)), int(m_full.group(3))
+        if 1 <= m <= 12 and 1 <= d <= 31:
+            return f"{y:04d}-{m:02d}-{d:02d}"
+
+    # 2. Buscar periodo YYYY-MM
+    m_mes = re.search(r'(\d{4})[-_](\d{2})', str(nombre_archivo))
+    if m_mes:
+        y, m = int(m_mes.group(1)), int(m_mes.group(2))
+        if 1 <= m <= 12 and 2000 <= y <= 2100:
+            ultimo_dia = calendar.monthrange(y, m)[1]
+            return f"{y:04d}-{m:02d}-{ultimo_dia:02d}"
+
+    return None
+
+
 def aplicar_modulo_limpieza(
     tabla_destino: str,
-    df_raw: pd.DataFrame
+    df_raw: pd.DataFrame,
+    nombre_archivo: str = ""
 ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """
     Ejecuta el protocolo de limpieza específico de la entidad sobre el DataFrame entrante.
@@ -229,6 +259,19 @@ def aplicar_modulo_limpieza(
     # 4. CONTEO FÍSICO OFICIAL
     # =========================================================================
     elif tabla_destino in ['conteo_fisico', 'conteo_fisico_clean']:
+        # 4.1 Sincronización de fecha de corte declarada en remisión/nombre de archivo
+        fecha_declarada = extraer_fecha_corte_de_nombre_archivo(nombre_archivo)
+        if fecha_declarada and 'fecha_conteo' in df.columns:
+            periodo_declarado = fecha_declarada[:7]  # e.g. '2026-08'
+            s_fechas = df['fecha_conteo'].astype(str)
+            desalineadas = int((~s_fechas.str.startswith(periodo_declarado)).sum())
+            if desalineadas > 0:
+                df['fecha_conteo'] = fecha_declarada
+                transformaciones.append(
+                    f"{desalineadas} fechas de corte desactualizadas normalizadas al periodo oficial '{fecha_declarada}' especificado en la planilla."
+                )
+                total_errores_corregidos += desalineadas
+
         if 'sku' in df.columns:
             df['sku'] = df['sku'].astype(str).str.strip().str.upper()
             subset_dups = ['sku', 'fecha_conteo'] if 'fecha_conteo' in df.columns else ['sku']
