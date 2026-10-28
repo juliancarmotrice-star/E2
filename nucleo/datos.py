@@ -143,12 +143,46 @@ def consultar(
     return todos_los_registros
 
 
+import math
+
+
+def _sanitizar_valor(val: Any) -> Any:
+    """Convierte NaN, Inf y NaT en None para serialización JSON estándar válida."""
+    if val is None:
+        return None
+    if isinstance(val, float):
+        if math.isnan(val) or math.isinf(val):
+            return None
+        return val
+    str_val = str(val).strip()
+    if str_val in ("<NA>", "NaT", "nan", "NaN", "None", "NULL"):
+        return None
+    return val
+
+
+def _sanitizar_registros(registros: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Limpia recursivamente una lista de diccionarios de registro."""
+    return [
+        {k: _sanitizar_valor(v) for k, v in r.items()}
+        for r in registros
+    ]
+
+
 def insertar(
     tabla: str,
-    registros: List[Dict[str, Any]]
+    registros: List[Dict[str, Any]],
+    ignorar_duplicados: bool = False,
+    on_conflict: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
     Inserta uno o varios registros en una tabla de Supabase.
+    Soporta resolución idempotente ignore-duplicates (ON CONFLICT DO NOTHING).
+
+    Args:
+        tabla: Nombre de la tabla destino
+        registros: Lista de diccionarios a insertar
+        ignorar_duplicados: Si True, no falla ante conflicto de clave primaria
+        on_conflict: Columnas de clave primaria para la resolución (e.g. 'sku', 'periodo,producto')
     """
     if not registros:
         return []
@@ -157,16 +191,23 @@ def insertar(
     url_base = cfg["SUPABASE_URL"].rstrip("/")
     api_key = cfg["SUPABASE_KEY"]
 
-    endpoint = f"{url_base}/rest/v1/{tabla}"
+    params_url = ""
+    if on_conflict:
+        params_url = f"?on_conflict={urllib.parse.quote(on_conflict)}"
+
+    endpoint = f"{url_base}/rest/v1/{tabla}{params_url}"
+    prefer_header = "resolution=ignore-duplicates,return=representation" if ignorar_duplicados else "return=representation"
+
     headers = {
         "apikey": api_key,
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Prefer": "return=representation"
+        "Prefer": prefer_header
     }
 
-    datos_bytes = json.dumps(registros).encode("utf-8")
+    registros_limpios = _sanitizar_registros(registros)
+    datos_bytes = json.dumps(registros_limpios).encode("utf-8")
     req = urllib.request.Request(endpoint, data=datos_bytes, headers=headers, method="POST")
 
     try:

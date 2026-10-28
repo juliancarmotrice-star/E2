@@ -146,6 +146,43 @@ class TestB4AnalisisCambiosEIngesta(unittest.TestCase):
         self.assertGreater(rep['total_correcciones_limpieza'], 0)
         self.assertTrue(len(rep['transformaciones_limpieza']) > 0)
 
+    def test_conteo_fisico_idempotencia_compuesta(self):
+        # Valida que un nuevo conteo físico con fecha posterior para SKUs existentes NO sea bloqueado
+        # por idempotencia errónea de solo SKU, sino que sea aceptado por clave compuesta (sku, fecha_conteo).
+        df_cf_nuevo = pd.DataFrame([
+            {'sku': 'MP-0001', 'stock_fisico_contado': 520, 'fecha_conteo': '2026-08-31'},
+            {'sku': 'MP-0002', 'stock_fisico_contado': 1850, 'fecha_conteo': '2026-08-31'}
+        ])
+        llaves_existentes_marzo = {'MP-0001||2026-03-31', 'MP-0002||2026-03-31'}
+        
+        # 1. Carga de nuevo conteo en agosto: debe ser EXITOSA (0 duplicados detectados)
+        res_nuevo = cambios.ejecutar_ingesta_5_pasos(
+            tabla_destino='conteo_fisico',
+            df_entrante=df_cf_nuevo,
+            nombre_archivo='conteo_fisico_2026-08.csv',
+            modo_idempotente=True,
+            persistir_en_bd=False,
+            llaves_existentes_override=llaves_existentes_marzo
+        )
+        self.assertTrue(res_nuevo['exito'])
+        self.assertEqual(res_nuevo['filas_cargadas'], 2)
+        self.assertEqual(res_nuevo['filas_duplicadas'], 0)
+
+        # 2. Recarga del MISMO conteo de agosto: debe ser DENEGADA por idempotencia
+        llaves_con_agosto = llaves_existentes_marzo | {'MP-0001||2026-08-31', 'MP-0002||2026-08-31'}
+        res_recarga = cambios.ejecutar_ingesta_5_pasos(
+            tabla_destino='conteo_fisico',
+            df_entrante=df_cf_nuevo,
+            nombre_archivo='conteo_fisico_2026-08.csv',
+            modo_idempotente=True,
+            persistir_en_bd=False,
+            llaves_existentes_override=llaves_con_agosto
+        )
+        self.assertFalse(res_recarga['exito'])
+        self.assertTrue(res_recarga.get('denegada_por_idempotencia'))
+        self.assertEqual(res_recarga['paso_fallido'], 'IDEMPOTENCIA')
+        self.assertEqual(res_recarga['filas_cargadas'], 0)
+
 
 if __name__ == '__main__':
     unittest.main()

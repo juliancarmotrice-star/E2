@@ -159,12 +159,16 @@ def aplicar_modulo_limpieza(
     # 2. MOVIMIENTOS DE INVENTARIOS (KARDEX)
     # =========================================================================
     elif tabla_destino in ['movimientos_inventarios', 'movimientos_inventario', 'movimientos_inventarios_clean']:
-        # 2.1 Fechas (mes 13 -> mes 03)
+        # 2.1 Fechas (mes 13 -> mes 03 y formato ISO)
         if 'fecha' in df.columns:
             df['fecha'], n_fechas = corregir_fechas_serie(df['fecha'])
             if n_fechas > 0:
                 transformaciones.append(f"{n_fechas} fechas anómalas '2026-13-05' corregidas a '2026-03-05'.")
                 total_errores_corregidos += n_fechas
+            try:
+                df['fecha'] = pd.to_datetime(df['fecha'], errors='coerce').dt.strftime('%Y-%m-%d')
+            except Exception:
+                pass
 
         # 2.2 Cantidad positiva (el tipo_movimiento rige el signo contable)
         if 'cantidad' in df.columns:
@@ -182,6 +186,9 @@ def aplicar_modulo_limpieza(
         if 'sku' in df.columns:
             df['sku'] = df['sku'].astype(str).str.strip().str.upper()
 
+        if 'documento' in df.columns:
+            df['documento'] = df['documento'].astype(str).str.strip().str.upper()
+
     # =========================================================================
     # 3. ÓRDENES DE COMPRA
     # =========================================================================
@@ -191,6 +198,14 @@ def aplicar_modulo_limpieza(
         if n_2035 > 0:
             transformaciones.append(f"{n_2035} fechas de recepción con año '2035' ajustadas a su año real de compra.")
             total_errores_corregidos += n_2035
+
+        for col_f in ['fecha_pedido', 'fecha_promesa', 'fecha_recepcion']:
+            if col_f in df.columns:
+                try:
+                    s_dt = pd.to_datetime(df[col_f], errors='coerce').dt.strftime('%Y-%m-%d')
+                    df[col_f] = s_dt.where(pd.notna(s_dt), None)
+                except Exception:
+                    pass
 
         # 3.2 Cantidad y costos no negativos
         if 'cantidad' in df.columns:
@@ -207,16 +222,20 @@ def aplicar_modulo_limpieza(
         if 'sku' in df.columns:
             df['sku'] = df['sku'].astype(str).str.strip().str.upper()
 
+        if 'orden_compra' in df.columns:
+            df['orden_compra'] = df['orden_compra'].astype(str).str.strip().str.upper()
+
     # =========================================================================
     # 4. CONTEO FÍSICO OFICIAL
     # =========================================================================
     elif tabla_destino in ['conteo_fisico', 'conteo_fisico_clean']:
         if 'sku' in df.columns:
             df['sku'] = df['sku'].astype(str).str.strip().str.upper()
-            n_dups = int(df.duplicated(subset=['sku']).sum())
+            subset_dups = ['sku', 'fecha_conteo'] if 'fecha_conteo' in df.columns else ['sku']
+            n_dups = int(df.duplicated(subset=subset_dups).sum())
             if n_dups > 0:
-                df = df.drop_duplicates(subset=['sku'], keep='first')
-                transformaciones.append(f"{n_dups} registros duplicados de SKU eliminados.")
+                df = df.drop_duplicates(subset=subset_dups, keep='first')
+                transformaciones.append(f"{n_dups} registros duplicados de conteo físico eliminados.")
                 total_errores_corregidos += n_dups
 
         if 'stock_fisico_contado' in df.columns:
@@ -299,6 +318,20 @@ def aplicar_modulo_limpieza(
             df = df.drop(columns=['nombre_producto'])
             transformaciones.append("Columna redundante 'nombre_producto' desacoplada hacia maestro_productos (3FN).")
             total_errores_corregidos += 1
+
+        if 'periodo' in df.columns:
+            def _norm_periodo(val):
+                if pd.isna(val):
+                    return val
+                s = str(val).strip()
+                if re.match(r'^\d{4}-\d{2}$', s):
+                    return f"{s}-01"
+                try:
+                    dt = pd.to_datetime(s)
+                    return dt.strftime('%Y-%m-01')
+                except Exception:
+                    return s
+            df['periodo'] = df['periodo'].apply(_norm_periodo)
 
         if 'producto' in df.columns:
             df['producto'] = df['producto'].astype(str).str.strip().str.upper()

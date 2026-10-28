@@ -882,7 +882,13 @@ with tab_ingesta:
         # Procesamiento de archivo subido
         if archivo_subido is not None and btn_procesar:
             try:
-                df_up = pd.read_csv(archivo_subido)
+                # Lectura robusta con soporte UTF-8 y fallback a latin-1 para tildes
+                try:
+                    df_up = pd.read_csv(archivo_subido)
+                except UnicodeDecodeError:
+                    archivo_subido.seek(0)
+                    df_up = pd.read_csv(archivo_subido, encoding="latin-1")
+
                 res_ing = cambios.ejecutar_ingesta_5_pasos(
                     tabla_destino=tabla_seleccionada,
                     df_entrante=df_up,
@@ -892,6 +898,12 @@ with tab_ingesta:
                     persistir_en_bd=persistir_db
                 )
                 st.session_state["ultimo_reporte_ingesta"] = res_ing
+                if res_ing.get("exito") and persistir_db and res_ing.get("filas_cargadas", 0) > 0:
+                    st.cache_data.clear()
+                    res_reload = orquestador.generar_propuestas_reposicion(umbral_alto_valor_cop=st.session_state["umbral_monto"])
+                    st.session_state["propuestas_activas"] = res_reload["propuestas"]
+                    st.session_state["conteo_paradas"] = res_reload["conteo_paradas"]
+                    st.session_state["inversion_total_formato"] = res_reload["inversion_total_formato"]
             except Exception as e:
                 st.error(f"Error procesando CSV: {e}")
 
@@ -914,7 +926,8 @@ with tab_ingesta:
                 st.caption("🔒 El archivo no pertenece a la entidad seleccionada o carece de las columnas obligatorias.")
 
             elif not res_ing.get("exito"):
-                st.error("🛑 RECHAZADA: ARCHIVO SIN INFORMACIÓN")
+                paso_f = res_ing.get("paso_fallido", "VALIDACIÓN")
+                st.error(f"🛑 CARGA RECHAZADA EN PASO '{paso_f}'")
                 st.write(res_ing.get("mensaje"))
 
             else:

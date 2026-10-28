@@ -55,9 +55,10 @@ ALTER TABLE public.ordenes_compra ADD CONSTRAINT ordenes_compra_pkey PRIMARY KEY
 ALTER TABLE public.inventario_inicial DROP CONSTRAINT IF EXISTS inventario_inicial_pkey CASCADE;
 ALTER TABLE public.inventario_inicial ADD CONSTRAINT inventario_inicial_pkey PRIMARY KEY (sku);
 
--- 2.4 Conteo Físico (Auditoría física de inventario)
+-- 2.4 Conteo Físico (Auditoría física de inventario por corte)
 ALTER TABLE public.conteo_fisico DROP CONSTRAINT IF EXISTS conteo_fisico_pkey CASCADE;
-ALTER TABLE public.conteo_fisico ADD CONSTRAINT conteo_fisico_pkey PRIMARY KEY (sku);
+ALTER TABLE public.conteo_fisico ALTER COLUMN fecha_conteo SET NOT NULL;
+ALTER TABLE public.conteo_fisico ADD CONSTRAINT conteo_fisico_pkey PRIMARY KEY (sku, fecha_conteo);
 
 -- 2.5 Plan de Producción (Plan vs Real mensual por Producto)
 ALTER TABLE public.plan_produccion DROP CONSTRAINT IF EXISTS plan_produccion_pkey CASCADE;

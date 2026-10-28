@@ -11,6 +11,7 @@ Pilares Implementados:
 """
 
 import os
+import re
 import json
 import time
 import pandas as pd
@@ -253,7 +254,7 @@ ESQUEMAS_HOJAS: Dict[str, Dict[str, Any]] = {
         'nombre': 'Conteo Físico Oficial',
         'requeridas': ['sku', 'stock_fisico_contado', 'fecha_conteo'],
         'distintivas': ['stock_fisico_contado', 'fecha_conteo'],
-        'clave_primaria': ['sku']
+        'clave_primaria': ['sku', 'fecha_conteo']
     },
     'inventario_bodega_JEFE': {
         'nombre': 'Inventario Bodega Jefe',
@@ -288,14 +289,38 @@ ESQUEMAS_HOJAS: Dict[str, Dict[str, Any]] = {
 }
 
 
+# Mapeo de nombres de tablas a archivos limpios locales para fallback
+MAPEO_ARCHIVOS_LOCALES: Dict[str, str] = {
+    'maestro_materiales': 'maestro_materiales_clean.csv',
+    'movimientos_inventarios': 'movimientos_inventario_clean.csv',
+    'movimientos_inventario': 'movimientos_inventario_clean.csv',
+    'ordenes_compra': 'ordenes_compra_clean.csv',
+    'conteo_fisico': 'conteo_fisico_clean.csv',
+    'inventario_bodega_JEFE': 'inventario_bodega_JEFE_clean.csv',
+    'inventario_inicial': 'inventario_inicial_clean.csv',
+    'bom': 'bom_clean.csv',
+    'maestro_productos': 'maestro_productos_clean.csv',
+    'plan_produccion': 'plan_produccion_clean.csv'
+}
+
+
 def _extraer_clave_registro(row: Dict[str, Any], pk_cols: List[str]) -> Optional[str]:
-    """Extrae una representación unívoca normalizada de la clave primaria de un registro."""
+    """
+    Extrae una representación unívoca normalizada de la clave primaria de un registro.
+    Aplica insensibilidad a mayúsculas/espacios y normalización de formatos de fecha.
+    """
     vals = []
     for col in pk_cols:
         val = row.get(col)
-        if val is None or str(val).strip() == '' or str(val).strip().lower() == 'nan':
+        if val is None or str(val).strip() == '' or str(val).strip().lower() in ('nan', 'none', '<na>', 'nat', 'null'):
             return None
-        vals.append(str(val).strip())
+        val_str = str(val).strip().upper()
+        # Si tiene formato de fecha o timestamp, extraer YYYY-MM-DD
+        if ' ' in val_str and '-' in val_str:
+            val_str = val_str.split(' ')[0]
+        elif re.match(r'^\d{4}-\d{2}$', val_str):  # YYYY-MM -> YYYY-MM-01
+            val_str = f"{val_str}-01"
+        vals.append(val_str)
     return "||".join(vals)
 
 
@@ -326,10 +351,12 @@ def obtener_llaves_existentes_en_bd(tabla_destino: str) -> Set[str]:
     except Exception as e:
         print(f"[ALERTA IDEMPOTENCIA] Consulta remota falló para {tabla_destino}: {e}")
 
-    # 2. Fallback local sobre datos limpios
-    p_clean = obtener_ruta_limpia(f"{tabla_destino}_clean.csv" if not tabla_destino.endswith('_clean') else f"{tabla_destino}.csv")
+    # 2. Fallback local sobre datos limpios usando mapeo unívoco
+    nombre_archivo_local = MAPEO_ARCHIVOS_LOCALES.get(tabla_destino, f"{tabla_destino}_clean.csv")
+    p_clean = obtener_ruta_limpia(nombre_archivo_local)
     if not os.path.exists(p_clean):
         p_clean = obtener_ruta_limpia(f"{tabla_destino}.csv")
+
     if os.path.exists(p_clean):
         try:
             df_local = pd.read_csv(p_clean)
@@ -337,8 +364,8 @@ def obtener_llaves_existentes_en_bd(tabla_destino: str) -> Set[str]:
                 clave = _extraer_clave_registro(r.to_dict(), pk_cols)
                 if clave:
                     llaves.add(clave)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[ALERTA IDEMPOTENCIA] Fallback local falló para {tabla_destino}: {e}")
 
     return llaves
 
@@ -557,13 +584,19 @@ def ejecutar_ingesta_5_pasos(
     filas_duplicadas = []
 
     if modo_idempotente and pk_cols:
-        llaves_existentes = llaves_existentes_override if llaves_existentes_override is not None else obtener_llaves_existentes_en_bd(tabla_destino)
+        llaves_existentes = (
+            set(llaves_existentes_override)
+            if llaves_existentes_override is not None
+            else obtener_llaves_existentes_en_bd(tabla_destino)
+        )
         for r in filas_validas:
             k = _extraer_clave_registro(r, pk_cols)
             if k in llaves_existentes:
                 filas_duplicadas.append(r)
             else:
                 filas_nuevas.append(r)
+                # REFUERZO DE IDEMPOTENCIA: registrar en memoria de la corrida para deduplicar dentro del mismo lote
+                llaves_existentes.add(k)
 
         # REGLA DURA: Si el 100% de los registros ya existen en el dataset,
         # la planilla ya fue cargada y DEBE SER DENEGADA para evitar duplicidad.
@@ -641,15 +674,18 @@ def ejecutar_ingesta_5_pasos(
     # PASO 5: ESCRIBIR (A la base de datos Supabase + Asentar en Bitácora)
     # -------------------------------------------------------------------------
     duracion_ms = int((time.time() - inicio_ms) * 1000)
+    error_persistencia = None
 
-    # Persistencia real en Supabase si se solicita
+    # Persistencia real en Supabase con resolución idempotente ON CONFLICT DO NOTHING
     if persistir_en_bd and filas_nuevas:
         try:
+            pk_on_conflict = ",".join(pk_cols) if pk_cols else None
             chunk_size = 250
             for i in range(0, len(filas_nuevas), chunk_size):
                 chunk = filas_nuevas[i:i + chunk_size]
-                datos.insertar(tabla_destino, chunk)
+                datos.insertar(tabla_destino, chunk, ignorar_duplicados=True, on_conflict=pk_on_conflict)
         except Exception as e:
+            error_persistencia = str(e)
             print(f"[ALERTA INGESTA] Error persistiendo en {tabla_destino}: {e}")
 
     # Registro en Bitácora de Cargas de Supabase
@@ -658,7 +694,7 @@ def ejecutar_ingesta_5_pasos(
             'archivo_origen': nombre_archivo,
             'tabla_destino': tabla_destino,
             'filas_leidas': total_filas_leidas,
-            'filas_cargadas': filas_cargadas,
+            'filas_cargadas': filas_cargadas if not error_persistencia else 0,
             'filas_rechazadas': filas_rechazadas_count + filas_duplicadas_count,
             'detalle_rechazos': json.dumps(reporte_cuentas['detalle_rechazos']),
             'es_idempotente': modo_idempotente,
@@ -668,6 +704,21 @@ def ejecutar_ingesta_5_pasos(
         registrar_en_bitacora_cargas(registro_bitacora)
     except Exception as e:
         print(f"[ALERTA BITACORA] No se pudo persistir bitácora remota: {e}")
+
+    if error_persistencia:
+        return {
+            'exito': False,
+            'paso_fallido': 'ESCRIBIR',
+            'mensaje': f"Error al persistir registros en base de datos: {error_persistencia}",
+            'duracion_ms': duracion_ms,
+            'reporte': reporte_cuentas,
+            'filas_leidas': total_filas_leidas,
+            'filas_cargadas': 0,
+            'filas_duplicadas': filas_duplicadas_count,
+            'filas_rechazadas': total_filas_leidas,
+            'error_persistencia': error_persistencia,
+            'datos_listos_para_base': []
+        }
 
     return {
         'exito': True,
@@ -715,16 +766,64 @@ def registrar_en_bitacora_cargas(registro: Dict[str, Any]) -> bool:
 # 3. VERIFICADOR DE IDEMPOTENCIA Y CARGA ACUMULATIVA (TALLER B4_02 SLIDE 8)
 # =============================================================================
 
+# Plantillas de datos nuevos por entidad para probar acumulación estricta
+PLANTILLAS_INCREMENTALES_PRUEBA: Dict[str, List[Dict[str, Any]]] = {
+    'maestro_materiales': [
+        {'sku': 'MP-TEST-NEW1', 'descripcion': 'Lámina Acero Galvanizado 2mm (Prueba Incremental)', 'categoria': 'Lámina', 'unidad': 'lámina', 'costo_unitario': 85000, 'lead_time_declarado_dias': 12},
+        {'sku': 'MP-TEST-NEW2', 'descripcion': 'Tornillo Autorroscante 1/4 (Prueba Incremental)', 'categoria': 'Tornillería', 'unidad': 'unidad', 'costo_unitario': 250, 'lead_time_declarado_dias': 7}
+    ],
+    'movimientos_inventarios': [
+        {'fecha': '2026-04-01', 'sku': 'MP-0001', 'tipo_movimiento': 'entrada', 'cantidad': 50, 'documento': 'DOC-TEST-INC1', 'bodega': 'BOD-01', 'responsable': 'OP-01'},
+        {'fecha': '2026-04-01', 'sku': 'MP-0002', 'tipo_movimiento': 'salida', 'cantidad': 20, 'documento': 'DOC-TEST-INC2', 'bodega': 'BOD-01', 'responsable': 'OP-01'}
+    ],
+    'movimientos_inventario': [
+        {'fecha': '2026-04-01', 'sku': 'MP-0001', 'tipo_movimiento': 'entrada', 'cantidad': 50, 'documento': 'DOC-TEST-INC1', 'bodega': 'BOD-01', 'responsable': 'OP-01'},
+        {'fecha': '2026-04-01', 'sku': 'MP-0002', 'tipo_movimiento': 'salida', 'cantidad': 20, 'documento': 'DOC-TEST-INC2', 'bodega': 'BOD-01', 'responsable': 'OP-01'}
+    ],
+    'ordenes_compra': [
+        {'orden_compra': 'OC-TEST-INC1', 'sku': 'MP-0001', 'fecha_pedido': '2026-04-01', 'cantidad': 100, 'proveedor': 'Aceros S.A.', 'costo_unitario': 45000},
+        {'orden_compra': 'OC-TEST-INC2', 'sku': 'MP-0002', 'fecha_pedido': '2026-04-01', 'cantidad': 200, 'proveedor': 'Metales Industriales', 'costo_unitario': 32000}
+    ],
+    'conteo_fisico': [
+        {'sku': 'MP-TEST-CF1', 'stock_fisico_contado': 150, 'fecha_conteo': '2026-04-01'},
+        {'sku': 'MP-TEST-CF2', 'stock_fisico_contado': 220, 'fecha_conteo': '2026-04-01'}
+    ],
+    'inventario_bodega_JEFE': [
+        {'codigo': 'MP-TEST-BJ1', 'material': 'Lámina', 'conteo_jefe': 140, 'observacion': 'Auditoría física'},
+        {'codigo': 'MP-TEST-BJ2', 'material': 'Tubería', 'conteo_jefe': 85, 'observacion': 'Auditoría física'}
+    ],
+    'inventario_inicial': [
+        {'sku': 'MP-TEST-II1', 'stock_inicial': 300, 'fecha': '2024-07-01'},
+        {'sku': 'MP-TEST-II2', 'stock_inicial': 150, 'fecha': '2024-07-01'}
+    ],
+    'bom': [
+        {'producto': 'PT-ESC-STD', 'sku_material': 'MP-TEST-BOM1', 'cantidad_por_unidad': 2.0},
+        {'producto': 'PT-ESC-STD', 'sku_material': 'MP-TEST-BOM2', 'cantidad_por_unidad': 4.5}
+    ],
+    'maestro_productos': [
+        {'producto': 'PT-TEST-P1', 'nombre_producto': 'Estación Ergonómica Plus'},
+        {'producto': 'PT-TEST-P2', 'nombre_producto': 'Mueble Modular Ejecutivo'}
+    ],
+    'plan_produccion': [
+        {'periodo': '2026-04-01', 'producto': 'PT-ESC-STD', 'cantidad_planeada': 120, 'cantidad_real': 125},
+        {'periodo': '2026-04-01', 'producto': 'PT-ESC-EJE', 'cantidad_planeada': 60, 'cantidad_real': 58}
+    ]
+}
+
+
 def simular_prueba_idempotencia_acumulativa(
     tabla: str = "maestro_materiales"
 ) -> Dict[str, Any]:
     """
-    Ejecuta el protocolo de validación en 10 minutos (Slide 8):
+    Ejecuta el protocolo de validación en 10 minutos (Slide 8 B4_02):
     1. Carga inicial del archivo -> contar filas base.
     2. Cargar EL MISMO archivo otra vez -> verificar que se DENEGUE por idempotencia (0 incremento).
     3. Cargar archivo con filas nuevas -> verificar que se SUMEN sin borrar las anteriores (Acumulativa).
     """
-    p_clean = obtener_ruta_limpia(f"{tabla}_clean.csv" if not tabla.endswith('_clean') else f"{tabla}.csv")
+    nombre_archivo_local = MAPEO_ARCHIVOS_LOCALES.get(tabla, f"{tabla}_clean.csv")
+    p_clean = obtener_ruta_limpia(nombre_archivo_local)
+    if not os.path.exists(p_clean):
+        p_clean = obtener_ruta_limpia(f"{tabla}.csv")
     if not os.path.exists(p_clean):
         p_clean = obtener_ruta_limpia("maestro_materiales_clean.csv")
 
@@ -754,20 +853,19 @@ def simular_prueba_idempotencia_acumulativa(
     conteo_post_recarga = conteo_base + registros_insertados_en_recarga
     es_idempotente = (registros_insertados_en_recarga == 0 and res_recarga.get('denegada_por_idempotencia', False))
 
-    # Paso 3: Cargar lote incremental con SKUs nuevos no existentes
-    nuevos_skus = pd.DataFrame([
-        {'sku': 'MP-9901', 'descripcion': 'Lámina Acero Galvanizado 2mm (Prueba Incremental)', 'categoria': 'Lámina', 'unidad': 'lámina', 'costo_unitario': 85000, 'lead_time_declarado_dias': 12},
-        {'sku': 'MP-9902', 'descripcion': 'Tornillo Autorroscante 1/4 (Prueba Incremental)', 'categoria': 'Tornillería', 'unidad': 'unidad', 'costo_unitario': 250, 'lead_time_declarado_dias': 7}
-    ])
+    # Paso 3: Cargar lote incremental con registros nuevos específicos para la tabla
+    filas_plantilla = PLANTILLAS_INCREMENTALES_PRUEBA.get(tabla, PLANTILLAS_INCREMENTALES_PRUEBA['maestro_materiales'])
+    df_incremental = pd.DataFrame(filas_plantilla)
+
     res_acumulativo = ejecutar_ingesta_5_pasos(
         tabla_destino=tabla,
-        df_entrante=nuevos_skus,
-        nombre_archivo="lote_incremental_nuevos_skus.csv",
+        df_entrante=df_incremental,
+        nombre_archivo=f"{tabla}_lote_incremental_nuevos.csv",
         modo_idempotente=True,
         persistir_en_bd=False,
         llaves_existentes_override=llaves_base
     )
-    filas_nuevas_cargadas = res_acumulativo.get('filas_cargadas', len(nuevos_skus))
+    filas_nuevas_cargadas = res_acumulativo.get('filas_cargadas', len(df_incremental))
     conteo_post_acumulativo = conteo_base + filas_nuevas_cargadas
     es_acumulativo = (conteo_post_acumulativo > conteo_base and res_acumulativo.get('exito', False))
 
