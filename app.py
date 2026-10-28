@@ -491,12 +491,16 @@ def cargar_kpis_base():
     res_sla = sla.obtener_resumen_global_sla()
     res_abc = abc.obtener_resumen_pareto()
     plan_compras = reposicion.obtener_plan_compras_sugeridas()
-    return res_eri, res_sla, res_abc, plan_compras
+    todos_rop = reposicion.obtener_parametros_reposicion()
+    return res_eri, res_sla, res_abc, plan_compras, todos_rop
 
 try:
-    kpi_eri, kpi_sla, kpi_abc, kpi_plan = cargar_kpis_base()
+    kpi_eri, kpi_sla, kpi_abc, kpi_plan, kpi_todos_rop = cargar_kpis_base()
     eri_pm = (kpi_eri.get("categorias") or {}).get("Inactivo (Plata Muerta)") or kpi_eri.get("total_general") or {}
     eri_tg = kpi_eri.get("total_general") or {}
+    rop_total_skus   = len(kpi_todos_rop)
+    rop_quiebre      = sum(1 for i in kpi_todos_rop if "Quiebre" in str(i.get("estado_semaforo", "") or i.get("semaforo_inventario", "")))
+    rop_bajo_rop     = sum(1 for i in kpi_todos_rop if i.get("requiere_orden_compra"))
 except Exception as e:
     st.error(f"Error consultando Supabase: {e}")
     st.stop()
@@ -651,21 +655,23 @@ with m3:
     """, unsafe_allow_html=True)
 
 with m4:
-    a_pct  = kpi_abc['clases']['A']['pct_valor']
-    a_skus = kpi_abc['clases']['A']['total_skus']
+    rop_pct_ok = round(((rop_total_skus - rop_bajo_rop) / rop_total_skus * 100), 1) if rop_total_skus > 0 else 0.0
+    color_rop = "#DC2626" if rop_quiebre > 0 else "#15803D"
+    badge_bg  = "#FEE2E2" if rop_quiebre > 0 else "#DCFCE7"
+    badge_col = "#B91C1C" if rop_quiebre > 0 else "#166534"
     st.markdown(f"""
     <div class="kpi-card">
       <div class="kpi-top">
-        <div class="kpi-icon-box" style="background:#FAF5FF; color:#7C3AED;">
+        <div class="kpi-icon-box" style="background:#FEF2F2; color:#DC2626;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/>
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
         </div>
-        <span class="kpi-badge" style="background:#EDE9FE; color:#6D28D9;">Pareto 80/20</span>
+        <span class="kpi-badge" style="background:{badge_bg}; color:{badge_col};">{rop_quiebre} Quiebre Inminente</span>
       </div>
-      <div class="kpi-val">{a_pct}%</div>
-      <div class="kpi-lbl">Concentración Clase A</div>
-      <div class="kpi-sub">{a_skus} SKUs concentran el valor</div>
+      <div class="kpi-val" style="color:{color_rop};">{rop_bajo_rop}<span style="font-size:1rem; color:#94A3B8; font-weight:600;"> / {rop_total_skus}</span></div>
+      <div class="kpi-lbl">SKUs Bajo Punto de Reorden</div>
+      <div class="kpi-sub">Saldo activo sin orden pendiente</div>
     </div>
     """, unsafe_allow_html=True)
 
