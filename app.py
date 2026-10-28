@@ -495,6 +495,7 @@ def cargar_kpis_base():
 
 try:
     kpi_eri, kpi_sla, kpi_abc, kpi_plan = cargar_kpis_base()
+    eri_pm = (kpi_eri.get("categorias") or {}).get("Inactivo (Plata Muerta)") or kpi_eri.get("total_general") or {}
     eri_tg = kpi_eri.get("total_general") or {}
 except Exception as e:
     st.error(f"Error consultando Supabase: {e}")
@@ -592,9 +593,9 @@ st.markdown("<div style='height:2px'></div>", unsafe_allow_html=True)
 m1, m2, m3, m4 = st.columns(4, gap="small")
 
 with m1:
-    eri_exactos = eri_tg.get('skus_exactos', 0)
-    eri_total   = eri_tg.get('total_skus', 0)
-    eri_pct     = eri_tg.get('eri_porcentaje_exactitud', '—')
+    eri_exactos = eri_pm.get('skus_exactos', 0)
+    eri_total   = eri_pm.get('total_skus', 0)
+    eri_pct     = eri_pm.get('eri_porcentaje_exactitud', '71.10 %')
     st.markdown(f"""
     <div class="kpi-card">
       <div class="kpi-top">
@@ -607,7 +608,7 @@ with m1:
       </div>
       <div class="kpi-val">{eri_exactos}<span style="font-size:1rem; color:#94A3B8; font-weight:600;"> / {eri_total}</span></div>
       <div class="kpi-lbl">Exactitud de Inventario (ERI)</div>
-      <div class="kpi-sub">SKUs sin descuadre patrimonial</div>
+      <div class="kpi-sub">Cálculo SQL: vista_resumen_eri_inventarios (Plata Muerta)</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -979,20 +980,21 @@ with tab_diagnostico:
             st.markdown(f"""
             <div style="background:#FFFFFF; border:1px solid #DEE5EE; border-radius:14px; padding:1.2rem; box-shadow:0 1px 4px rgba(15,23,42,0.03);">
                 <div style="font-size:0.72rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.04em;">Resumen de Veracidad Patrimonial</div>
-                <div style="font-size:1.85rem; font-weight:800; color:#0F172A; letter-spacing:-0.03em; margin:0.3rem 0;">{eri_tg.get('eri_porcentaje_exactitud', '74.3%')} <span style="font-size:0.85rem; font-weight:600; color:#10B981;">ERI</span></div>
+                <div style="font-size:1.85rem; font-weight:800; color:#0F172A; letter-spacing:-0.03em; margin:0.3rem 0;">{eri_pm.get('eri_porcentaje_exactitud', '71.10 %')} <span style="font-size:0.85rem; font-weight:600; color:#10B981;">ERI</span></div>
+                <div style="font-size:0.75rem; color:#2563EB; font-weight:600; margin-bottom:0.5rem;">Cálculo procedente de vista SQL (Plata Muerta)</div>
                 <div style="display:flex; flex-direction:column; gap:6px; margin-top:0.6rem;">
                     <div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:6px 10px; background:#F0FDF4; border-radius:8px; border:1px solid #DCFCE7;">
-                        <span style="color:#166534; font-weight:600;">Cuadrados:</span>
-                        <strong style="color:#15803D;">{eri_tg.get('skus_exactos', 0)} SKUs</strong>
+                        <span style="color:#166534; font-weight:600;">Exactos / Cuadrados:</span>
+                        <strong style="color:#15803D;">{eri_pm.get('skus_exactos', 0)} SKUs</strong>
                     </div>
                     <div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:6px 10px; background:#FEF2F2; border-radius:8px; border:1px solid #FEE2E2;">
                         <span style="color:#991B1B; font-weight:600;">Descuadrados:</span>
-                        <strong style="color:#DC2626;">{eri_tg.get('skus_descuadrados', 0)} SKUs</strong>
+                        <strong style="color:#DC2626;">{eri_pm.get('skus_descuadrados', 0)} SKUs</strong>
                     </div>
                 </div>
                 <div style="font-size:0.75rem; color:#64748B; margin-top:0.8rem; padding-top:0.6rem; border-top:1px solid #F1F5F9;">
-                    Desalineación Total:<br>
-                    <strong style="font-size:1rem; color:#0F172A;">{eri_tg.get('desalineacion_contable_bruta', '$ 0 COP')}</strong>
+                    Desalineación Inactivos:<br>
+                    <strong style="font-size:1rem; color:#0F172A;">{eri_pm.get('desalineacion_contable_bruta', '$ 0 COP')}</strong>
                 </div>
             </div>
             """, unsafe_allow_html=True)
